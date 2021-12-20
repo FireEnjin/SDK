@@ -1,12 +1,18 @@
 {
   "name": "@fireenjin/sdk",
   "version": "1.0.0",
+  "private": false,
   "description": "Roll your own SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "build": "tsc src/index.ts --outDir dist --declaration",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "npm run build",
+    "serve": "tsc src/index.ts --outDir dist --declaration --watch"
   },
   "repository": {
     "type": "git",
@@ -29,6 +35,11 @@
     "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^8.0.3",
+    "@semantic-release/release-notes-generator": "^10.0.2",
+    "semantic-release": "^18.0.0",
     "typescript": "^4.5.4"
   }
 }
