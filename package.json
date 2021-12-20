@@ -32,7 +32,8 @@
     "firebase": "^9.6.1",
     "graphql-request": "^3.7.0",
     "localforage": "^1.10.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "rxjs": "^7.4.0"
   },
   "devDependencies": {
     "@semantic-release/commit-analyzer": "^9.0.2",
