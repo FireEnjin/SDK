@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -44,27 +43,26 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-exports.__esModule = true;
-var firestore_1 = require("firebase/firestore");
-var functions_1 = require("firebase/functions");
+import { getFirestore, addDoc, collection, doc, getDoc, getDocs, query as firestoreQuery, orderBy as firestoreOrderBy, limit as firestoreLimit, where as firestoreWhere, setDoc, updateDoc, onSnapshot, enableIndexedDbPersistence, connectFirestoreEmulator, } from "firebase/firestore";
+import { connectFunctionsEmulator, getFunctions, httpsCallable, } from "firebase/functions";
 var DatabaseService = /** @class */ (function () {
     function DatabaseService(options) {
         this.watchers = {};
-        this.service = (0, firestore_1.getFirestore)();
-        this.functions = (0, functions_1.getFunctions)();
+        this.service = getFirestore();
+        this.functions = getFunctions();
         if (options === null || options === void 0 ? void 0 : options.emulate) {
-            (0, firestore_1.connectFirestoreEmulator)(this.service, "localhost", 8080);
-            (0, functions_1.connectFunctionsEmulator)(this.functions, "localhost", 5001);
+            connectFirestoreEmulator(this.service, "localhost", 8080);
+            connectFunctionsEmulator(this.functions, "localhost", 5001);
         }
         try {
-            (0, firestore_1.enableIndexedDbPersistence)(this.service);
+            enableIndexedDbPersistence(this.service);
         }
         catch (error) {
             console.log(error.message);
         }
     }
     DatabaseService.prototype.call = function (functionName) {
-        return (0, functions_1.httpsCallable)(this.functions, functionName);
+        return httpsCallable(this.functions, functionName);
     };
     DatabaseService.prototype.add = function (collectionName, data, id) {
         return __awaiter(this, void 0, void 0, function () {
@@ -75,26 +73,26 @@ var DatabaseService = /** @class */ (function () {
                     case 1:
                         collection = _a.sent();
                         if (!id) return [3 /*break*/, 3];
-                        return [4 /*yield*/, (0, firestore_1.setDoc)(this.document(collectionName, id), data)];
+                        return [4 /*yield*/, setDoc(this.document(collectionName, id), data)];
                     case 2:
                         _a.sent();
                         _a.label = 3;
-                    case 3: return [2 /*return*/, id ? this.document(collectionName, id) : (0, firestore_1.addDoc)(collection, data)];
+                    case 3: return [2 /*return*/, id ? this.document(collectionName, id) : addDoc(collection, data)];
                 }
             });
         });
     };
     DatabaseService.prototype.collection = function (path) {
-        return (0, firestore_1.collection)(this.service, path);
+        return collection(this.service, path);
     };
     DatabaseService.prototype.getCollection = function (path) {
-        return (0, firestore_1.getDocs)(this.collection(path));
+        return getDocs(this.collection(path));
     };
     DatabaseService.prototype.document = function (path, id) {
-        return id ? (0, firestore_1.doc)(this.collection(path), id) : (0, firestore_1.doc)(this.service, path);
+        return id ? doc(this.collection(path), id) : doc(this.service, path);
     };
     DatabaseService.prototype.getDocument = function (path, id) {
-        return (0, firestore_1.getDoc)(this.document(path, id));
+        return getDoc(this.document(path, id));
     };
     DatabaseService.prototype.update = function (collectionName, id, data) {
         return __awaiter(this, void 0, void 0, function () {
@@ -103,7 +101,7 @@ var DatabaseService = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         document = this.document(collectionName, id);
-                        return [4 /*yield*/, (0, firestore_1.updateDoc)(document, data, { merge: true })];
+                        return [4 /*yield*/, updateDoc(document, data, { merge: true })];
                     case 1:
                         _a.sent();
                         return [4 /*yield*/, this.getDocument(collectionName, id)];
@@ -126,34 +124,10 @@ var DatabaseService = /** @class */ (function () {
             });
         });
     };
-    DatabaseService.prototype.subscribe = function (query, callback, name) {
-        var _this = this;
-        var watcherName = name ? name : new Date().toISOString();
-        this.watchers[watcherName] = (0, firestore_1.onSnapshot)(this.rawQuery(query === null || query === void 0 ? void 0 : query.collectionName, query === null || query === void 0 ? void 0 : query.where, query === null || query === void 0 ? void 0 : query.orderBy, query === null || query === void 0 ? void 0 : query.limit), function (snapshot) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                if (callback && typeof callback === "function") {
-                    callback({ docs: (snapshot === null || snapshot === void 0 ? void 0 : snapshot.docs) || [] });
-                }
-                return [2 /*return*/];
-            });
-        }); });
-        return this.watchers[watcherName];
-    };
-    DatabaseService.prototype.unsubscribe = function (watcherName) {
-        if (this.watchers[watcherName] &&
-            typeof this.watchers[watcherName] === "function") {
-            this.watchers[watcherName]();
-            return true;
-        }
-        else {
-            console.log("There is no watcher running on ".concat(watcherName, " query."));
-            return false;
-        }
-    };
     DatabaseService.prototype.watchDocument = function (collectionName, id, callback) {
         var _this = this;
         var watcherName = "".concat(collectionName, ":").concat(id);
-        this.watchers[watcherName] = (0, firestore_1.onSnapshot)(this.document(collectionName, id), function (doc) { return __awaiter(_this, void 0, void 0, function () {
+        this.watchers[watcherName] = onSnapshot(this.document(collectionName, id), function (doc) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 if (callback && typeof callback === "function") {
                     callback({ data: doc.data() });
@@ -174,27 +148,25 @@ var DatabaseService = /** @class */ (function () {
             return false;
         }
     };
-    DatabaseService.prototype.rawQuery = function (collectionName, where, orderBy, limit) {
-        var params = [];
-        for (var _i = 0, _a = where || []; _i < _a.length; _i++) {
-            var w = _a[_i];
-            if (!(w === null || w === void 0 ? void 0 : w.conditional) || !(w === null || w === void 0 ? void 0 : w.key))
-                continue;
-            params.push((0, firestore_1.where)(w.key, w.conditional, w.value));
-        }
-        if (orderBy)
-            params.push((0, firestore_1.orderBy)(orderBy));
-        if (limit)
-            params.push((0, firestore_1.limit)(limit));
-        return firestore_1.query.apply(void 0, __spreadArray([this.collection(collectionName)], params, false));
-    };
     DatabaseService.prototype.query = function (collectionName, where, orderBy, limit) {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, (0, firestore_1.getDocs)(this.rawQuery(collectionName, where, orderBy, limit))];
+            var params, _i, _a, w;
+            return __generator(this, function (_b) {
+                params = [];
+                for (_i = 0, _a = where || []; _i < _a.length; _i++) {
+                    w = _a[_i];
+                    if (!(w === null || w === void 0 ? void 0 : w.conditional) || !(w === null || w === void 0 ? void 0 : w.key))
+                        continue;
+                    params.push(firestoreWhere(w.key, w.conditional, w.value));
+                }
+                if (orderBy)
+                    params.push(firestoreOrderBy(orderBy));
+                if (limit)
+                    params.push(firestoreLimit(limit));
+                return [2 /*return*/, getDocs(firestoreQuery.apply(void 0, __spreadArray([this.collection(collectionName)], params, false)))];
             });
         });
     };
     return DatabaseService;
 }());
-exports["default"] = DatabaseService;
+export default DatabaseService;

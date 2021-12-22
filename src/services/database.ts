@@ -16,6 +16,8 @@ import {
   onSnapshot,
   enableIndexedDbPersistence,
   connectFirestoreEmulator,
+  QueryDocumentSnapshot,
+  QuerySnapshot,
 } from "firebase/firestore";
 import {
   connectFunctionsEmulator,
@@ -87,6 +89,48 @@ export default class DatabaseService {
 
     return true;
   }
+  subscribe(
+    query: {
+      collectionName: string;
+      where?: { key?: string; conditional?: WhereFilterOp; value?: any }[];
+      orderBy?: string;
+      limit?: number;
+    },
+    callback: (data: { docs: QueryDocumentSnapshot[] }) => void,
+    name?: string
+  ) {
+    const watcherName = name ? name : new Date().toISOString();
+    this.watchers[watcherName] = onSnapshot(
+      this.rawQuery(
+        query?.collectionName,
+        query?.where,
+        query?.orderBy,
+        query?.limit
+      ),
+      async (snapshot: QuerySnapshot) => {
+        if (callback && typeof callback === "function") {
+          callback({ docs: snapshot?.docs || [] });
+        }
+      }
+    );
+
+    return this.watchers[watcherName];
+  }
+
+  unsubscribe(watcherName: string) {
+    if (
+      this.watchers[watcherName] &&
+      typeof this.watchers[watcherName] === "function"
+    ) {
+      this.watchers[watcherName]();
+
+      return true;
+    } else {
+      console.log(`There is no watcher running on ${watcherName} query.`);
+
+      return false;
+    }
+  }
 
   watchDocument(collectionName: string, id: string, callback) {
     const watcherName = `${collectionName}:${id}`;
@@ -116,7 +160,7 @@ export default class DatabaseService {
     }
   }
 
-  async query(
+  rawQuery(
     collectionName: string,
     where: { key?: string; conditional?: WhereFilterOp; value?: any }[],
     orderBy?: string,
@@ -130,6 +174,15 @@ export default class DatabaseService {
     if (orderBy) params.push(firestoreOrderBy(orderBy));
     if (limit) params.push(firestoreLimit(limit));
 
-    return getDocs(firestoreQuery(this.collection(collectionName), ...params));
+    return firestoreQuery(this.collection(collectionName), ...params);
+  }
+
+  async query(
+    collectionName: string,
+    where: { key?: string; conditional?: WhereFilterOp; value?: any }[],
+    orderBy?: string,
+    limit?: number
+  ) {
+    return getDocs(this.rawQuery(collectionName, where, orderBy, limit));
   }
 }

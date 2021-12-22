@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "tsc src/index.ts --outDir dist --declaration",
+    "browser": "tsc --project tsconfig.browser.json",
     "test": "echo \"Error: no test specified\" && exit 1",
     "publish": "npm run build",
     "serve": "tsc src/index.ts --outDir dist --declaration --watch"
