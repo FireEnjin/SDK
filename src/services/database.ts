@@ -1,3 +1,4 @@
+import { initializeApp } from "@firebase/app";
 import {
   Firestore,
   getFirestore,
@@ -27,13 +28,23 @@ import {
 } from "firebase/functions";
 
 export default class DatabaseService {
+  app: any;
   service: Firestore;
   watchers: any = {};
   functions: Functions;
 
-  constructor(options?: { emulate: boolean }) {
-    this.service = getFirestore();
-    this.functions = getFunctions();
+  constructor(options?: { emulate?: boolean; app?: any; config?: any }) {
+    this.app = options?.app || null;
+    if (!this.app) {
+      try {
+        this.app = initializeApp(options?.config?.firebase);
+        console.log("Initializing Firebase App...", this.app);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    this.service = getFirestore(this.app);
+    this.functions = getFunctions(this.app);
     if (options?.emulate) {
       connectFirestoreEmulator(this.service, "localhost", 8080);
       connectFunctionsEmulator(this.functions, "localhost", 5001);
@@ -89,6 +100,7 @@ export default class DatabaseService {
 
     return true;
   }
+
   subscribe(
     query: {
       collectionName: string;

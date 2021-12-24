@@ -75,11 +75,12 @@ export default class AuthService {
   public isOnline = false;
   public service: Auth;
 
-  constructor(config?: IFireEnjinAuthConfig) {
-    this.config = { ...this.config, ...config };
+  constructor(options?: { config?: IFireEnjinAuthConfig; app?: any }) {
+    this.config = { ...this.config, ...(options?.config || {}) };
+    this.app = options?.app || null;
     if (!this.app) {
       try {
-        this.app = initializeApp(config.firebase);
+        this.app = initializeApp(options?.config?.firebase);
         console.log("Initializing Firebase App...", this.app);
       } catch (e) {
         console.log(e);

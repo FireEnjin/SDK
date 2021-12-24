@@ -56,8 +56,8 @@ var messaging_1 = require("firebase/messaging");
 var database_1 = require("firebase/database");
 var sessionManager_1 = require("./sessionManager");
 var AuthService = /** @class */ (function () {
-    function AuthService(config) {
-        var _a;
+    function AuthService(options) {
+        var _a, _b;
         this.config = {
             authLocalStorageKey: "enjin:session",
             tokenLocalStorageKey: "enjin:token",
@@ -69,10 +69,11 @@ var AuthService = /** @class */ (function () {
         this.googlePlus = google_plus_1.GooglePlus;
         this.twitter = twitter_connect_1.TwitterConnect;
         this.isOnline = false;
-        this.config = __assign(__assign({}, this.config), config);
+        this.config = __assign(__assign({}, this.config), ((options === null || options === void 0 ? void 0 : options.config) || {}));
+        this.app = (options === null || options === void 0 ? void 0 : options.app) || null;
         if (!this.app) {
             try {
-                this.app = (0, app_1.initializeApp)(config.firebase);
+                this.app = (0, app_1.initializeApp)((_a = options === null || options === void 0 ? void 0 : options.config) === null || _a === void 0 ? void 0 : _a.firebase);
                 console.log("Initializing Firebase App...", this.app);
             }
             catch (e) {
@@ -85,7 +86,7 @@ var AuthService = /** @class */ (function () {
             !this.config.googlePlus.options.webClientId) {
             console.log("googlePlus.options.webClientId is required for Google Native Auth See Here: https://github.com/EddyVerbruggen/cordova-plugin-googleplus#6-usage");
         }
-        if ((_a = this.config) === null || _a === void 0 ? void 0 : _a.emulate) {
+        if ((_b = this.config) === null || _b === void 0 ? void 0 : _b.emulate) {
             (0, auth_1.connectAuthEmulator)(this.service, "http://localhost:9099");
         }
         this.onEmailLink(window.location.href);

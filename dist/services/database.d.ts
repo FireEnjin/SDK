@@ -1,11 +1,14 @@
 import { Firestore, WhereFilterOp, QueryDocumentSnapshot, QuerySnapshot } from "firebase/firestore";
 import { Functions } from "firebase/functions";
 export default class DatabaseService {
+    app: any;
     service: Firestore;
     watchers: any;
     functions: Functions;
     constructor(options?: {
-        emulate: boolean;
+        emulate?: boolean;
+        app?: any;
+        config?: any;
     });
     call(functionName: string): import("@firebase/functions").HttpsCallable<unknown, unknown>;
     add(collectionName: string, data: any, id?: string): Promise<import("@firebase/firestore").DocumentReference<import("@firebase/firestore").DocumentData> | import("@firebase/firestore").DocumentReference<any>>;

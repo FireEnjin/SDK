@@ -31,7 +31,10 @@ export default class AuthService {
     private twitter;
     isOnline: boolean;
     service: Auth;
-    constructor(config?: IFireEnjinAuthConfig);
+    constructor(options?: {
+        config?: IFireEnjinAuthConfig;
+        app?: any;
+    });
     initializePushNotifications(onMessageCallback?: (payload: any) => void, options?: {
         vapidKey: string;
     }): Promise<string>;

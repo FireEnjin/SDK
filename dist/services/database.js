@@ -45,13 +45,25 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 exports.__esModule = true;
+var app_1 = require("@firebase/app");
 var firestore_1 = require("firebase/firestore");
 var functions_1 = require("firebase/functions");
 var DatabaseService = /** @class */ (function () {
     function DatabaseService(options) {
+        var _a;
         this.watchers = {};
-        this.service = (0, firestore_1.getFirestore)();
-        this.functions = (0, functions_1.getFunctions)();
+        this.app = (options === null || options === void 0 ? void 0 : options.app) || null;
+        if (!this.app) {
+            try {
+                this.app = (0, app_1.initializeApp)((_a = options === null || options === void 0 ? void 0 : options.config) === null || _a === void 0 ? void 0 : _a.firebase);
+                console.log("Initializing Firebase App...", this.app);
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+        this.service = (0, firestore_1.getFirestore)(this.app);
+        this.functions = (0, functions_1.getFunctions)(this.app);
         if (options === null || options === void 0 ? void 0 : options.emulate) {
             (0, firestore_1.connectFirestoreEmulator)(this.service, "localhost", 8080);
             (0, functions_1.connectFunctionsEmulator)(this.functions, "localhost", 5001);
