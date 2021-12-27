@@ -1,4 +1,4 @@
-import { initializeApp } from "@firebase/app";
+import { initializeApp, FirebaseApp } from "@firebase/app";
 import {
   Firestore,
   getFirestore,
@@ -28,7 +28,7 @@ import {
 } from "firebase/functions";
 
 export default class DatabaseService {
-  app: any;
+  app: FirebaseApp;
   service: Firestore;
   watchers: any = {};
   functions: Functions;
