@@ -13,7 +13,7 @@
     "browser": "tsc --project tsconfig.browser.json",
     "test": "echo \"Error: no test specified\" && exit 1",
     "publish": "npm run build",
-    "serve": "tsc src/index.ts --outDir dist --declaration --watch"
+    "start": "tsc src/index.ts --outDir dist --declaration --watch"
   },
   "repository": {
     "type": "git",
@@ -34,8 +34,7 @@
     "graphql": "^16.2.0",
     "graphql-request": "^3.7.0",
     "localforage": "^1.10.0",
-    "lodash": "^4.17.21",
-    "rxjs": "^7.4.0"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@semantic-release/commit-analyzer": "^9.0.2",
