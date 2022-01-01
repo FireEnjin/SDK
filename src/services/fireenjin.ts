@@ -1,7 +1,7 @@
 import * as localforage from "localforage";
 import isEqual from "lodash/fp/isEqual";
-import fireenjinError from "../events/error";
 import fireenjinSuccess from "../events/success";
+import tryOrFail from "../helpers/tryOrFail";
 
 import Client from "./client";
 
@@ -66,52 +66,38 @@ export default class FireEnjin {
       typeof this.options?.onUpload === "function"
     )
       return false;
-    try {
-      const response = await fetch(
-        this.options.uploadUrl
-          ? this.options.uploadUrl
-          : `${this.options.functionsHost}/upload`,
-        {
-          method: "POST",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: event.detail.data?.id,
-            path: event.detail.data?.path,
-            fileName: event.detail.data?.fileName,
-            file: event.detail.data?.encodedContent,
-            type: event.detail.data?.type,
-          }),
-        }
-      );
-      const data = await response.json();
-      if (event?.target) event.target.value = data.url;
-      await fireenjinSuccess(
-        {
-          event,
-          data,
-          name: event?.detail?.name,
-          endpoint: event?.detail?.endpoint,
-        },
-        {
-          onSuccess: this.options?.onSuccess,
-        }
-      );
-    } catch (err) {
-      await fireenjinError(
-        {
-          event: event?.detail?.event,
-          error: err,
-          name: event?.detail?.name,
-          endpoint: event?.detail?.endpoint,
-        },
-        {
-          onError: this.options?.onError,
-        }
-      );
-    }
+
+    await tryOrFail(
+      async () => {
+        const response = await fetch(
+          this.options.uploadUrl
+            ? this.options.uploadUrl
+            : `${this.options.functionsHost}/upload`,
+          {
+            method: "POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: event.detail.data?.id,
+              path: event.detail.data?.path,
+              fileName: event.detail.data?.fileName,
+              file: event.detail.data?.encodedContent,
+              type: event.detail.data?.type,
+            }),
+          }
+        );
+        const data = await response.json();
+        if (event?.target) event.target.value = data.url;
+
+        return data;
+      },
+      {
+        onError: this.options?.onError,
+        onSuccess: this.options?.onSuccess,
+      }
+    );
   }
 
   async fetch(event) {
@@ -157,47 +143,15 @@ export default class FireEnjin {
       }
     }
 
-    try {
-      const response = await this.client.request(
-        event.detail.query,
-        event.detail.params
-      );
-
-      if (
-        !this.options.disableCache &&
-        (!cachedData || (cachedData && !isEqual(cachedData, response)))
-      ) {
-        await fireenjinSuccess(
-          {
-            event: event.detail?.event,
-            cached: false,
-            data: response,
-            name: event.detail.name,
-            endpoint: event.detail.endpoint,
-          },
-          {
-            onSuccess: this.options?.onSuccess,
-          }
-        );
-        try {
-          await localforage.setItem(localKey, response);
-        } catch (err) {
-          console.log(err);
-        }
+    await tryOrFail(
+      async () => {
+        return this.client.get(event.detail.endpoint);
+      },
+      {
+        onError: this.options?.onError,
+        onSuccess: this.options?.onSuccess,
       }
-    } catch (err) {
-      await fireenjinError(
-        {
-          event: event?.detail?.event,
-          error: err,
-          name: event?.detail?.name,
-          endpoint: event?.detail?.endpoint,
-        },
-        {
-          onError: this.options?.onError,
-        }
-      );
-    }
+    );
   }
 
   async submit(event) {
@@ -209,43 +163,15 @@ export default class FireEnjin {
     )
       return false;
 
-    try {
-      // const data = await sdk[event.detail.endpoint]({
-      //   id: event.detail.id,
-      //   data: event.detail.data,
-      // });
-      const data = null;
-      await fireenjinSuccess(
-        {
-          event: event.detail?.event,
-          data,
-          name: event.detail.name,
-          endpoint: event.detail.endpoint,
-        },
-        {
-          onSuccess: this.options?.onSuccess,
-        }
-      );
-    } catch (err) {
-      await fireenjinError(
-        {
-          event: event?.detail?.event,
-          error: err,
-          name: event?.detail?.name,
-          endpoint: event?.detail?.endpoint,
-        },
-        {
-          onError: this.options?.onError,
-        }
-      );
-    }
-
-    if (
-      event?.target?.setLoading &&
-      typeof event?.target?.setLoading === "function"
-    ) {
-      event.target.setLoading(false);
-    }
+    await tryOrFail(
+      async () => {
+        return this.client.post(event.detail.endpoint);
+      },
+      {
+        onError: this.options?.onError,
+        onSuccess: this.options?.onSuccess,
+      }
+    );
   }
 
   setHeader(key: string, value: string) {
