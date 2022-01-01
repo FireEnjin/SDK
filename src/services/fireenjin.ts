@@ -1,5 +1,4 @@
 import * as localforage from "localforage";
-import isEqual from "lodash/fp/isEqual";
 import fireenjinSuccess from "../events/success";
 import tryOrFail from "../helpers/tryOrFail";
 

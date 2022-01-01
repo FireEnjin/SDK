@@ -8,5 +8,6 @@ export default class Client {
         host?: string;
         requestOptions?: RequestInit;
     });
-    get(url: string, requestOptions?: RequestInit): Promise<Response>;
+    get(url: string, requestOptions?: RequestInit): Promise<any>;
+    post(url: string, requestOptions?: RequestInit): Promise<any>;
 }

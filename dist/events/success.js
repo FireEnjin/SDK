@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -47,37 +36,33 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-require("isomorphic-unfetch");
-var Client = /** @class */ (function () {
-    function Client(options) {
-        this.options = options || {};
-    }
-    Client.prototype.get = function (url, requestOptions) {
-        return __awaiter(this, void 0, void 0, function () {
-            var response;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, fetch(url, __assign({ method: "GET" }, requestOptions))];
-                    case 1:
-                        response = _a.sent();
-                        return [2 /*return*/, response.json()];
-                }
-            });
+var setComponentProps_1 = require("../helpers/setComponentProps");
+function fireenjinSuccess(input, options) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function () {
+        var detail;
+        var _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    _b = {
+                        event: input === null || input === void 0 ? void 0 : input.event
+                    };
+                    return [4 /*yield*/, (0, setComponentProps_1["default"])(input === null || input === void 0 ? void 0 : input.dataPropsMap, input === null || input === void 0 ? void 0 : input.data)];
+                case 1:
+                    detail = (_b.data = _c.sent(),
+                        _b.target = (_a = input === null || input === void 0 ? void 0 : input.event) === null || _a === void 0 ? void 0 : _a.target,
+                        _b.name = input === null || input === void 0 ? void 0 : input.name,
+                        _b.endpoint = input === null || input === void 0 ? void 0 : input.endpoint,
+                        _b);
+                    if (typeof (options === null || options === void 0 ? void 0 : options.onSuccess) === "function")
+                        options.onSuccess(detail);
+                    document.body.dispatchEvent(new CustomEvent("fireenjinSuccess", {
+                        detail: detail
+                    }));
+                    return [2 /*return*/];
+            }
         });
-    };
-    Client.prototype.post = function (url, requestOptions) {
-        return __awaiter(this, void 0, void 0, function () {
-            var response;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, fetch(url, __assign({ method: "POST" }, requestOptions))];
-                    case 1:
-                        response = _a.sent();
-                        return [2 /*return*/, response.json()];
-                }
-            });
-        });
-    };
-    return Client;
-}());
-exports["default"] = Client;
+    });
+}
+exports["default"] = fireenjinSuccess;

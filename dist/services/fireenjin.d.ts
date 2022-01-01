@@ -17,6 +17,7 @@ export default class FireEnjin {
         host?: string;
         token?: string;
         getSdk?: any;
+        onRequest?: (action: any, endpoint?: string) => any;
         onError?: (error: any) => void;
         onSuccess?: (data: any) => void;
         onUpload?: (data: any) => void;
