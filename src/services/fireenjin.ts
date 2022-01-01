@@ -1,7 +1,8 @@
 import * as localforage from "localforage";
 import isEqual from "lodash/fp/isEqual";
+import fireenjinError from "../events/error";
+import fireenjinSuccess from "../events/success";
 
-import setComponentProps from "../helpers/setComponentProps";
 import Client from "./client";
 
 export default class FireEnjin {
@@ -24,6 +25,7 @@ export default class FireEnjin {
       host?: string;
       token?: string;
       getSdk?: any;
+      onRequest?: (action: any, endpoint?: string) => any;
       onError?: (error) => void;
       onSuccess?: (data) => void;
       onUpload?: (data) => void;
@@ -42,7 +44,7 @@ export default class FireEnjin {
       },
     };
     this.client = options?.getSdk
-      ? new options.getSdk(clientOptions)
+      ? new options.getSdk(clientOptions, options?.onRequest)
       : new Client({ requestOptions: clientOptions });
     this.sdk = options.getSdk(this.client);
     window.addEventListener("fireenjinUpload", (event) => {
@@ -85,33 +87,29 @@ export default class FireEnjin {
         }
       );
       const data = await response.json();
-      event.target.value = data.url;
-
-      document.body.dispatchEvent(
-        new CustomEvent("fireenjinSuccess", {
-          detail: {
-            event: event.detail.event,
-            data: await setComponentProps(event?.detail?.dataPropsMap, data),
-            target: event.target,
-            name: event.detail.name,
-            endpoint: event.detail.endpoint,
-          },
-        })
+      if (event?.target) event.target.value = data.url;
+      await fireenjinSuccess(
+        {
+          event,
+          data,
+          name: event?.detail?.name,
+          endpoint: event?.detail?.endpoint,
+        },
+        {
+          onSuccess: this.options?.onSuccess,
+        }
       );
     } catch (err) {
-      if (this.options.onError && typeof this.options.onError === "function") {
-        this.options.onError(err);
-      }
-      document.body.dispatchEvent(
-        new CustomEvent("fireenjinError", {
-          detail: {
-            event: event?.detail?.event,
-            target: event?.target,
-            error: err,
-            name: event?.detail?.name,
-            endpoint: event?.detail?.endpoint,
-          },
-        })
+      await fireenjinError(
+        {
+          event: event?.detail?.event,
+          error: err,
+          name: event?.detail?.name,
+          endpoint: event?.detail?.endpoint,
+        },
+        {
+          onError: this.options?.onError,
+        }
       );
     }
   }
@@ -140,28 +138,19 @@ export default class FireEnjin {
       try {
         cachedData = await localforage.getItem(localKey);
         if (cachedData) {
-          const data = await setComponentProps(
-            event?.detail?.dataPropsMap,
-            cachedData
+          await fireenjinSuccess(
+            {
+              event: event.detail.event,
+              dataPropsMap: event?.detail?.dataPropsMap,
+              cached: true,
+              data: cachedData,
+              name: event.detail.name,
+              endpoint: event.detail.endpoint,
+            },
+            {
+              onSuccess: this.options?.onSuccess,
+            }
           );
-          document.body.dispatchEvent(
-            new CustomEvent("fireenjinSuccess", {
-              detail: {
-                event: event.detail.event,
-                target: event.target,
-                cached: true,
-                data,
-                name: event.detail.name,
-                endpoint: event.detail.endpoint,
-              },
-            })
-          );
-          if (
-            event?.target?.setLoading &&
-            typeof event?.target?.setLoading === "function"
-          ) {
-            event.target.setLoading(false);
-          }
         }
       } catch (err) {
         console.log(err);
@@ -174,32 +163,21 @@ export default class FireEnjin {
         event.detail.params
       );
 
-      const data = await setComponentProps(
-        event?.detail?.dataPropsMap,
-        response
-      );
-
-      if (
-        this.options.onSuccess &&
-        typeof this.options.onSuccess === "function"
-      ) {
-        this.options.onSuccess(response);
-      }
       if (
         !this.options.disableCache &&
         (!cachedData || (cachedData && !isEqual(cachedData, response)))
       ) {
-        document.body.dispatchEvent(
-          new CustomEvent("fireenjinSuccess", {
-            detail: {
-              event: event.detail?.event,
-              target: event.target,
-              cached: false,
-              data,
-              name: event.detail.name,
-              endpoint: event.detail.endpoint,
-            },
-          })
+        await fireenjinSuccess(
+          {
+            event: event.detail?.event,
+            cached: false,
+            data: response,
+            name: event.detail.name,
+            endpoint: event.detail.endpoint,
+          },
+          {
+            onSuccess: this.options?.onSuccess,
+          }
         );
         try {
           await localforage.setItem(localKey, response);
@@ -208,27 +186,17 @@ export default class FireEnjin {
         }
       }
     } catch (err) {
-      if (this.options.onError && typeof this.options.onError === "function") {
-        this.options.onError(err);
-      }
-      document.body.dispatchEvent(
-        new CustomEvent("fireenjinError", {
-          detail: {
-            event: event?.detail?.event,
-            target: event?.target,
-            error: err,
-            name: event?.detail?.name,
-            endpoint: event?.detail?.endpoint,
-          },
-        })
+      await fireenjinError(
+        {
+          event: event?.detail?.event,
+          error: err,
+          name: event?.detail?.name,
+          endpoint: event?.detail?.endpoint,
+        },
+        {
+          onError: this.options?.onError,
+        }
       );
-    }
-
-    if (
-      event?.target?.setLoading &&
-      typeof event?.target?.setLoading === "function"
-    ) {
-      event.target.setLoading(false);
     }
   }
 
@@ -247,38 +215,28 @@ export default class FireEnjin {
       //   data: event.detail.data,
       // });
       const data = null;
-
-      if (
-        this.options.onSuccess &&
-        typeof this.options.onSuccess === "function"
-      ) {
-        this.options.onSuccess(data);
-      }
-      document.body.dispatchEvent(
-        new CustomEvent("fireenjinSuccess", {
-          detail: {
-            event: event.detail?.event,
-            data: await setComponentProps(event?.detail?.dataPropsMap, data),
-            target: event.target,
-            name: event.detail.name,
-            endpoint: event.detail.endpoint,
-          },
-        })
+      await fireenjinSuccess(
+        {
+          event: event.detail?.event,
+          data,
+          name: event.detail.name,
+          endpoint: event.detail.endpoint,
+        },
+        {
+          onSuccess: this.options?.onSuccess,
+        }
       );
     } catch (err) {
-      if (this.options.onError && typeof this.options.onError === "function") {
-        this.options.onError(err);
-      }
-      document.body.dispatchEvent(
-        new CustomEvent("fireenjinError", {
-          detail: {
-            event: event?.detail?.event,
-            error: err,
-            target: event.target,
-            name: event?.detail?.name,
-            endpoint: event?.detail?.endpoint,
-          },
-        })
+      await fireenjinError(
+        {
+          event: event?.detail?.event,
+          error: err,
+          name: event?.detail?.name,
+          endpoint: event?.detail?.endpoint,
+        },
+        {
+          onError: this.options?.onError,
+        }
       );
     }
 
