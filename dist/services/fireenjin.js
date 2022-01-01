@@ -78,52 +78,46 @@ var FireEnjin = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_g) {
-                switch (_g.label) {
-                    case 0:
-                        if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onUpload) === "function")
-                            this.options.onUpload(event);
-                        if (!((_c = (_b = event.detail) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.encodedContent) ||
-                            typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onUpload) === "function")
-                            return [2 /*return*/, false];
-                        return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
-                                var response, data;
-                                var _a, _b, _c, _d, _e;
-                                return __generator(this, function (_f) {
-                                    switch (_f.label) {
-                                        case 0: return [4 /*yield*/, fetch(this.options.uploadUrl
-                                                ? this.options.uploadUrl
-                                                : "".concat(this.options.functionsHost, "/upload"), {
-                                                method: "POST",
-                                                mode: "cors",
-                                                headers: {
-                                                    "Content-Type": "application/json"
-                                                },
-                                                body: JSON.stringify({
-                                                    id: (_a = event.detail.data) === null || _a === void 0 ? void 0 : _a.id,
-                                                    path: (_b = event.detail.data) === null || _b === void 0 ? void 0 : _b.path,
-                                                    fileName: (_c = event.detail.data) === null || _c === void 0 ? void 0 : _c.fileName,
-                                                    file: (_d = event.detail.data) === null || _d === void 0 ? void 0 : _d.encodedContent,
-                                                    type: (_e = event.detail.data) === null || _e === void 0 ? void 0 : _e.type
-                                                })
-                                            })];
-                                        case 1:
-                                            response = _f.sent();
-                                            return [4 /*yield*/, response.json()];
-                                        case 2:
-                                            data = _f.sent();
-                                            if (event === null || event === void 0 ? void 0 : event.target)
-                                                event.target.value = data.url;
-                                            return [2 /*return*/, data];
-                                    }
-                                });
-                            }); }, {
-                                onError: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onError,
-                                onSuccess: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onSuccess
-                            })];
-                    case 1:
-                        _g.sent();
-                        return [2 /*return*/];
-                }
+                if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onUpload) === "function")
+                    this.options.onUpload(event);
+                if (!((_c = (_b = event.detail) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.encodedContent) ||
+                    typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onUpload) === "function")
+                    return [2 /*return*/, false];
+                return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
+                        var response, data;
+                        var _a, _b, _c, _d, _e;
+                        return __generator(this, function (_f) {
+                            switch (_f.label) {
+                                case 0: return [4 /*yield*/, fetch(this.options.uploadUrl
+                                        ? this.options.uploadUrl
+                                        : "".concat(this.options.functionsHost, "/upload"), {
+                                        method: "POST",
+                                        mode: "cors",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({
+                                            id: (_a = event.detail.data) === null || _a === void 0 ? void 0 : _a.id,
+                                            path: (_b = event.detail.data) === null || _b === void 0 ? void 0 : _b.path,
+                                            fileName: (_c = event.detail.data) === null || _c === void 0 ? void 0 : _c.fileName,
+                                            file: (_d = event.detail.data) === null || _d === void 0 ? void 0 : _d.encodedContent,
+                                            type: (_e = event.detail.data) === null || _e === void 0 ? void 0 : _e.type
+                                        })
+                                    })];
+                                case 1:
+                                    response = _f.sent();
+                                    return [4 /*yield*/, response.json()];
+                                case 2:
+                                    data = _f.sent();
+                                    if (event === null || event === void 0 ? void 0 : event.target)
+                                        event.target.value = data.url;
+                                    return [2 /*return*/, data];
+                            }
+                        });
+                    }); }, {
+                        onError: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onError,
+                        onSuccess: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onSuccess
+                    })];
             });
         });
     };
@@ -173,7 +167,7 @@ var FireEnjin = /** @class */ (function () {
                         err_1 = _e.sent();
                         console.log(err_1);
                         return [3 /*break*/, 6];
-                    case 6: return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
+                    case 6: return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 return [2 /*return*/, this.client.get(event.detail.endpoint)];
                             });
@@ -181,9 +175,6 @@ var FireEnjin = /** @class */ (function () {
                             onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
                             onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess
                         })];
-                    case 7:
-                        _e.sent();
-                        return [2 /*return*/];
                 }
             });
         });
@@ -193,25 +184,19 @@ var FireEnjin = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        if (!event ||
-                            !event.detail ||
-                            !event.detail.endpoint ||
-                            event.detail.disableSubmit)
-                            return [2 /*return*/, false];
-                        return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
-                                    return [2 /*return*/, this.client.post(event.detail.endpoint)];
-                                });
-                            }); }, {
-                                onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
-                                onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
-                            })];
-                    case 1:
-                        _c.sent();
-                        return [2 /*return*/];
-                }
+                if (!event ||
+                    !event.detail ||
+                    !event.detail.endpoint ||
+                    event.detail.disableSubmit)
+                    return [2 /*return*/, false];
+                return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            return [2 /*return*/, this.client.post(event.detail.endpoint)];
+                        });
+                    }); }, {
+                        onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
+                        onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
+                    })];
             });
         });
     };

@@ -66,7 +66,7 @@ export default class FireEnjin {
     )
       return false;
 
-    await tryOrFail(
+    return tryOrFail(
       async () => {
         const response = await fetch(
           this.options.uploadUrl
@@ -142,7 +142,7 @@ export default class FireEnjin {
       }
     }
 
-    await tryOrFail(
+    return tryOrFail(
       async () => {
         return this.client.get(event.detail.endpoint);
       },
@@ -162,7 +162,7 @@ export default class FireEnjin {
     )
       return false;
 
-    await tryOrFail(
+    return tryOrFail(
       async () => {
         return this.client.post(event.detail.endpoint);
       },

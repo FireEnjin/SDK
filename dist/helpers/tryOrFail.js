@@ -60,7 +60,7 @@ function tryOrFail(fn, options) {
                         })];
                 case 2:
                     _h.sent();
-                    return [3 /*break*/, 5];
+                    return [2 /*return*/, data];
                 case 3:
                     error_2 = _h.sent();
                     return [4 /*yield*/, (0, error_1["default"])({
@@ -74,7 +74,7 @@ function tryOrFail(fn, options) {
                         })];
                 case 4:
                     _h.sent();
-                    return [3 /*break*/, 5];
+                    return [2 /*return*/];
                 case 5: return [2 /*return*/];
             }
         });

@@ -4,4 +4,4 @@ export default function tryOrFail(fn: () => Promise<any>, options?: {
     cached?: boolean;
     onError?: (error: any) => void;
     onSuccess?: (data: any) => void;
-}): Promise<void>;
+}): Promise<any>;

@@ -27,8 +27,8 @@ export default class FireEnjin {
         debug?: boolean;
         disableCache?: boolean;
     });
-    upload(event: any): Promise<boolean>;
-    fetch(event: any): Promise<boolean>;
-    submit(event: any): Promise<boolean>;
+    upload(event: any): Promise<any>;
+    fetch(event: any): Promise<any>;
+    submit(event: any): Promise<any>;
     setHeader(key: string, value: string): boolean;
 }

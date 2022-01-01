@@ -25,6 +25,8 @@ export default async function tryOrFail(
         onSuccess: options?.onSuccess,
       }
     );
+
+    return data;
   } catch (error) {
     await fireenjinError(
       {
@@ -38,5 +40,7 @@ export default async function tryOrFail(
         onError: options?.onError,
       }
     );
+
+    return;
   }
 }
