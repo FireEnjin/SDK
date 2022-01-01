@@ -35,12 +35,15 @@ export default class FireEnjin {
     } = {}
   ) {
     this.options = options || {};
-    this.client = new Client({
+    const clientOptions = {
       headers: {
         Authorization: options.token ? `Bearer ${options.token}` : "",
         ...(options.headers ? options.headers : {}),
       },
-    });
+    };
+    this.client = options?.getSdk
+      ? new options.getSdk(clientOptions)
+      : new Client({ requestOptions: clientOptions });
     this.sdk = options.getSdk(this.client);
     window.addEventListener("fireenjinUpload", (event) => {
       this.upload(event);
