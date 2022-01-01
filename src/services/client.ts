@@ -10,11 +10,13 @@ export default class Client {
     this.options = options || {};
   }
 
-  get(url: string, requestOptions?: RequestInit) {
-    return fetch(url, { method: "GET", ...requestOptions });
+  async get(url: string, requestOptions?: RequestInit) {
+    const response = await fetch(url, { method: "GET", ...requestOptions });
+    return response.json();
   }
 
-  post(url: string, requestOptions?: RequestInit) {
-    return fetch(url, { method: "POST", ...requestOptions });
+  async post(url: string, requestOptions?: RequestInit) {
+    const response = await fetch(url, { method: "POST", ...requestOptions });
+    return response.json();
   }
 }
