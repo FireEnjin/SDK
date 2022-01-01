@@ -1,8 +1,8 @@
 import * as localforage from "localforage";
-import { GraphQLClient } from "graphql-request";
 import isEqual from "lodash/fp/isEqual";
 
 import setComponentProps from "../helpers/setComponentProps";
+import Client from "./client";
 
 export default class FireEnjin {
   client: any;
@@ -35,7 +35,7 @@ export default class FireEnjin {
     } = {}
   ) {
     this.options = options || {};
-    this.client = new GraphQLClient(options.host, {
+    this.client = new Client({
       headers: {
         Authorization: options.token ? `Bearer ${options.token}` : "",
         ...(options.headers ? options.headers : {}),
