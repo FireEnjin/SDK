@@ -1,28 +1,32 @@
 import "isomorphic-unfetch";
 
 export default class Client {
-  options: {
-    host?: string;
-    requestOptions?: RequestInit;
-  };
+  host?: string;
+  requestOptions?: RequestInit;
 
-  constructor(options: { host?: string; requestOptions?: RequestInit }) {
-    this.options = options || {};
+  constructor(host?: string, requestOptions?: RequestInit) {
+    this.host = host || "http://localhost:4000";
+    this.requestOptions = requestOptions || {};
   }
 
   async request(url: string, requestOptions?: RequestInit) {
     const response = await fetch(url, {
-      ...(this.options?.requestOptions || {}),
+      ...(this.requestOptions || {}),
       ...requestOptions,
     });
     return response.json();
   }
 
+  setEndpoint(host: string) {
+    this.host = host;
+
+    return true;
+  }
+
   setHeader(key: string, value: any) {
-    if (!this.options?.requestOptions) this.options.requestOptions = {};
-    if (!this.options?.requestOptions?.headers)
-      this.options.requestOptions.headers = {};
-    this.options.requestOptions.headers[key] = value;
+    if (!this.requestOptions) this.requestOptions = {};
+    if (!this.requestOptions?.headers) this.requestOptions.headers = {};
+    this.requestOptions.headers[key] = value;
 
     return true;
   }

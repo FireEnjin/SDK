@@ -49,21 +49,42 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 require("isomorphic-unfetch");
 var Client = /** @class */ (function () {
-    function Client(options) {
-        this.options = options || {};
+    function Client(host, requestOptions) {
+        this.host = host || "http://localhost:4000";
+        this.requestOptions = requestOptions || {};
     }
     Client.prototype.request = function (url, requestOptions) {
         return __awaiter(this, void 0, void 0, function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, fetch(url, __assign({ method: "GET" }, requestOptions))];
+                    case 0: return [4 /*yield*/, fetch(url, __assign(__assign({}, (this.requestOptions || {})), requestOptions))];
                     case 1:
                         response = _a.sent();
                         return [2 /*return*/, response.json()];
                 }
             });
         });
+    };
+    Client.prototype.setEndpoint = function (host) {
+        this.host = host;
+        return true;
+    };
+    Client.prototype.setHeader = function (key, value) {
+        var _a;
+        if (!this.requestOptions)
+            this.requestOptions = {};
+        if (!((_a = this.requestOptions) === null || _a === void 0 ? void 0 : _a.headers))
+            this.requestOptions.headers = {};
+        this.requestOptions.headers[key] = value;
+        return true;
+    };
+    Client.prototype.setHeaders = function (values) {
+        for (var _i = 0, _a = Object.entries(values); _i < _a.length; _i++) {
+            var _b = _a[_i], key = _b[0], value = _b[1];
+            this.setHeader(key, value);
+        }
+        return true;
     };
     return Client;
 }());

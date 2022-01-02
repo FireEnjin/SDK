@@ -1,37 +1,39 @@
+import { GraphQLClient } from "graphql-request";
+import Client from "./client";
 declare type SdkFunctionWrapper = <T>(action: (requestHeaders?: Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
+declare type FireEnjinHost = {
+    name?: string;
+    url?: string;
+    type?: "firebase" | "graphql" | "rest";
+    headers?: HeadersInit;
+    retries?: number;
+    priority?: number;
+};
+declare type FireEnjinOptions = {
+    getSdk?: any;
+    host?: string;
+    connections?: FireEnjinHost[];
+    token?: string;
+    onRequest?: SdkFunctionWrapper;
+    onError?: (error: any) => void;
+    onSuccess?: (data: any) => void;
+    onUpload?: (data: any) => void;
+    headers?: HeadersInit;
+    uploadUrl?: string;
+    debug?: boolean;
+    disableCache?: boolean;
+};
 export default class FireEnjin {
-    client: any;
+    client: Client | GraphQLClient;
     sdk: any;
-    options: {
-        host?: string;
-        token?: string;
-        onRequest?: SdkFunctionWrapper;
-        onError?: (error: any) => void;
-        onSuccess?: (data: any) => void;
-        onUpload?: (data: any) => void;
-        headers?: any;
-        functionsHost?: string;
-        uploadUrl?: string;
-        debug?: boolean;
-        disableCache?: boolean;
-    };
-    constructor(options?: {
-        host?: string;
-        token?: string;
-        getSdk?: any;
-        onRequest?: SdkFunctionWrapper;
-        onError?: (error: any) => void;
-        onSuccess?: (data: any) => void;
-        onUpload?: (data: any) => void;
-        headers?: any;
-        functionsHost?: string;
-        uploadUrl?: string;
-        debug?: boolean;
-        disableCache?: boolean;
-    });
+    host: FireEnjinHost;
+    options: FireEnjinOptions;
+    constructor(options: FireEnjinOptions);
     upload(event: any): Promise<any>;
     fetch(event: any): Promise<any>;
     submit(event: any): Promise<any>;
-    setHeader(key: string, value: string): boolean;
+    setHeader(key: string, value: string): boolean | GraphQLClient;
+    setHeaders(headers: any): boolean | GraphQLClient;
+    setConnection(name: string): FireEnjinHost;
 }
 export {};

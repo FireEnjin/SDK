@@ -1,7 +1,8 @@
 import * as localforage from "localforage";
+import { GraphQLClient } from "graphql-request";
+
 import fireenjinSuccess from "../events/success";
 import tryOrFail from "../helpers/tryOrFail";
-
 import Client from "./client";
 
 type SdkFunctionWrapper = <T>(
@@ -9,49 +10,64 @@ type SdkFunctionWrapper = <T>(
   operationName: string
 ) => Promise<T>;
 
+type FireEnjinHost = {
+  name?: string;
+  url?: string;
+  type?: "firebase" | "graphql" | "rest";
+  headers?: HeadersInit;
+  retries?: number;
+  priority?: number;
+};
+
+type FireEnjinOptions = {
+  getSdk?: any;
+  host?: string;
+  connections?: FireEnjinHost[];
+  token?: string;
+  onRequest?: SdkFunctionWrapper;
+  onError?: (error) => void;
+  onSuccess?: (data) => void;
+  onUpload?: (data) => void;
+  headers?: HeadersInit;
+  uploadUrl?: string;
+  debug?: boolean;
+  disableCache?: boolean;
+};
+
 export default class FireEnjin {
-  client: any;
+  client: Client | GraphQLClient;
   sdk;
-  options: {
-    host?: string;
-    token?: string;
-    onRequest?: SdkFunctionWrapper;
-    onError?: (error) => void;
-    onSuccess?: (data) => void;
-    onUpload?: (data) => void;
-    headers?: any;
-    functionsHost?: string;
-    uploadUrl?: string;
-    debug?: boolean;
-    disableCache?: boolean;
-  };
-  constructor(
-    options: {
-      host?: string;
-      token?: string;
-      getSdk?: any;
-      onRequest?: SdkFunctionWrapper;
-      onError?: (error) => void;
-      onSuccess?: (data) => void;
-      onUpload?: (data) => void;
-      headers?: any;
-      functionsHost?: string;
-      uploadUrl?: string;
-      debug?: boolean;
-      disableCache?: boolean;
-    } = {}
-  ) {
+  host: FireEnjinHost = {};
+  options: FireEnjinOptions;
+  constructor(options: FireEnjinOptions) {
     this.options = options || {};
-    const clientOptions = {
-      headers: {
-        Authorization: options.token ? `Bearer ${options.token}` : "",
-        ...(options.headers ? options.headers : {}),
-      },
+    const headers = {
+      Authorization: options?.token ? `Bearer ${options.token}` : "",
+      ...(options.headers ? options.headers : {}),
     };
-    this.client = options?.getSdk
-      ? new options.getSdk(clientOptions, options?.onRequest)
-      : new Client({ requestOptions: clientOptions });
-    this.sdk = options.getSdk(this.client);
+    if (!options?.connections?.length && options.host) {
+      this.host = {
+        name: "default",
+        url: options.host,
+        type: typeof options?.getSdk === "function" ? "graphql" : "rest",
+        headers,
+      };
+    }
+    if (!this.host?.url && options?.connections?.length) {
+      this.host = options.connections.sort((a, b) =>
+        (a?.priority || 0) > (b?.priority || 0) ? 1 : -1
+      )[0];
+      this.host.headers = headers;
+    }
+
+    this.client =
+      this.host.type === "graphql"
+        ? new GraphQLClient(this.host?.url || "http://localhost:4000", {
+            headers: this.host?.headers || {},
+          })
+        : new Client(this.host.url, { headers: this.host?.headers || {} });
+    this.sdk =
+      this.host.type === "graphql" ? options.getSdk(this.client) : null;
     window.addEventListener("fireenjinUpload", (event) => {
       this.upload(event);
     });
@@ -77,7 +93,7 @@ export default class FireEnjin {
         const data = await this.client.request(
           this.options.uploadUrl
             ? this.options.uploadUrl
-            : `${this.options.functionsHost}/upload`,
+            : `${this.host.url}/upload`,
           {
             method: "POST",
             mode: "cors",
@@ -149,7 +165,13 @@ export default class FireEnjin {
 
     return tryOrFail(
       async () => {
-        return this.client.get(event.detail.endpoint);
+        return this.host?.type === "graphql"
+          ? event?.detail?.query
+            ? this.client.request(event.detail?.query, event.detail?.params)
+            : this.sdk[event.detail?.endpoint](event.detail?.params)
+          : this.client.request(event.detail.endpoint, {
+              body: JSON.stringify(event.detail?.data || {}),
+            });
       },
       {
         onError: this.options?.onError,
@@ -169,7 +191,16 @@ export default class FireEnjin {
 
     return tryOrFail(
       async () => {
-        return this.client.request(event.detail.endpoint, event?.detail?.data);
+        return this.host?.type === "graphql"
+          ? event?.detail?.query
+            ? this.client.request(event.detail.query, event.detail.params)
+            : this.sdk[event.detail.endpoint]({
+                id: event.detail.id,
+                data: event.detail.data,
+              })
+          : this.client.request(event.detail.endpoint, {
+              body: JSON.stringify(event?.detail?.data || {}),
+            });
       },
       {
         onError: this.options?.onError,
@@ -180,8 +211,24 @@ export default class FireEnjin {
 
   setHeader(key: string, value: string) {
     if (!this.client) return false;
-    this.client.setHeader(key, value);
+    if (!this.host?.headers) this.host.headers = {};
+    this.host.headers[key] = value;
 
-    return true;
+    return this.client.setHeader(key, value);
+  }
+
+  setHeaders(headers: any) {
+    if (!this.client) return false;
+
+    return this.client.setHeaders(headers);
+  }
+
+  setConnection(name: string) {
+    this.host = (this.options?.connections || []).find(
+      (connection) => connection?.name === name
+    ) as FireEnjinHost;
+    this.client.setEndpoint(this.host?.url || "http://localhost:4000");
+
+    return this.host;
   }
 }

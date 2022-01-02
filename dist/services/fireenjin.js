@@ -48,21 +48,39 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var localforage = require("localforage");
+var graphql_request_1 = require("graphql-request");
 var success_1 = require("../events/success");
 var tryOrFail_1 = require("../helpers/tryOrFail");
 var client_1 = require("./client");
 var FireEnjin = /** @class */ (function () {
     function FireEnjin(options) {
         var _this = this;
-        if (options === void 0) { options = {}; }
+        var _a, _b, _c, _d, _e, _f;
+        this.host = {};
         this.options = options || {};
-        var clientOptions = {
-            headers: __assign({ Authorization: options.token ? "Bearer ".concat(options.token) : "" }, (options.headers ? options.headers : {}))
-        };
-        this.client = (options === null || options === void 0 ? void 0 : options.getSdk)
-            ? new options.getSdk(clientOptions, options === null || options === void 0 ? void 0 : options.onRequest)
-            : new client_1["default"]({ requestOptions: clientOptions });
-        this.sdk = options.getSdk(this.client);
+        var headers = __assign({ Authorization: (options === null || options === void 0 ? void 0 : options.token) ? "Bearer ".concat(options.token) : "" }, (options.headers ? options.headers : {}));
+        if (!((_a = options === null || options === void 0 ? void 0 : options.connections) === null || _a === void 0 ? void 0 : _a.length) && options.host) {
+            this.host = {
+                name: "default",
+                url: options.host,
+                type: typeof (options === null || options === void 0 ? void 0 : options.getSdk) === "function" ? "graphql" : "rest",
+                headers: headers
+            };
+        }
+        if (!((_b = this.host) === null || _b === void 0 ? void 0 : _b.url) && ((_c = options === null || options === void 0 ? void 0 : options.connections) === null || _c === void 0 ? void 0 : _c.length)) {
+            this.host = options.connections.sort(function (a, b) {
+                return ((a === null || a === void 0 ? void 0 : a.priority) || 0) > ((b === null || b === void 0 ? void 0 : b.priority) || 0) ? 1 : -1;
+            })[0];
+            this.host.headers = headers;
+        }
+        this.client =
+            this.host.type === "graphql"
+                ? new graphql_request_1.GraphQLClient(((_d = this.host) === null || _d === void 0 ? void 0 : _d.url) || "http://localhost:4000", {
+                    headers: ((_e = this.host) === null || _e === void 0 ? void 0 : _e.headers) || {}
+                })
+                : new client_1["default"](this.host.url, { headers: ((_f = this.host) === null || _f === void 0 ? void 0 : _f.headers) || {} });
+        this.sdk =
+            this.host.type === "graphql" ? options.getSdk(this.client) : null;
         window.addEventListener("fireenjinUpload", function (event) {
             _this.upload(event);
         });
@@ -90,7 +108,7 @@ var FireEnjin = /** @class */ (function () {
                             switch (_f.label) {
                                 case 0: return [4 /*yield*/, this.client.request(this.options.uploadUrl
                                         ? this.options.uploadUrl
-                                        : "".concat(this.options.functionsHost, "/upload"), {
+                                        : "".concat(this.host.url, "/upload"), {
                                         method: "POST",
                                         mode: "cors",
                                         headers: {
@@ -165,8 +183,15 @@ var FireEnjin = /** @class */ (function () {
                         console.log(err_1);
                         return [3 /*break*/, 6];
                     case 6: return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                return [2 /*return*/, this.client.get(event.detail.endpoint)];
+                            var _a, _b, _c, _d, _e, _f, _g;
+                            return __generator(this, function (_h) {
+                                return [2 /*return*/, ((_a = this.host) === null || _a === void 0 ? void 0 : _a.type) === "graphql"
+                                        ? ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.query)
+                                            ? this.client.request((_c = event.detail) === null || _c === void 0 ? void 0 : _c.query, (_d = event.detail) === null || _d === void 0 ? void 0 : _d.params)
+                                            : this.sdk[(_e = event.detail) === null || _e === void 0 ? void 0 : _e.endpoint]((_f = event.detail) === null || _f === void 0 ? void 0 : _f.params)
+                                        : this.client.request(event.detail.endpoint, {
+                                            body: JSON.stringify(((_g = event.detail) === null || _g === void 0 ? void 0 : _g.data) || {})
+                                        })];
                             });
                         }); }, {
                             onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
@@ -187,9 +212,18 @@ var FireEnjin = /** @class */ (function () {
                     event.detail.disableSubmit)
                     return [2 /*return*/, false];
                 return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
-                        var _a;
-                        return __generator(this, function (_b) {
-                            return [2 /*return*/, this.client.request(event.detail.endpoint, (_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.data)];
+                        var _a, _b, _c;
+                        return __generator(this, function (_d) {
+                            return [2 /*return*/, ((_a = this.host) === null || _a === void 0 ? void 0 : _a.type) === "graphql"
+                                    ? ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.query)
+                                        ? this.client.request(event.detail.query, event.detail.params)
+                                        : this.sdk[event.detail.endpoint]({
+                                            id: event.detail.id,
+                                            data: event.detail.data
+                                        })
+                                    : this.client.request(event.detail.endpoint, {
+                                        body: JSON.stringify(((_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.data) || {})
+                                    })];
                         });
                     }); }, {
                         onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
@@ -199,10 +233,24 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.setHeader = function (key, value) {
+        var _a;
         if (!this.client)
             return false;
-        this.client.setHeader(key, value);
-        return true;
+        if (!((_a = this.host) === null || _a === void 0 ? void 0 : _a.headers))
+            this.host.headers = {};
+        this.host.headers[key] = value;
+        return this.client.setHeader(key, value);
+    };
+    FireEnjin.prototype.setHeaders = function (headers) {
+        if (!this.client)
+            return false;
+        return this.client.setHeaders(headers);
+    };
+    FireEnjin.prototype.setConnection = function (name) {
+        var _a, _b;
+        this.host = (((_a = this.options) === null || _a === void 0 ? void 0 : _a.connections) || []).find(function (connection) { return (connection === null || connection === void 0 ? void 0 : connection.name) === name; });
+        this.client.setEndpoint(((_b = this.host) === null || _b === void 0 ? void 0 : _b.url) || "http://localhost:4000");
+        return this.host;
     };
     return FireEnjin;
 }());
