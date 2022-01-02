@@ -84,11 +84,11 @@ var FireEnjin = /** @class */ (function () {
                     typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onUpload) === "function")
                     return [2 /*return*/, false];
                 return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
-                        var response, data;
+                        var data;
                         var _a, _b, _c, _d, _e;
                         return __generator(this, function (_f) {
                             switch (_f.label) {
-                                case 0: return [4 /*yield*/, fetch(this.options.uploadUrl
+                                case 0: return [4 /*yield*/, this.client.request(this.options.uploadUrl
                                         ? this.options.uploadUrl
                                         : "".concat(this.options.functionsHost, "/upload"), {
                                         method: "POST",
@@ -105,9 +105,6 @@ var FireEnjin = /** @class */ (function () {
                                         })
                                     })];
                                 case 1:
-                                    response = _f.sent();
-                                    return [4 /*yield*/, response.json()];
-                                case 2:
                                     data = _f.sent();
                                     if (event === null || event === void 0 ? void 0 : event.target)
                                         event.target.value = data.url;
@@ -190,8 +187,9 @@ var FireEnjin = /** @class */ (function () {
                     event.detail.disableSubmit)
                     return [2 /*return*/, false];
                 return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            return [2 /*return*/, this.client.post(event.detail.endpoint)];
+                        var _a;
+                        return __generator(this, function (_b) {
+                            return [2 /*return*/, this.client.request(event.detail.endpoint, (_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.data)];
                         });
                     }); }, {
                         onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,

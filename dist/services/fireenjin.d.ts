@@ -1,9 +1,11 @@
+declare type SdkFunctionWrapper = <T>(action: (requestHeaders?: Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
 export default class FireEnjin {
     client: any;
     sdk: any;
     options: {
         host?: string;
         token?: string;
+        onRequest?: SdkFunctionWrapper;
         onError?: (error: any) => void;
         onSuccess?: (data: any) => void;
         onUpload?: (data: any) => void;
@@ -17,7 +19,7 @@ export default class FireEnjin {
         host?: string;
         token?: string;
         getSdk?: any;
-        onRequest?: (action: any, endpoint?: string) => any;
+        onRequest?: SdkFunctionWrapper;
         onError?: (error: any) => void;
         onSuccess?: (data: any) => void;
         onUpload?: (data: any) => void;
@@ -32,3 +34,4 @@ export default class FireEnjin {
     submit(event: any): Promise<any>;
     setHeader(key: string, value: string): boolean;
 }
+export {};

@@ -5,26 +5,26 @@ interface IFireEnjinAuthConfig {
     authLocalStorageKey?: string;
     tokenLocalStorageKey?: string;
     firebase?: {
-        apiKey: string;
-        authDomain: string;
-        databaseURL: string;
-        projectId: string;
-        storageBucket: string;
-        messagingSenderId: string;
+        apiKey?: string;
+        authDomain?: string;
+        databaseURL?: string;
+        projectId?: string;
+        storageBucket?: string;
+        messagingSenderId?: string;
     };
     facebook?: {
-        permissions: string[];
+        permissions?: string[];
     };
     googlePlus?: {
-        options: {
-            webClientId: string;
-            offline: boolean;
+        options?: {
+            webClientId?: string;
+            offline?: boolean;
         };
     };
 }
 export default class AuthService {
     private app;
-    private sessionManager;
+    private sessionManager?;
     private config;
     private facebook;
     private googlePlus;
@@ -36,7 +36,7 @@ export default class AuthService {
         app?: any;
     });
     initializePushNotifications(onMessageCallback?: (payload: any) => void, options?: {
-        vapidKey: string;
+        vapidKey?: string;
     }): Promise<string>;
     getClaims(): Promise<import("@firebase/auth").ParsedToken>;
     getToken(): Promise<string>;

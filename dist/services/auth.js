@@ -103,7 +103,7 @@ var AuthService = /** @class */ (function () {
                         if (onMessageCallback && typeof onMessageCallback === "function") {
                             (0, messaging_1.onMessage)(messaging, onMessageCallback);
                         }
-                        vapidKey = (options === null || options === void 0 ? void 0 : options.vapidKey) || null;
+                        vapidKey = options === null || options === void 0 ? void 0 : options.vapidKey;
                         _a = messaging_1.getToken;
                         _b = [messaging];
                         _e = {
@@ -165,25 +165,25 @@ var AuthService = /** @class */ (function () {
         });
     };
     AuthService.prototype.getToken = function () {
-        var _a;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var currentToken, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var currentToken, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         if (!((_a = this.service) === null || _a === void 0 ? void 0 : _a.currentUser)) return [3 /*break*/, 2];
                         return [4 /*yield*/, (0, auth_1.getIdToken)(this.service.currentUser)];
                     case 1:
-                        _b = _c.sent();
+                        _c = _d.sent();
                         return [3 /*break*/, 3];
                     case 2:
-                        _b = localStorage.getItem(this.config.tokenLocalStorageKey);
-                        _c.label = 3;
+                        _c = localStorage.getItem(((_b = this.config) === null || _b === void 0 ? void 0 : _b.tokenLocalStorageKey) || "");
+                        _d.label = 3;
                     case 3:
-                        currentToken = _b;
+                        currentToken = _c;
                         return [4 /*yield*/, this.setToken(currentToken)];
                     case 4:
-                        _c.sent();
+                        _d.sent();
                         return [2 /*return*/, currentToken];
                 }
             });
@@ -192,7 +192,7 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.setToken = function (token) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                localStorage.setItem(this.config.tokenLocalStorageKey, token);
+                localStorage.setItem(this.config.tokenLocalStorageKey || "", token);
                 return [2 /*return*/, token];
             });
         });
@@ -208,7 +208,7 @@ var AuthService = /** @class */ (function () {
                         if (!email) {
                             email = window.prompt("Please provide your email for confirmation");
                         }
-                        return [4 /*yield*/, (0, auth_1.signInWithEmailLink)(this.service, email, link)];
+                        return [4 /*yield*/, (0, auth_1.signInWithEmailLink)(this.service, email || "", link)];
                     case 1:
                         authUser = _a.sent();
                         window.localStorage.removeItem("emailForSignIn");
@@ -262,11 +262,12 @@ var AuthService = /** @class */ (function () {
     };
     AuthService.prototype.onAuthChanged = function (callback) {
         var _this = this;
+        var _a;
         (0, auth_1.onAuthStateChanged)(this.service, function (session) { return __awaiter(_this, void 0, void 0, function () {
             var _a, _b, _c;
-            var _d;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var _d, _e, _f;
+            return __generator(this, function (_g) {
+                switch (_g.label) {
                     case 0:
                         if (!session ||
                             (!session.emailVerified &&
@@ -275,13 +276,13 @@ var AuthService = /** @class */ (function () {
                             return [2 /*return*/, false];
                         }
                         if (!session) return [3 /*break*/, 2];
-                        localStorage.setItem(this.config.authLocalStorageKey, JSON.stringify(session));
+                        localStorage.setItem(((_d = this.config) === null || _d === void 0 ? void 0 : _d.authLocalStorageKey) || "", JSON.stringify(session));
                         _b = (_a = localStorage).setItem;
-                        _c = [this.config.tokenLocalStorageKey];
-                        return [4 /*yield*/, (0, auth_1.getIdToken)((_d = this.service) === null || _d === void 0 ? void 0 : _d.currentUser, true)];
+                        _c = [((_e = this.config) === null || _e === void 0 ? void 0 : _e.tokenLocalStorageKey) || ""];
+                        return [4 /*yield*/, (0, auth_1.getIdToken)((_f = this.service) === null || _f === void 0 ? void 0 : _f.currentUser, true)];
                     case 1:
-                        _b.apply(_a, _c.concat([_e.sent()]));
-                        _e.label = 2;
+                        _b.apply(_a, _c.concat([_g.sent()]));
+                        _g.label = 2;
                     case 2:
                         if (callback && typeof callback === "function") {
                             callback(session);
@@ -290,13 +291,14 @@ var AuthService = /** @class */ (function () {
                 }
             });
         }); });
-        if (!localStorage.getItem(this.config.authLocalStorageKey)) {
+        if (!localStorage.getItem(((_a = this.config) === null || _a === void 0 ? void 0 : _a.authLocalStorageKey) || "")) {
             callback(null);
         }
     };
     AuthService.prototype.getFromStorage = function () {
-        return localStorage.getItem(this.config.authLocalStorageKey)
-            ? JSON.parse(localStorage.getItem(this.config.authLocalStorageKey))
+        var _a, _b;
+        return localStorage.getItem(((_a = this.config) === null || _a === void 0 ? void 0 : _a.authLocalStorageKey) || "")
+            ? JSON.parse(localStorage.getItem(((_b = this.config) === null || _b === void 0 ? void 0 : _b.authLocalStorageKey) || ""))
             : null;
     };
     AuthService.prototype.isLoggedIn = function () {
@@ -354,31 +356,33 @@ var AuthService = /** @class */ (function () {
         });
     };
     AuthService.prototype.facebookNative = function () {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var result;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.facebook.login(this.config.facebook.permissions)];
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0: return [4 /*yield*/, this.facebook.login((_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.facebook) === null || _b === void 0 ? void 0 : _b.permissions)];
                     case 1:
-                        result = _a.sent();
+                        result = _c.sent();
                         return [2 /*return*/, this.withCredential(auth_1.FacebookAuthProvider.credential(result.authResponse.accessToken))];
                 }
             });
         });
     };
     AuthService.prototype.googleNative = function () {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var result, error_3;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, this.googlePlus.login(this.config.googlePlus.options)];
+                        _c.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.googlePlus.login((_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.googlePlus) === null || _b === void 0 ? void 0 : _b.options)];
                     case 1:
-                        result = _a.sent();
+                        result = _c.sent();
                         return [3 /*break*/, 3];
                     case 2:
-                        error_3 = _a.sent();
+                        error_3 = _c.sent();
                         console.log("Error with Google Native Login...");
                         console.log(error_3);
                         return [3 /*break*/, 3];
@@ -495,15 +499,16 @@ var AuthService = /** @class */ (function () {
         return (0, auth_1.signOut)(this.service);
     };
     AuthService.prototype.updatePassword = function (newPassword, credential) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         if (!credential) return [3 /*break*/, 2];
-                        return [4 /*yield*/, (0, auth_1.reauthenticateWithCredential)(this.service.currentUser, credential)];
+                        return [4 /*yield*/, (0, auth_1.reauthenticateWithCredential)((_a = this.service) === null || _a === void 0 ? void 0 : _a.currentUser, credential)];
                     case 1:
-                        _a.sent();
-                        _a.label = 2;
+                        _b.sent();
+                        _b.label = 2;
                     case 2: return [2 /*return*/, (0, auth_1.updatePassword)(this.service.currentUser, newPassword)];
                 }
             });

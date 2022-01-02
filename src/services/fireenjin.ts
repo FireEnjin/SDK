@@ -4,12 +4,18 @@ import tryOrFail from "../helpers/tryOrFail";
 
 import Client from "./client";
 
+type SdkFunctionWrapper = <T>(
+  action: (requestHeaders?: Record<string, string>) => Promise<T>,
+  operationName: string
+) => Promise<T>;
+
 export default class FireEnjin {
   client: any;
   sdk;
   options: {
     host?: string;
     token?: string;
+    onRequest?: SdkFunctionWrapper;
     onError?: (error) => void;
     onSuccess?: (data) => void;
     onUpload?: (data) => void;
@@ -24,7 +30,7 @@ export default class FireEnjin {
       host?: string;
       token?: string;
       getSdk?: any;
-      onRequest?: (action: any, endpoint?: string) => any;
+      onRequest?: SdkFunctionWrapper;
       onError?: (error) => void;
       onSuccess?: (data) => void;
       onUpload?: (data) => void;
@@ -68,7 +74,7 @@ export default class FireEnjin {
 
     return tryOrFail(
       async () => {
-        const response = await fetch(
+        const data = await this.client.request(
           this.options.uploadUrl
             ? this.options.uploadUrl
             : `${this.options.functionsHost}/upload`,
@@ -87,7 +93,6 @@ export default class FireEnjin {
             }),
           }
         );
-        const data = await response.json();
         if (event?.target) event.target.value = data.url;
 
         return data;
@@ -164,7 +169,7 @@ export default class FireEnjin {
 
     return tryOrFail(
       async () => {
-        return this.client.post(event.detail.endpoint);
+        return this.client.request(event.detail.endpoint, event?.detail?.data);
       },
       {
         onError: this.options?.onError,

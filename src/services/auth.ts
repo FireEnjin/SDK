@@ -40,27 +40,27 @@ interface IFireEnjinAuthConfig {
   authLocalStorageKey?: string;
   tokenLocalStorageKey?: string;
   firebase?: {
-    apiKey: string;
-    authDomain: string;
-    databaseURL: string;
-    projectId: string;
-    storageBucket: string;
-    messagingSenderId: string;
+    apiKey?: string;
+    authDomain?: string;
+    databaseURL?: string;
+    projectId?: string;
+    storageBucket?: string;
+    messagingSenderId?: string;
   };
   facebook?: {
-    permissions: string[];
+    permissions?: string[];
   };
   googlePlus?: {
-    options: {
-      webClientId: string;
-      offline: boolean;
+    options?: {
+      webClientId?: string;
+      offline?: boolean;
     };
   };
 }
 
 export default class AuthService {
   private app: FirebaseApp;
-  private sessionManager: SessionManager;
+  private sessionManager?: SessionManager;
   private config: IFireEnjinAuthConfig = {
     authLocalStorageKey: "enjin:session",
     tokenLocalStorageKey: "enjin:token",
@@ -80,7 +80,7 @@ export default class AuthService {
     this.app = options?.app || null;
     if (!this.app) {
       try {
-        this.app = initializeApp(options?.config?.firebase);
+        this.app = initializeApp(options?.config?.firebase as any);
         console.log("Initializing Firebase App...", this.app);
       } catch (e) {
         console.log(e);
@@ -108,14 +108,14 @@ export default class AuthService {
 
   async initializePushNotifications(
     onMessageCallback?: (payload: any) => void,
-    options?: { vapidKey: string }
+    options?: { vapidKey?: string }
   ) {
     try {
       const messaging = getMessaging(this.app);
       if (onMessageCallback && typeof onMessageCallback === "function") {
         onMessage(messaging, onMessageCallback);
       }
-      const vapidKey = options?.vapidKey || null;
+      const vapidKey = options?.vapidKey;
       let messagingToken = await getToken(messaging, {
         vapidKey,
         serviceWorkerRegistration:
@@ -145,7 +145,9 @@ export default class AuthService {
 
   async getClaims() {
     try {
-      const { claims } = await getIdTokenResult(this.service?.currentUser);
+      const { claims } = await getIdTokenResult(
+        this.service?.currentUser as any
+      );
       return claims;
     } catch (error) {
       return {};
@@ -155,7 +157,7 @@ export default class AuthService {
   async getToken() {
     const currentToken = this.service?.currentUser
       ? await getIdToken(this.service.currentUser)
-      : localStorage.getItem(this.config.tokenLocalStorageKey);
+      : localStorage.getItem(this.config?.tokenLocalStorageKey || "");
 
     await this.setToken(currentToken);
 
@@ -163,7 +165,7 @@ export default class AuthService {
   }
 
   async setToken(token) {
-    localStorage.setItem(this.config.tokenLocalStorageKey, token);
+    localStorage.setItem(this.config.tokenLocalStorageKey || "", token);
 
     return token;
   }
@@ -175,7 +177,11 @@ export default class AuthService {
         email = window.prompt("Please provide your email for confirmation");
       }
 
-      const authUser = await signInWithEmailLink(this.service, email, link);
+      const authUser = await signInWithEmailLink(
+        this.service,
+        email || "",
+        link
+      );
       window.localStorage.removeItem("emailForSignIn");
 
       this.emitLoggedInEvent(authUser);
@@ -247,12 +253,12 @@ export default class AuthService {
       }
       if (session) {
         localStorage.setItem(
-          this.config.authLocalStorageKey,
+          this.config?.authLocalStorageKey || "",
           JSON.stringify(session)
         );
         localStorage.setItem(
-          this.config.tokenLocalStorageKey,
-          await getIdToken(this.service?.currentUser, true)
+          this.config?.tokenLocalStorageKey || "",
+          await getIdToken(this.service?.currentUser as any, true)
         );
       }
       if (callback && typeof callback === "function") {
@@ -260,14 +266,16 @@ export default class AuthService {
       }
     });
 
-    if (!localStorage.getItem(this.config.authLocalStorageKey)) {
+    if (!localStorage.getItem(this.config?.authLocalStorageKey || "")) {
       callback(null);
     }
   }
 
   getFromStorage() {
-    return localStorage.getItem(this.config.authLocalStorageKey)
-      ? JSON.parse(localStorage.getItem(this.config.authLocalStorageKey))
+    return localStorage.getItem(this.config?.authLocalStorageKey || "")
+      ? JSON.parse(
+          localStorage.getItem(this.config?.authLocalStorageKey || "") as string
+        )
       : null;
   }
 
@@ -294,7 +302,7 @@ export default class AuthService {
 
   sendEmailVerification(options?) {
     return sendEmailVerification(
-      this.service.currentUser,
+      this.service.currentUser as any,
       options ? options : null
     );
   }
@@ -327,7 +335,7 @@ export default class AuthService {
   updateEmail(newEmail: string, actionOptions: any) {
     return new Promise((resolve, reject) => {
       try {
-        updateEmail(this.service?.currentUser, newEmail)
+        updateEmail(this.service?.currentUser as any, newEmail)
           .then((user) => {
             resolve({ data: { user } });
             this.sendEmailVerification(actionOptions);
@@ -342,7 +350,9 @@ export default class AuthService {
   }
 
   async facebookNative(): Promise<any> {
-    const result = await this.facebook.login(this.config.facebook.permissions);
+    const result = await this.facebook.login(
+      this.config?.facebook?.permissions
+    );
 
     return this.withCredential(
       FacebookAuthProvider.credential(result.authResponse.accessToken)
@@ -352,7 +362,7 @@ export default class AuthService {
   async googleNative(): Promise<any> {
     let result;
     try {
-      result = await this.googlePlus.login(this.config.googlePlus.options);
+      result = await this.googlePlus.login(this.config?.googlePlus?.options);
     } catch (error) {
       console.log("Error with Google Native Login...");
       console.log(error);
@@ -445,10 +455,13 @@ export default class AuthService {
 
   async updatePassword(newPassword: string, credential) {
     if (credential) {
-      await reauthenticateWithCredential(this.service.currentUser, credential);
+      await reauthenticateWithCredential(
+        this.service?.currentUser as any,
+        credential
+      );
     }
 
-    return updatePassword(this.service.currentUser, newPassword);
+    return updatePassword(this.service.currentUser as any, newPassword);
   }
 
   async storeRoles(roles: any[]) {
@@ -468,7 +481,7 @@ export default class AuthService {
       return true;
     }
     try {
-      roles = JSON.parse(localStorage.getItem("roles"));
+      roles = JSON.parse(localStorage.getItem("roles") as string);
     } catch (e) {
       console.log("Error getting roles from local storage");
     }
