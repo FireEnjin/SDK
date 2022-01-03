@@ -10,22 +10,27 @@ type SdkFunctionWrapper = <T>(
   operationName: string
 ) => Promise<T>;
 
+type FireEnjinEndpoints = {
+  [endpoint: string]: (variables: any, requestHeaders) => Promise<any>;
+};
+
 type FireEnjinHost = {
   name?: string;
   url: string;
+  readOnly?: boolean;
   type?: "firebase" | "graphql" | "rest";
   headers?: HeadersInit;
   retries?: number;
   priority?: number;
+  auth?: any;
+  endpoints?: FireEnjinEndpoints;
 };
 
 type FireEnjinOptions = {
   getSdk?: (
     client?: Client | GraphQLClient,
     withWrapper?: SdkFunctionWrapper
-  ) => {
-    [endpoint: string]: (variables: any, requestHeaders) => Promise<any>;
-  };
+  ) => FireEnjinEndpoints;
   host?: string;
   connections?: FireEnjinHost[];
   token?: string;

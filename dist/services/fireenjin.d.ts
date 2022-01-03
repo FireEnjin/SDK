@@ -1,18 +1,22 @@
 import { GraphQLClient } from "graphql-request";
 import Client from "./client";
 declare type SdkFunctionWrapper = <T>(action: (requestHeaders?: Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
+declare type FireEnjinEndpoints = {
+    [endpoint: string]: (variables: any, requestHeaders: any) => Promise<any>;
+};
 declare type FireEnjinHost = {
     name?: string;
     url: string;
+    readOnly?: boolean;
     type?: "firebase" | "graphql" | "rest";
     headers?: HeadersInit;
     retries?: number;
     priority?: number;
+    auth?: any;
+    endpoints?: FireEnjinEndpoints;
 };
 declare type FireEnjinOptions = {
-    getSdk?: (client?: Client | GraphQLClient, withWrapper?: SdkFunctionWrapper) => {
-        [endpoint: string]: (variables: any, requestHeaders: any) => Promise<any>;
-    };
+    getSdk?: (client?: Client | GraphQLClient, withWrapper?: SdkFunctionWrapper) => FireEnjinEndpoints;
     host?: string;
     connections?: FireEnjinHost[];
     token?: string;

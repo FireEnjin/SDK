@@ -51,7 +51,7 @@ export default class DatabaseService {
     }
     try {
       enableIndexedDbPersistence(this.service);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error.message);
     }
   }
@@ -174,7 +174,7 @@ export default class DatabaseService {
 
   rawQuery(
     collectionName: string,
-    where: { key?: string; conditional?: WhereFilterOp; value?: any }[],
+    where?: { key?: string; conditional?: WhereFilterOp; value?: any }[],
     orderBy?: string,
     limit?: number
   ) {

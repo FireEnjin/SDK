@@ -34,7 +34,7 @@ export default class DatabaseService {
     unsubscribe(watcherName: string): boolean;
     watchDocument(collectionName: string, id: string, callback: any): void;
     unwatchDocument(collectionName: string, id: string): boolean;
-    rawQuery(collectionName: string, where: {
+    rawQuery(collectionName: string, where?: {
         key?: string;
         conditional?: WhereFilterOp;
         value?: any;
