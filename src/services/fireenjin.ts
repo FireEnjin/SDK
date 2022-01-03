@@ -20,7 +20,12 @@ type FireEnjinHost = {
 };
 
 type FireEnjinOptions = {
-  getSdk?: any;
+  getSdk?: (
+    client?: Client | GraphQLClient,
+    withWrapper?: SdkFunctionWrapper
+  ) => {
+    [endpoint: string]: (variables: any, requestHeaders) => Promise<any>;
+  };
   host?: string;
   connections?: FireEnjinHost[];
   token?: string;

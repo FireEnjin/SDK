@@ -10,7 +10,9 @@ declare type FireEnjinHost = {
     priority?: number;
 };
 declare type FireEnjinOptions = {
-    getSdk?: any;
+    getSdk?: (client?: Client | GraphQLClient, withWrapper?: SdkFunctionWrapper) => {
+        [endpoint: string]: (variables: any, requestHeaders: any) => Promise<any>;
+    };
     host?: string;
     connections?: FireEnjinHost[];
     token?: string;
