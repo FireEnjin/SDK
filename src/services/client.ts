@@ -38,7 +38,7 @@ export default class Client {
 
     return {
       data: (await response?.json?.()) || null,
-      headers: response.headers || {},
+      headers: response.headers,
       status: response.status,
       extensions: {},
     };

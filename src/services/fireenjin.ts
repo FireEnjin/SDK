@@ -12,7 +12,7 @@ type SdkFunctionWrapper = <T>(
 
 type FireEnjinHost = {
   name?: string;
-  url?: string;
+  url: string;
   type?: "firebase" | "graphql" | "rest";
   headers?: HeadersInit;
   retries?: number;
@@ -42,8 +42,11 @@ type FireEnjinOptions = {
 export default class FireEnjin {
   client: Client | GraphQLClient;
   sdk;
-  host: FireEnjinHost = {};
+  host: FireEnjinHost = {
+    url: "http://localhost:4000",
+  };
   options: FireEnjinOptions;
+
   constructor(options: FireEnjinOptions) {
     this.options = options || {};
     const headers = {
@@ -72,7 +75,9 @@ export default class FireEnjin {
           })
         : new Client(this.host.url, { headers: this.host?.headers || {} });
     this.sdk =
-      this.host.type === "graphql" ? options.getSdk(this.client) : null;
+      this.host.type === "graphql" && typeof options?.getSdk === "function"
+        ? options.getSdk(this.client)
+        : null;
     window.addEventListener("fireenjinUpload", (event) => {
       this.upload(event);
     });

@@ -56,7 +56,9 @@ var FireEnjin = /** @class */ (function () {
     function FireEnjin(options) {
         var _this = this;
         var _a, _b, _c, _d, _e, _f;
-        this.host = {};
+        this.host = {
+            url: "http://localhost:4000"
+        };
         this.options = options || {};
         var headers = __assign({ Authorization: (options === null || options === void 0 ? void 0 : options.token) ? "Bearer ".concat(options.token) : "" }, (options.headers ? options.headers : {}));
         if (!((_a = options === null || options === void 0 ? void 0 : options.connections) === null || _a === void 0 ? void 0 : _a.length) && options.host) {
@@ -80,7 +82,9 @@ var FireEnjin = /** @class */ (function () {
                 })
                 : new client_1["default"](this.host.url, { headers: ((_f = this.host) === null || _f === void 0 ? void 0 : _f.headers) || {} });
         this.sdk =
-            this.host.type === "graphql" ? options.getSdk(this.client) : null;
+            this.host.type === "graphql" && typeof (options === null || options === void 0 ? void 0 : options.getSdk) === "function"
+                ? options.getSdk(this.client)
+                : null;
         window.addEventListener("fireenjinUpload", function (event) {
             _this.upload(event);
         });

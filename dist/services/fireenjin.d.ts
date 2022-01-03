@@ -3,7 +3,7 @@ import Client from "./client";
 declare type SdkFunctionWrapper = <T>(action: (requestHeaders?: Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
 declare type FireEnjinHost = {
     name?: string;
-    url?: string;
+    url: string;
     type?: "firebase" | "graphql" | "rest";
     headers?: HeadersInit;
     retries?: number;
@@ -34,8 +34,8 @@ export default class FireEnjin {
     upload(event: any): Promise<any>;
     fetch(event: any): Promise<any>;
     submit(event: any): Promise<any>;
-    setHeader(key: string, value: string): boolean | GraphQLClient;
-    setHeaders(headers: any): boolean | GraphQLClient;
+    setHeader(key: string, value: string): false | GraphQLClient | Client;
+    setHeaders(headers: any): false | GraphQLClient | Client;
     setConnection(name: string): FireEnjinHost;
 }
 export {};

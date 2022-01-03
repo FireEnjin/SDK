@@ -49,42 +49,97 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 require("isomorphic-unfetch");
 var Client = /** @class */ (function () {
-    function Client(host, requestOptions) {
-        this.host = host || "http://localhost:4000";
-        this.requestOptions = requestOptions || {};
+    function Client(url, options) {
+        this.url = url || "http://localhost:4000";
+        this.options = options || {};
     }
-    Client.prototype.request = function (url, requestOptions) {
+    Client.prototype.rawRequest = function (query, variables, requestHeaders) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var response;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, fetch(url, __assign(__assign({}, (this.requestOptions || {})), requestOptions))];
+            var _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0: return [4 /*yield*/, fetch("".concat(this.url, "/").concat(query), __assign(__assign({}, (this.options || {})), { headers: requestHeaders || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.headers) || {}, body: JSON.stringify(variables || {}) }))];
                     case 1:
-                        response = _a.sent();
+                        response = _d.sent();
+                        _c = {};
+                        return [4 /*yield*/, ((_b = response === null || response === void 0 ? void 0 : response.json) === null || _b === void 0 ? void 0 : _b.call(response))];
+                    case 2: return [2 /*return*/, (_c.data = (_d.sent()) || null,
+                            _c.headers = response.headers,
+                            _c.status = response.status,
+                            _c.extensions = {},
+                            _c)];
+                }
+            });
+        });
+    };
+    Client.prototype.request = function (endpoint, variables, requestHeaders) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, fetch("".concat(this.url, "/").concat(endpoint), __assign(__assign({}, (this.options || {})), { headers: requestHeaders || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.headers) || {}, body: JSON.stringify(variables || {}) }))];
+                    case 1:
+                        response = _b.sent();
                         return [2 /*return*/, response.json()];
                 }
             });
         });
     };
-    Client.prototype.setEndpoint = function (host) {
-        this.host = host;
+    Client.prototype.batchRequests = function (documents, requestHeaders) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, _i, documents_1, _a, document_1, variables, _b, _c, _d;
+            return __generator(this, function (_e) {
+                switch (_e.label) {
+                    case 0:
+                        response = {};
+                        _i = 0, documents_1 = documents;
+                        _e.label = 1;
+                    case 1:
+                        if (!(_i < documents_1.length)) return [3 /*break*/, 6];
+                        _a = documents_1[_i], document_1 = _a.document, variables = _a.variables;
+                        _e.label = 2;
+                    case 2:
+                        _e.trys.push([2, 4, , 5]);
+                        _b = response;
+                        _c = document_1;
+                        return [4 /*yield*/, this.request(document_1, variables, requestHeaders)];
+                    case 3:
+                        _b[_c] = _e.sent();
+                        return [3 /*break*/, 5];
+                    case 4:
+                        _d = _e.sent();
+                        response[document_1] = null;
+                        return [3 /*break*/, 5];
+                    case 5:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 6: return [2 /*return*/, response];
+                }
+            });
+        });
+    };
+    Client.prototype.setEndpoint = function (value) {
+        this.url = value;
         return true;
     };
     Client.prototype.setHeader = function (key, value) {
         var _a;
-        if (!this.requestOptions)
-            this.requestOptions = {};
-        if (!((_a = this.requestOptions) === null || _a === void 0 ? void 0 : _a.headers))
-            this.requestOptions.headers = {};
-        this.requestOptions.headers[key] = value;
-        return true;
+        if (!this.options)
+            this.options = {};
+        if (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.headers))
+            this.options.headers = {};
+        this.options.headers[key] = value;
+        return this;
     };
-    Client.prototype.setHeaders = function (values) {
-        for (var _i = 0, _a = Object.entries(values); _i < _a.length; _i++) {
+    Client.prototype.setHeaders = function (headers) {
+        for (var _i = 0, _a = Object.entries(headers); _i < _a.length; _i++) {
             var _b = _a[_i], key = _b[0], value = _b[1];
             this.setHeader(key, value);
         }
-        return true;
+        return this;
     };
     return Client;
 }());
