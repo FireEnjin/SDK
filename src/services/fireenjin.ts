@@ -238,10 +238,17 @@ export default class FireEnjin {
     return this.client.setHeaders(headers);
   }
 
-  setConnection(name: string) {
-    this.host = (this.options?.connections || []).find(
-      (connection) => connection?.name === name
+  setConnection(nameUrlOrIndex: string | number) {
+    this.host = (
+      typeof name === "string"
+        ? (this.options?.connections || []).find(
+            (connection) =>
+              connection?.name === nameUrlOrIndex ||
+              connection?.url === nameUrlOrIndex
+          )
+        : this.options?.connections?.[nameUrlOrIndex]
     ) as FireEnjinHost;
+
     this.client.setEndpoint(this.host?.url || "http://localhost:4000");
 
     return this.host;
