@@ -35,9 +35,24 @@ export declare class FireEnjin {
     host: FireEnjinHost;
     options: FireEnjinOptions;
     constructor(options: FireEnjinOptions);
-    upload(event: any): Promise<any>;
-    fetch(event: any): Promise<any>;
-    submit(event: any): Promise<any>;
+    upload(input: {
+        id?: string | number;
+        path?: string;
+        fileName?: string;
+        file?: any;
+        type?: string;
+    }): Promise<any>;
+    private onUpload;
+    fetch(endpoint: string, variables?: any, options?: {
+        cacheKey?: string;
+        disableCache?: boolean;
+        event?: Event;
+        dataPropsMap?: any;
+        name?: string;
+    }): Promise<any>;
+    private onFetch;
+    submit(endpoint: string, variables?: any): Promise<any>;
+    private onSubmit;
     setHeader(key: string, value: string): false | GraphQLClient | Client;
     setHeaders(headers: any): false | GraphQLClient | Client;
     setConnection(nameUrlOrIndex: string | number): FireEnjinHost;

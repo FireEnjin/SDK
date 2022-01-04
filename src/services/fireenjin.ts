@@ -83,26 +83,18 @@ export class FireEnjin {
       this.host.type === "graphql" && typeof options?.getSdk === "function"
         ? options.getSdk(this.client)
         : null;
-    window.addEventListener("fireenjinUpload", (event) => {
-      this.upload(event);
-    });
-    window.addEventListener("fireenjinSubmit", (event) => {
-      this.submit(event);
-    });
-    window.addEventListener("fireenjinFetch", (event) => {
-      this.fetch(event);
-    });
+    window.addEventListener("fireenjinUpload", this.onUpload.bind(this));
+    window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
+    window.addEventListener("fireenjinFetch", this.onFetch.bind(this));
   }
 
-  async upload(event) {
-    if (typeof this.options?.onUpload === "function")
-      this.options.onUpload(event);
-    if (
-      !event.detail?.data?.encodedContent ||
-      typeof this.options?.onUpload === "function"
-    )
-      return false;
-
+  async upload(input: {
+    id?: string | number;
+    path?: string;
+    fileName?: string;
+    file?: any;
+    type?: string;
+  }) {
     return tryOrFail(
       async () => {
         const data = await this.client.request(
@@ -115,16 +107,9 @@ export class FireEnjin {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              id: event.detail.data?.id,
-              path: event.detail.data?.path,
-              fileName: event.detail.data?.fileName,
-              file: event.detail.data?.encodedContent,
-              type: event.detail.data?.type,
-            }),
+            body: JSON.stringify(input),
           }
         );
-        if (event?.target) event.target.value = data.url;
 
         return data;
       },
@@ -135,38 +120,62 @@ export class FireEnjin {
     );
   }
 
-  async fetch(event) {
+  private async onUpload(event) {
+    if (typeof this.options?.onUpload === "function")
+      this.options.onUpload(event);
     if (
-      !event ||
-      !event.detail ||
-      !event.detail.endpoint ||
-      event.detail.disableFetch
+      !event.detail?.data?.encodedContent ||
+      typeof this.options?.onUpload === "function"
     )
       return false;
 
-    let cachedData;
-    const localKey = event.detail.cacheKey
-      ? event.detail.cacheKey
-      : `${event.detail.endpoint}_${
-          event.detail.id
-            ? `${event.detail.id}:`
-            : event.detail.params
-            ? btoa(JSON.stringify(Object.values(event.detail.params)))
-            : ""
-        }${btoa(JSON.stringify(event.detail.data))}`;
+    const data = await this.upload({
+      id: event.detail.data?.id,
+      path: event.detail.data?.path,
+      fileName: event.detail.data?.fileName,
+      file: event.detail.data?.encodedContent,
+      type: event.detail.data?.type,
+    });
 
-    if (!event.detail.disableCache) {
+    if (event?.target) event.target.value = data.url;
+
+    return data;
+  }
+
+  async fetch(
+    endpoint: string,
+    variables?: any,
+    options?: {
+      cacheKey?: string;
+      disableCache?: boolean;
+      event?: Event;
+      dataPropsMap?: any;
+      name?: string;
+    }
+  ) {
+    let cachedData;
+    const localKey = options?.cacheKey
+      ? options.cacheKey
+      : `${endpoint}_${
+          variables?.id
+            ? `${variables.id}:`
+            : variables?.params
+            ? btoa(JSON.stringify(Object.values(variables.params)))
+            : ""
+        }${btoa(JSON.stringify(variables))}`;
+
+    if (!options?.disableCache) {
       try {
         cachedData = await localforage.getItem(localKey);
         if (cachedData) {
           await fireenjinSuccess(
             {
-              event: event.detail.event,
-              dataPropsMap: event?.detail?.dataPropsMap,
+              event: options?.event,
+              dataPropsMap: options?.dataPropsMap,
               cached: true,
               data: cachedData,
-              name: event.detail.name,
-              endpoint: event.detail.endpoint,
+              name: options?.name,
+              endpoint,
             },
             {
               onSuccess: this.options?.onSuccess,
@@ -181,11 +190,11 @@ export class FireEnjin {
     return tryOrFail(
       async () => {
         return this.host?.type === "graphql"
-          ? event?.detail?.query
-            ? this.client.request(event.detail?.query, event.detail?.params)
-            : this.sdk[event.detail?.endpoint](event.detail?.params)
-          : this.client.request(event.detail.endpoint, {
-              body: JSON.stringify(event.detail?.data || {}),
+          ? variables?.query
+            ? this.client.request(variables?.query, variables?.params)
+            : this.sdk[endpoint](variables?.params)
+          : this.client.request(endpoint, {
+              body: JSON.stringify(variables || {}),
             });
       },
       {
@@ -195,7 +204,46 @@ export class FireEnjin {
     );
   }
 
-  async submit(event) {
+  private async onFetch(event) {
+    if (
+      !event ||
+      !event.detail ||
+      !event.detail.endpoint ||
+      event.detail.disableFetch
+    )
+      return false;
+
+    return this.fetch(event.detail.endpoint, event?.detail?.data || {}, {
+      event: event?.detail?.event,
+      dataPropsMap: event?.detail?.dataPropsMap,
+      name: event?.detail?.name,
+      cacheKey: event?.detail?.cacheKey,
+      disableCache: !!event?.detail?.disableCache,
+    });
+  }
+
+  async submit(endpoint: string, variables?: any) {
+    return tryOrFail(
+      async () => {
+        return this.host?.type === "graphql"
+          ? variables?.query
+            ? this.client.request(variables.query, variables.params)
+            : this.sdk[endpoint]({
+                id: variables.id,
+                data: variables.data,
+              })
+          : this.client.request(endpoint, {
+              body: JSON.stringify(variables || {}),
+            });
+      },
+      {
+        onError: this.options?.onError,
+        onSuccess: this.options?.onSuccess,
+      }
+    );
+  }
+
+  private async onSubmit(event) {
     if (
       !event ||
       !event.detail ||
@@ -204,24 +252,12 @@ export class FireEnjin {
     )
       return false;
 
-    return tryOrFail(
-      async () => {
-        return this.host?.type === "graphql"
-          ? event?.detail?.query
-            ? this.client.request(event.detail.query, event.detail.params)
-            : this.sdk[event.detail.endpoint]({
-                id: event.detail.id,
-                data: event.detail.data,
-              })
-          : this.client.request(event.detail.endpoint, {
-              body: JSON.stringify(event?.detail?.data || {}),
-            });
-      },
-      {
-        onError: this.options?.onError,
-        onSuccess: this.options?.onSuccess,
-      }
-    );
+    return this.submit(event.detail.endpoint, {
+      id: event?.detail?.id,
+      data: event?.detail?.data,
+      params: event?.detail?.params,
+      query: event?.detail?.query,
+    });
   }
 
   setHeader(key: string, value: string) {

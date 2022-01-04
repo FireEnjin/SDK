@@ -55,7 +55,6 @@ var tryOrFail_1 = require("../helpers/tryOrFail");
 var client_1 = require("./client");
 var FireEnjin = /** @class */ (function () {
     function FireEnjin(options) {
-        var _this = this;
         var _a, _b, _c, _d, _e, _f;
         this.host = {
             url: "http://localhost:4000"
@@ -86,31 +85,19 @@ var FireEnjin = /** @class */ (function () {
             this.host.type === "graphql" && typeof (options === null || options === void 0 ? void 0 : options.getSdk) === "function"
                 ? options.getSdk(this.client)
                 : null;
-        window.addEventListener("fireenjinUpload", function (event) {
-            _this.upload(event);
-        });
-        window.addEventListener("fireenjinSubmit", function (event) {
-            _this.submit(event);
-        });
-        window.addEventListener("fireenjinFetch", function (event) {
-            _this.fetch(event);
-        });
+        window.addEventListener("fireenjinUpload", this.onUpload.bind(this));
+        window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
+        window.addEventListener("fireenjinFetch", this.onFetch.bind(this));
     }
-    FireEnjin.prototype.upload = function (event) {
-        var _a, _b, _c, _d, _e, _f;
+    FireEnjin.prototype.upload = function (input) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            return __generator(this, function (_g) {
-                if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onUpload) === "function")
-                    this.options.onUpload(event);
-                if (!((_c = (_b = event.detail) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.encodedContent) ||
-                    typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onUpload) === "function")
-                    return [2 /*return*/, false];
+            return __generator(this, function (_c) {
                 return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
                         var data;
-                        var _a, _b, _c, _d, _e;
-                        return __generator(this, function (_f) {
-                            switch (_f.label) {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
                                 case 0: return [4 /*yield*/, this.client.request(this.options.uploadUrl
                                         ? this.options.uploadUrl
                                         : "".concat(this.host.url, "/upload"), {
@@ -119,120 +106,167 @@ var FireEnjin = /** @class */ (function () {
                                         headers: {
                                             "Content-Type": "application/json"
                                         },
-                                        body: JSON.stringify({
-                                            id: (_a = event.detail.data) === null || _a === void 0 ? void 0 : _a.id,
-                                            path: (_b = event.detail.data) === null || _b === void 0 ? void 0 : _b.path,
-                                            fileName: (_c = event.detail.data) === null || _c === void 0 ? void 0 : _c.fileName,
-                                            file: (_d = event.detail.data) === null || _d === void 0 ? void 0 : _d.encodedContent,
-                                            type: (_e = event.detail.data) === null || _e === void 0 ? void 0 : _e.type
-                                        })
+                                        body: JSON.stringify(input)
                                     })];
                                 case 1:
-                                    data = _f.sent();
-                                    if (event === null || event === void 0 ? void 0 : event.target)
-                                        event.target.value = data.url;
+                                    data = _a.sent();
                                     return [2 /*return*/, data];
                             }
                         });
                     }); }, {
-                        onError: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onError,
-                        onSuccess: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onSuccess
+                        onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
+                        onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
                     })];
             });
         });
     };
-    FireEnjin.prototype.fetch = function (event) {
-        var _a, _b, _c, _d;
+    FireEnjin.prototype.onUpload = function (event) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        return __awaiter(this, void 0, void 0, function () {
+            var data;
+            return __generator(this, function (_k) {
+                switch (_k.label) {
+                    case 0:
+                        if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onUpload) === "function")
+                            this.options.onUpload(event);
+                        if (!((_c = (_b = event.detail) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.encodedContent) ||
+                            typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onUpload) === "function")
+                            return [2 /*return*/, false];
+                        return [4 /*yield*/, this.upload({
+                                id: (_e = event.detail.data) === null || _e === void 0 ? void 0 : _e.id,
+                                path: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.path,
+                                fileName: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.fileName,
+                                file: (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.encodedContent,
+                                type: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.type
+                            })];
+                    case 1:
+                        data = _k.sent();
+                        if (event === null || event === void 0 ? void 0 : event.target)
+                            event.target.value = data.url;
+                        return [2 /*return*/, data];
+                }
+            });
+        });
+    };
+    FireEnjin.prototype.fetch = function (endpoint, variables, options) {
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function () {
             var cachedData, localKey, err_1;
             var _this = this;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        if (!event ||
-                            !event.detail ||
-                            !event.detail.endpoint ||
-                            event.detail.disableFetch)
-                            return [2 /*return*/, false];
-                        localKey = event.detail.cacheKey
-                            ? event.detail.cacheKey
-                            : "".concat(event.detail.endpoint, "_").concat(event.detail.id
-                                ? "".concat(event.detail.id, ":")
-                                : event.detail.params
-                                    ? btoa(JSON.stringify(Object.values(event.detail.params)))
-                                    : "").concat(btoa(JSON.stringify(event.detail.data)));
-                        if (!!event.detail.disableCache) return [3 /*break*/, 6];
-                        _e.label = 1;
+                        localKey = (options === null || options === void 0 ? void 0 : options.cacheKey)
+                            ? options.cacheKey
+                            : "".concat(endpoint, "_").concat((variables === null || variables === void 0 ? void 0 : variables.id)
+                                ? "".concat(variables.id, ":")
+                                : (variables === null || variables === void 0 ? void 0 : variables.params)
+                                    ? btoa(JSON.stringify(Object.values(variables.params)))
+                                    : "").concat(btoa(JSON.stringify(variables)));
+                        if (!!(options === null || options === void 0 ? void 0 : options.disableCache)) return [3 /*break*/, 6];
+                        _d.label = 1;
                     case 1:
-                        _e.trys.push([1, 5, , 6]);
+                        _d.trys.push([1, 5, , 6]);
                         return [4 /*yield*/, localforage.getItem(localKey)];
                     case 2:
-                        cachedData = _e.sent();
+                        cachedData = _d.sent();
                         if (!cachedData) return [3 /*break*/, 4];
                         return [4 /*yield*/, (0, success_1["default"])({
-                                event: event.detail.event,
-                                dataPropsMap: (_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.dataPropsMap,
+                                event: options === null || options === void 0 ? void 0 : options.event,
+                                dataPropsMap: options === null || options === void 0 ? void 0 : options.dataPropsMap,
                                 cached: true,
                                 data: cachedData,
-                                name: event.detail.name,
-                                endpoint: event.detail.endpoint
+                                name: options === null || options === void 0 ? void 0 : options.name,
+                                endpoint: endpoint
                             }, {
-                                onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
+                                onSuccess: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onSuccess
                             })];
                     case 3:
-                        _e.sent();
-                        _e.label = 4;
+                        _d.sent();
+                        _d.label = 4;
                     case 4: return [3 /*break*/, 6];
                     case 5:
-                        err_1 = _e.sent();
+                        err_1 = _d.sent();
                         console.log(err_1);
                         return [3 /*break*/, 6];
                     case 6: return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
-                            var _a, _b, _c, _d, _e, _f, _g;
-                            return __generator(this, function (_h) {
+                            var _a;
+                            return __generator(this, function (_b) {
                                 return [2 /*return*/, ((_a = this.host) === null || _a === void 0 ? void 0 : _a.type) === "graphql"
-                                        ? ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.query)
-                                            ? this.client.request((_c = event.detail) === null || _c === void 0 ? void 0 : _c.query, (_d = event.detail) === null || _d === void 0 ? void 0 : _d.params)
-                                            : this.sdk[(_e = event.detail) === null || _e === void 0 ? void 0 : _e.endpoint]((_f = event.detail) === null || _f === void 0 ? void 0 : _f.params)
-                                        : this.client.request(event.detail.endpoint, {
-                                            body: JSON.stringify(((_g = event.detail) === null || _g === void 0 ? void 0 : _g.data) || {})
+                                        ? (variables === null || variables === void 0 ? void 0 : variables.query)
+                                            ? this.client.request(variables === null || variables === void 0 ? void 0 : variables.query, variables === null || variables === void 0 ? void 0 : variables.params)
+                                            : this.sdk[endpoint](variables === null || variables === void 0 ? void 0 : variables.params)
+                                        : this.client.request(endpoint, {
+                                            body: JSON.stringify(variables || {})
                                         })];
                             });
                         }); }, {
-                            onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
-                            onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess
+                            onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
+                            onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess
                         })];
                 }
             });
         });
     };
-    FireEnjin.prototype.submit = function (event) {
+    FireEnjin.prototype.onFetch = function (event) {
+        var _a, _b, _c, _d, _e, _f;
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_g) {
+                if (!event ||
+                    !event.detail ||
+                    !event.detail.endpoint ||
+                    event.detail.disableFetch)
+                    return [2 /*return*/, false];
+                return [2 /*return*/, this.fetch(event.detail.endpoint, ((_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.data) || {}, {
+                        event: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.event,
+                        dataPropsMap: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.dataPropsMap,
+                        name: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.name,
+                        cacheKey: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.cacheKey,
+                        disableCache: !!((_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.disableCache)
+                    })];
+            });
+        });
+    };
+    FireEnjin.prototype.submit = function (endpoint, variables) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_c) {
-                if (!event ||
-                    !event.detail ||
-                    !event.detail.endpoint ||
-                    event.detail.disableSubmit)
-                    return [2 /*return*/, false];
                 return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
-                        var _a, _b, _c;
-                        return __generator(this, function (_d) {
+                        var _a;
+                        return __generator(this, function (_b) {
                             return [2 /*return*/, ((_a = this.host) === null || _a === void 0 ? void 0 : _a.type) === "graphql"
-                                    ? ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.query)
-                                        ? this.client.request(event.detail.query, event.detail.params)
-                                        : this.sdk[event.detail.endpoint]({
-                                            id: event.detail.id,
-                                            data: event.detail.data
+                                    ? (variables === null || variables === void 0 ? void 0 : variables.query)
+                                        ? this.client.request(variables.query, variables.params)
+                                        : this.sdk[endpoint]({
+                                            id: variables.id,
+                                            data: variables.data
                                         })
-                                    : this.client.request(event.detail.endpoint, {
-                                        body: JSON.stringify(((_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.data) || {})
+                                    : this.client.request(endpoint, {
+                                        body: JSON.stringify(variables || {})
                                     })];
                         });
                     }); }, {
                         onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
                         onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
+                    })];
+            });
+        });
+    };
+    FireEnjin.prototype.onSubmit = function (event) {
+        var _a, _b, _c, _d;
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_e) {
+                if (!event ||
+                    !event.detail ||
+                    !event.detail.endpoint ||
+                    event.detail.disableSubmit)
+                    return [2 /*return*/, false];
+                return [2 /*return*/, this.submit(event.detail.endpoint, {
+                        id: (_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.id,
+                        data: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.data,
+                        params: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.params,
+                        query: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.query
                     })];
             });
         });
