@@ -1,10 +1,10 @@
 import { GraphQLClient } from "graphql-request";
 import Client from "./client";
 declare type SdkFunctionWrapper = <T>(action: (requestHeaders?: Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
-declare type FireEnjinEndpoints = {
+export declare type FireEnjinEndpoints = {
     [endpoint: string]: (variables: any, requestHeaders: any) => Promise<any>;
 };
-declare type FireEnjinHost = {
+export declare type FireEnjinHost = {
     name?: string;
     url: string;
     readOnly?: boolean;
@@ -15,7 +15,7 @@ declare type FireEnjinHost = {
     auth?: any;
     endpoints?: FireEnjinEndpoints;
 };
-declare type FireEnjinOptions = {
+export declare type FireEnjinOptions = {
     getSdk?: (client?: Client | GraphQLClient, withWrapper?: SdkFunctionWrapper) => FireEnjinEndpoints;
     host?: string;
     connections?: FireEnjinHost[];
@@ -29,7 +29,7 @@ declare type FireEnjinOptions = {
     debug?: boolean;
     disableCache?: boolean;
 };
-export default class FireEnjin {
+export declare class FireEnjin {
     client: Client | GraphQLClient;
     sdk: any;
     host: FireEnjinHost;
@@ -40,6 +40,6 @@ export default class FireEnjin {
     submit(event: any): Promise<any>;
     setHeader(key: string, value: string): false | GraphQLClient | Client;
     setHeaders(headers: any): false | GraphQLClient | Client;
-    setConnection(name: string): FireEnjinHost;
+    setConnection(nameUrlOrIndex: string | number): FireEnjinHost;
 }
 export {};

@@ -47,6 +47,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+exports.FireEnjin = void 0;
 var localforage = require("localforage");
 var graphql_request_1 = require("graphql-request");
 var success_1 = require("../events/success");
@@ -250,12 +251,17 @@ var FireEnjin = /** @class */ (function () {
             return false;
         return this.client.setHeaders(headers);
     };
-    FireEnjin.prototype.setConnection = function (name) {
-        var _a, _b;
-        this.host = (((_a = this.options) === null || _a === void 0 ? void 0 : _a.connections) || []).find(function (connection) { return (connection === null || connection === void 0 ? void 0 : connection.name) === name; });
-        this.client.setEndpoint(((_b = this.host) === null || _b === void 0 ? void 0 : _b.url) || "http://localhost:4000");
+    FireEnjin.prototype.setConnection = function (nameUrlOrIndex) {
+        var _a, _b, _c, _d;
+        this.host = (typeof name === "string"
+            ? (((_a = this.options) === null || _a === void 0 ? void 0 : _a.connections) || []).find(function (connection) {
+                return (connection === null || connection === void 0 ? void 0 : connection.name) === nameUrlOrIndex ||
+                    (connection === null || connection === void 0 ? void 0 : connection.url) === nameUrlOrIndex;
+            })
+            : (_c = (_b = this.options) === null || _b === void 0 ? void 0 : _b.connections) === null || _c === void 0 ? void 0 : _c[nameUrlOrIndex]);
+        this.client.setEndpoint(((_d = this.host) === null || _d === void 0 ? void 0 : _d.url) || "http://localhost:4000");
         return this.host;
     };
     return FireEnjin;
 }());
-exports["default"] = FireEnjin;
+exports.FireEnjin = FireEnjin;

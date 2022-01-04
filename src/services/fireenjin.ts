@@ -10,11 +10,11 @@ type SdkFunctionWrapper = <T>(
   operationName: string
 ) => Promise<T>;
 
-type FireEnjinEndpoints = {
+export type FireEnjinEndpoints = {
   [endpoint: string]: (variables: any, requestHeaders) => Promise<any>;
 };
 
-type FireEnjinHost = {
+export type FireEnjinHost = {
   name?: string;
   url: string;
   readOnly?: boolean;
@@ -26,7 +26,7 @@ type FireEnjinHost = {
   endpoints?: FireEnjinEndpoints;
 };
 
-type FireEnjinOptions = {
+export type FireEnjinOptions = {
   getSdk?: (
     client?: Client | GraphQLClient,
     withWrapper?: SdkFunctionWrapper
@@ -44,7 +44,7 @@ type FireEnjinOptions = {
   disableCache?: boolean;
 };
 
-export default class FireEnjin {
+export class FireEnjin {
   client: Client | GraphQLClient;
   sdk;
   host: FireEnjinHost = {
