@@ -81,7 +81,7 @@ export class FireEnjin {
         : new Client(this.host.url, { headers: this.host?.headers || {} });
     this.sdk =
       this.host.type === "graphql" && typeof options?.getSdk === "function"
-        ? options.getSdk(this.client)
+        ? options.getSdk(this.client, this.options?.onRequest)
         : null;
     if (window?.addEventListener) {
       window.addEventListener("fireenjinUpload", this.onUpload.bind(this));
@@ -103,14 +103,7 @@ export class FireEnjin {
           this.options.uploadUrl
             ? this.options.uploadUrl
             : `${this.host.url}/upload`,
-          {
-            method: "POST",
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(input),
-          }
+          input
         );
 
         return data;
@@ -193,9 +186,7 @@ export class FireEnjin {
           ? variables?.query
             ? this.client.request(variables?.query, variables?.params)
             : this.sdk[endpoint](variables?.params)
-          : this.client.request(endpoint, {
-              body: JSON.stringify(variables || {}),
-            });
+          : this.client.request(endpoint, variables);
       },
       {
         onError: this.options?.onError,
@@ -232,8 +223,8 @@ export class FireEnjin {
                 id: variables.id,
                 data: variables.data,
               })
-          : this.client.request(endpoint, {
-              body: JSON.stringify(variables || {}),
+          : this.client.request(endpoint, variables, {
+              method: "POST",
             });
       },
       {

@@ -70,7 +70,7 @@ export default class Client {
       ...(requestOptions || {}),
       headers,
       body:
-        (!["get", "post"].includes(method.toLocaleLowerCase()) &&
+        (!["get", "post"].includes(method.toLowerCase()) &&
           JSON.stringify(variables || {})) ||
         null,
     });
