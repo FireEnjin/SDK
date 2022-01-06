@@ -1,4 +1,5 @@
 import "isomorphic-unfetch";
+import objectToUrlParams from "../helpers/objectToUrlParams";
 
 declare type RequestDocument = string | any;
 
@@ -23,17 +24,26 @@ export default class Client {
   async rawRequest<T = any, V = any>(
     query: string,
     variables?: V,
-    requestHeaders?: HeadersInit
+    requestOptions?: RequestInit
   ): Promise<{
     data: T;
     extensions?: any;
-    headers: Headers;
+    headers: HeadersInit;
     status: number;
   }> {
-    const response = await fetch(`${this.url}/${query}`, {
+    const method: string =
+      requestOptions?.method || this.options?.method || "GET";
+    const headers: HeadersInit =
+      requestOptions?.headers || this.options?.headers || {};
+    const endpoint = `${this.url}/${query}${
+      method === "get" ? objectToUrlParams(variables) : ""
+    }`;
+    const response = await fetch(`${this.url}/${endpoint}`, {
+      method,
       ...(this.options || {}),
-      headers: requestHeaders || this.options?.headers || {},
-      body: JSON.stringify(variables || {}),
+      ...(requestOptions || {}),
+      headers,
+      body: method === "get" ? null : JSON.stringify(variables || {}),
     });
 
     return {
@@ -47,12 +57,22 @@ export default class Client {
   async request<T = any, V = Variables>(
     endpoint: string,
     variables?: V,
-    requestHeaders?: HeadersInit
+    requestOptions?: RequestInit
   ): Promise<T> {
+    console.log(endpoint);
+    const method: string =
+      requestOptions?.method || this.options?.method || "GET";
+    const headers: HeadersInit =
+      requestOptions?.headers || this.options?.headers || {};
     const response = await fetch(`${this.url}/${endpoint}`, {
+      method,
       ...(this.options || {}),
-      headers: requestHeaders || this.options?.headers || {},
-      body: JSON.stringify(variables || {}),
+      ...(requestOptions || {}),
+      headers,
+      body:
+        (!["get", "post"].includes(method.toLocaleLowerCase()) &&
+          JSON.stringify(variables || {})) ||
+        null,
     });
 
     return response.json();
@@ -60,7 +80,7 @@ export default class Client {
 
   async batchRequests<T extends any = any, V = Variables>(
     documents: BatchRequestDocument<V>[],
-    requestHeaders?: HeadersInit
+    requestOptions?: RequestInit
   ): Promise<T> {
     const response: {
       [endpoint: string]: any;
@@ -70,7 +90,7 @@ export default class Client {
         response[document] = await this.request(
           document,
           variables,
-          requestHeaders
+          requestOptions
         );
       } catch {
         response[document] = null;

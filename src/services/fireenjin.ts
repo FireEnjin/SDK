@@ -83,9 +83,11 @@ export class FireEnjin {
       this.host.type === "graphql" && typeof options?.getSdk === "function"
         ? options.getSdk(this.client)
         : null;
-    window.addEventListener("fireenjinUpload", this.onUpload.bind(this));
-    window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
-    window.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+    if (window?.addEventListener) {
+      window.addEventListener("fireenjinUpload", this.onUpload.bind(this));
+      window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
+      window.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+    }
   }
 
   async upload(input: {
@@ -153,35 +155,33 @@ export class FireEnjin {
       name?: string;
     }
   ) {
-    let cachedData;
     const localKey = options?.cacheKey
       ? options.cacheKey
       : `${endpoint}_${
           variables?.id
             ? `${variables.id}:`
             : variables?.params
-            ? btoa(JSON.stringify(Object.values(variables.params)))
+            ? Buffer.from(
+                JSON.stringify(Object.values(variables.params))
+              ).toString("base64")
             : ""
-        }${btoa(JSON.stringify(variables))}`;
+        }${Buffer.from(JSON.stringify(variables)).toString("base64")}`;
 
     if (!options?.disableCache) {
       try {
-        cachedData = await localforage.getItem(localKey);
-        if (cachedData) {
-          await fireenjinSuccess(
-            {
-              event: options?.event,
-              dataPropsMap: options?.dataPropsMap,
-              cached: true,
-              data: cachedData,
-              name: options?.name,
-              endpoint,
-            },
-            {
-              onSuccess: this.options?.onSuccess,
-            }
-          );
-        }
+        await fireenjinSuccess(
+          {
+            event: options?.event,
+            dataPropsMap: options?.dataPropsMap,
+            cached: true,
+            data: await localforage.getItem(localKey),
+            name: options?.name,
+            endpoint,
+          },
+          {
+            onSuccess: this.options?.onSuccess,
+          }
+        );
       } catch (err) {
         console.log(err);
       }

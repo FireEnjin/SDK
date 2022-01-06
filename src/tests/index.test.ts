@@ -1,6 +1,8 @@
-import { FireEnjin } from "..";
+import { FireEnjin } from "../services/fireenjin";
 import Client from "../services/client";
-
+/**
+ * @jest-environment jsdom
+ */
 describe("Tests", () => {
   it("Should create FireEnjin", async () => {
     const fire = new FireEnjin({
@@ -11,12 +13,10 @@ describe("Tests", () => {
     });
   });
   it("Should create a client and make a request", async () => {
-    const client = new Client({});
-    console.log(
-      await client.request(
-        "https://us-central1-madness-labs-pwa.cloudfunctions.net/api/template/Ocmq17xVsxRyyngvmct2"
-      )
+    const client = new Client(
+      "https://us-central1-madness-labs-pwa.cloudfunctions.net"
     );
+    console.log(await client.request("api/template/Ocmq17xVsxRyyngvmct2"));
     expect(client).toMatchObject({});
   });
 });
