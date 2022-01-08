@@ -12,7 +12,7 @@ describe("Tests", () => {
     console.log(await client.request("api/template/Ocmq17xVsxRyyngvmct2"));
     expect(client).toMatchObject({});
   });
-  it("Should create fireenjin and make a request", async () => {
+  it.only("Should create fireenjin and make a request", async () => {
     const enjin = new FireEnjin({
       getSdk,
       host: "https://us-central1-madness-labs-pwa.cloudfunctions.net/graphql",
@@ -53,7 +53,7 @@ describe("Tests", () => {
     console.log(res);
     expect(res).toMatchObject({});
   });
-  it.only("Should create fireenjin and make a request", async () => {
+  it("Should create fireenjin and make a request", async () => {
     const enjin = new FireEnjin({
       getSdk,
       host: "https://us-central1-madness-labs-pwa.cloudfunctions.net/graphql",
@@ -71,6 +71,34 @@ describe("Tests", () => {
         subject: "asdf",
       },
     });
+
+    console.log(res);
+    expect(res).toMatchObject({});
+  });
+  it("Should create fireenjin and make a request", async () => {
+    const enjin = new FireEnjin({
+      connections: [
+        {
+          auth: {
+            apiKey: "AIzaSyBpVG2JOIVTXfO-fWx7-YZq938dSINu9Lc",
+            authDomain: "madness-labs-pwa.firebaseapp.com",
+            databaseURL: "https://madness-labs-pwa.firebaseio.com",
+            projectId: "madness-labs-pwa",
+            storageBucket: "madness-labs-pwa.appspot.com",
+            messagingSenderId: "540141413358",
+            appId: "1:540141413358:web:94a1558c2ed20ecba8a4ff",
+            measurementId: "G-YCRMJPNHJG",
+          },
+        },
+      ],
+      onRequest: async (action, endpoint) => {
+        const result = await action();
+        console.log(`New Request: ${endpoint}`, result);
+
+        return result;
+      },
+    } as any);
+    const res = await enjin.fetch(`templates`);
 
     console.log(res);
     expect(res).toMatchObject({});

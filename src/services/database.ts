@@ -37,7 +37,7 @@ export default class DatabaseService {
     this.app = options?.app || null;
     if (!this.app) {
       try {
-        this.app = initializeApp(options?.config?.firebase);
+        this.app = initializeApp(options?.config);
         console.log("Initializing Firebase App...", this.app);
       } catch (e) {
         console.log(e);
@@ -178,7 +178,7 @@ export default class DatabaseService {
     orderBy?: string,
     limit?: number
   ) {
-    const params = [];
+    const params: any = [];
     for (const w of where || []) {
       if (!w?.conditional || !w?.key) continue;
       params.push(firestoreWhere(w.key, w.conditional, w.value));

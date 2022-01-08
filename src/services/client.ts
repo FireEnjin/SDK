@@ -59,7 +59,6 @@ export default class Client {
     variables?: V,
     requestOptions?: RequestInit
   ): Promise<T> {
-    console.log(endpoint);
     const method: string =
       requestOptions?.method || this.options?.method || "GET";
     const headers: HeadersInit =

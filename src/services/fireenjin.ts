@@ -3,6 +3,8 @@ import { GraphQLClient } from "graphql-request";
 
 import Client from "./client";
 import tryOrFail from "../helpers/tryOrFail";
+import DatabaseService from "./database";
+import FirestoreClient from "./firestore";
 
 type SdkFunctionWrapper = <T>(
   action: (requestHeaders?: Record<string, string>) => Promise<T>,
@@ -14,8 +16,9 @@ export type FireEnjinEndpoints = {
 };
 
 export type FireEnjinHost = {
-  name?: string;
   url: string;
+  db?: DatabaseService;
+  name?: string;
   readOnly?: boolean;
   type?: "firebase" | "graphql" | "rest";
   headers?: HeadersInit;
@@ -41,10 +44,11 @@ export type FireEnjinOptions = {
   uploadUrl?: string;
   debug?: boolean;
   disableCache?: boolean;
+  emulate?: boolean;
 };
 
 export class FireEnjin {
-  client: Client | GraphQLClient;
+  client: Client | GraphQLClient | FirestoreClient;
   sdk;
   host: FireEnjinHost = {
     url: "http://localhost:4000",
@@ -57,31 +61,35 @@ export class FireEnjin {
       Authorization: options?.token ? `Bearer ${options.token}` : "",
       ...(options.headers ? options.headers : {}),
     };
-    if (!options?.connections?.length && options.host) {
-      this.host = {
-        name: "default",
-        url: options.host,
-        type: typeof options?.getSdk === "function" ? "graphql" : "rest",
-        headers,
-      };
-    }
-    if (!this.host?.url && options?.connections?.length) {
-      this.host = options.connections.sort((a, b) =>
-        (a?.priority || 0) > (b?.priority || 0) ? 1 : -1
-      )[0];
-      this.host.headers = headers;
-    }
+
+    this.host = options?.connections?.length
+      ? this.setConnection(0)
+      : ({
+          url: options.host,
+          type: "rest",
+          headers,
+        } as FireEnjinHost);
 
     this.client =
       this.host.type === "graphql"
         ? new GraphQLClient(this.host?.url || "http://localhost:4000", {
             headers: this.host?.headers || {},
           })
+        : this.host?.type === "firebase"
+        ? new FirestoreClient(this.host.url, {
+            db: this.host?.db
+              ? this.host.db
+              : (new DatabaseService({
+                  emulate: !!options?.emulate,
+                  config: this.host?.auth,
+                }) as any),
+          })
         : new Client(this.host.url, { headers: this.host?.headers || {} });
     this.sdk =
       this.host.type === "graphql" && typeof options?.getSdk === "function"
         ? options.getSdk(this.client, this.options?.onRequest)
         : null;
+    console.log(this.host);
     if (window?.addEventListener) {
       window.addEventListener("fireenjinUpload", this.onUpload.bind(this));
       window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
@@ -176,7 +184,7 @@ export class FireEnjin {
                 JSON.stringify(Object.values(variables.params))
               ).toString("base64")
             : ""
-        }${Buffer.from(JSON.stringify(variables)).toString("base64")}`;
+        }${Buffer.from(JSON.stringify(variables || {})).toString("base64")}`;
 
     if (!options?.disableCache) {
       data = await tryOrFail(async () => localforage.getItem(localKey), {
@@ -294,7 +302,7 @@ export class FireEnjin {
 
   setConnection(nameUrlOrIndex: string | number) {
     this.host = (
-      typeof name === "string"
+      typeof nameUrlOrIndex === "string"
         ? (this.options?.connections || []).find(
             (connection) =>
               connection?.name === nameUrlOrIndex ||
@@ -302,6 +310,30 @@ export class FireEnjin {
           )
         : this.options?.connections?.[nameUrlOrIndex]
     ) as FireEnjinHost;
+
+    if (!this.host?.name) this.host.name = "default";
+    if (!this.host?.type)
+      this.host.type =
+        typeof this.options?.getSdk === "function"
+          ? "graphql"
+          : this.host?.db || this.host?.auth?.databaseURL
+          ? "firebase"
+          : "rest";
+    this.host.headers = {
+      ...(this.host?.headers || {}),
+      ...(this.options?.headers || {}),
+    };
+
+    this.client =
+      this.host.type === "graphql"
+        ? new GraphQLClient(this.host?.url || "http://localhost:4000", {
+            headers: this.host?.headers || {},
+          })
+        : this.host?.type === "firebase"
+        ? new FirestoreClient(this.host.url, {
+            db: this.host.db as any,
+          })
+        : new Client(this.host.url, { headers: this.host?.headers || {} });
 
     this.client.setEndpoint(this.host?.url || "http://localhost:4000");
 
