@@ -1,9 +1,8 @@
 import * as localforage from "localforage";
 import { GraphQLClient } from "graphql-request";
 
-import fireenjinSuccess from "../events/success";
-import tryOrFail from "../helpers/tryOrFail";
 import Client from "./client";
+import tryOrFail from "../helpers/tryOrFail";
 
 type SdkFunctionWrapper = <T>(
   action: (requestHeaders?: Record<string, string>) => Promise<T>,
@@ -90,25 +89,34 @@ export class FireEnjin {
     }
   }
 
-  async upload(input: {
-    id?: string | number;
-    path?: string;
-    fileName?: string;
-    file?: any;
-    type?: string;
-  }) {
+  async upload(
+    input: {
+      id?: string | number;
+      path?: string;
+      fileName?: string;
+      file?: any;
+      type?: string;
+    },
+    options?: {
+      event?: any;
+      name?: string;
+      endpoint?: string;
+    }
+  ) {
+    const endpoint = options?.endpoint || "upload";
     return tryOrFail(
-      async () => {
-        const data = await this.client.request(
+      async () =>
+        this.client.request(
           this.options.uploadUrl
             ? this.options.uploadUrl
-            : `${this.host.url}/upload`,
+            : `${this.host.url}/${endpoint}`,
           input
-        );
-
-        return data;
-      },
+        ),
       {
+        event: options?.event || null,
+        name: options?.name || endpoint,
+        endpoint,
+        cached: true,
         onError: this.options?.onError,
         onSuccess: this.options?.onSuccess,
       }
@@ -124,15 +132,22 @@ export class FireEnjin {
     )
       return false;
 
-    const data = await this.upload({
-      id: event.detail.data?.id,
-      path: event.detail.data?.path,
-      fileName: event.detail.data?.fileName,
-      file: event.detail.data?.encodedContent,
-      type: event.detail.data?.type,
-    });
+    const data = await this.upload(
+      {
+        id: event.detail.data?.id,
+        path: event.detail.data?.path,
+        fileName: event.detail.data?.fileName,
+        file: event.detail.data?.encodedContent,
+        type: event.detail.data?.type,
+      },
+      {
+        event: event.detail?.event,
+        name: event.detail?.name,
+        endpoint: event.detail?.endpoint,
+      }
+    );
 
-    if (event?.target) event.target.value = data.url;
+    if (event?.target) event.target.value = data?.url || null;
 
     return data;
   }
@@ -148,6 +163,9 @@ export class FireEnjin {
       name?: string;
     }
   ) {
+    let data: any = null;
+    const event: any = options?.event || null;
+    const name: string = options?.name || (null as any);
     const localKey = options?.cacheKey
       ? options.cacheKey
       : `${endpoint}_${
@@ -161,38 +179,34 @@ export class FireEnjin {
         }${Buffer.from(JSON.stringify(variables)).toString("base64")}`;
 
     if (!options?.disableCache) {
-      try {
-        await fireenjinSuccess(
-          {
-            event: options?.event,
-            dataPropsMap: options?.dataPropsMap,
-            cached: true,
-            data: await localforage.getItem(localKey),
-            name: options?.name,
-            endpoint,
-          },
-          {
-            onSuccess: this.options?.onSuccess,
-          }
-        );
-      } catch (err) {
-        console.log(err);
-      }
+      data = await tryOrFail(async () => localforage.getItem(localKey), {
+        endpoint,
+        event,
+        name,
+        cached: true,
+        onError: this.options?.onError,
+        onSuccess: this.options?.onSuccess,
+      });
     }
 
-    return tryOrFail(
-      async () => {
-        return this.host?.type === "graphql"
+    data = await tryOrFail(
+      async () =>
+        this.host?.type === "graphql"
           ? variables?.query
             ? this.client.request(variables?.query, variables?.params)
             : this.sdk[endpoint](variables?.params)
-          : this.client.request(endpoint, variables);
-      },
+          : this.client.request(endpoint, variables),
       {
+        endpoint,
+        event,
+        name,
+        cached: false,
         onError: this.options?.onError,
         onSuccess: this.options?.onSuccess,
       }
     );
+
+    return data;
   }
 
   private async onFetch(event) {
@@ -213,10 +227,20 @@ export class FireEnjin {
     });
   }
 
-  async submit(endpoint: string, variables?: any) {
+  async submit(
+    endpoint: string,
+    variables?: any,
+    options?: {
+      event?: Event;
+      name?: string;
+    }
+  ) {
+    const event: any = options?.event || null;
+    const name: string = options?.name || (null as any);
+
     return tryOrFail(
-      async () => {
-        return this.host?.type === "graphql"
+      async () =>
+        this.host?.type === "graphql"
           ? variables?.query
             ? this.client.request(variables.query, variables.params)
             : this.sdk[endpoint]({
@@ -225,9 +249,12 @@ export class FireEnjin {
               })
           : this.client.request(endpoint, variables, {
               method: "POST",
-            });
-      },
+            }),
       {
+        endpoint,
+        event,
+        name,
+        cached: false,
         onError: this.options?.onError,
         onSuccess: this.options?.onSuccess,
       }

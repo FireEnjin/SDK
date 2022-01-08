@@ -36,6 +36,9 @@ export declare class FireEnjin {
     options: FireEnjinOptions;
     constructor(options: FireEnjinOptions);
     upload(input: {
+        event?: any;
+        name?: string;
+        endpoint?: string;
         id?: string | number;
         path?: string;
         fileName?: string;
@@ -51,7 +54,10 @@ export declare class FireEnjin {
         name?: string;
     }): Promise<any>;
     private onFetch;
-    submit(endpoint: string, variables?: any): Promise<any>;
+    submit(endpoint: string, variables?: any, options?: {
+        event?: Event;
+        name?: string;
+    }): Promise<any>;
     private onSubmit;
     setHeader(key: string, value: string): false | GraphQLClient | Client;
     setHeaders(headers: any): false | GraphQLClient | Client;

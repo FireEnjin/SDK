@@ -4,6 +4,8 @@ import fireenjinSuccess from "../events/success";
 export default async function tryOrFail(
   fn: () => Promise<any>,
   options?: {
+    endpoint?: string;
+    name?: string;
     retries?: number;
     event?: any;
     cached?: boolean;
@@ -11,16 +13,16 @@ export default async function tryOrFail(
     onSuccess?: (data) => void;
   }
 ) {
+  const baseData = {
+    cached: !!options?.cached,
+    event: options?.event?.detail?.event,
+    name: options?.name,
+    endpoint: options?.endpoint,
+  };
   try {
     const data = await fn();
     await fireenjinSuccess(
-      {
-        cached: !!options?.cached,
-        event: options?.event.detail?.event,
-        data,
-        name: options?.event.detail.name,
-        endpoint: options?.event.detail.endpoint,
-      },
+      { ...baseData, data },
       {
         onSuccess: options?.onSuccess,
       }
@@ -30,11 +32,8 @@ export default async function tryOrFail(
   } catch (error) {
     await fireenjinError(
       {
-        cached: !!options?.cached,
-        event: options?.event?.detail?.event,
+        ...baseData,
         error,
-        name: options?.event?.detail?.name,
-        endpoint: options?.event?.detail?.endpoint,
       },
       {
         onError: options?.onError,

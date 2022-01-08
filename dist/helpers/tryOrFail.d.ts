@@ -1,4 +1,4 @@
-export default function tryOrFail(fn: () => Promise<any>, options?: {
+export default function tryOrFail(fn: () => Promise<any>, context: any, options?: {
     retries?: number;
     event?: any;
     cached?: boolean;

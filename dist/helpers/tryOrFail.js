@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var error_1 = require("../events/error");
 var success_1 = require("../events/success");
-function tryOrFail(fn, options) {
+function tryOrFail(fn, context, options) {
     var _a, _b, _c, _d, _e, _f, _g;
     return __awaiter(this, void 0, void 0, function () {
         var data, error_2;
@@ -46,7 +46,7 @@ function tryOrFail(fn, options) {
             switch (_h.label) {
                 case 0:
                     _h.trys.push([0, 3, , 5]);
-                    return [4 /*yield*/, fn()];
+                    return [4 /*yield*/, fn.apply(context)];
                 case 1:
                     data = _h.sent();
                     return [4 /*yield*/, (0, success_1["default"])({
