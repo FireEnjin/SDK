@@ -172,7 +172,7 @@ class FireEnjin {
                 return ((_e = this.host) === null || _e === void 0 ? void 0 : _e.type) === "graphql"
                     ? (variables === null || variables === void 0 ? void 0 : variables.query)
                         ? this.client.request(variables === null || variables === void 0 ? void 0 : variables.query, variables === null || variables === void 0 ? void 0 : variables.params)
-                        : this.sdk[endpoint](variables === null || variables === void 0 ? void 0 : variables.params, options === null || options === void 0 ? void 0 : options.headers)
+                        : this.sdk[endpoint](variables, options === null || options === void 0 ? void 0 : options.headers)
                     : this.client.request(endpoint, variables);
             }), {
                 endpoint,
@@ -196,7 +196,7 @@ class FireEnjin {
                 !event.detail.endpoint ||
                 event.detail.disableFetch)
                 return false;
-            return this.fetch(event.detail.endpoint, ((_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.data) || {}, {
+            return this.fetch(event.detail.endpoint, ((_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.params) || {}, {
                 event: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.event,
                 dataPropsMap: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.dataPropsMap,
                 name: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.name,

@@ -130,7 +130,7 @@ export class FireEnjin {
         data = await tryOrFail(async () => this.host?.type === "graphql"
             ? variables?.query
                 ? this.client.request(variables?.query, variables?.params)
-                : this.sdk[endpoint](variables?.params, options?.headers)
+                : this.sdk[endpoint](variables, options?.headers)
             : this.client.request(endpoint, variables), {
             endpoint,
             event,
@@ -150,7 +150,7 @@ export class FireEnjin {
             !event.detail.endpoint ||
             event.detail.disableFetch)
             return false;
-        return this.fetch(event.detail.endpoint, event?.detail?.data || {}, {
+        return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
             event: event?.detail?.event,
             dataPropsMap: event?.detail?.dataPropsMap,
             name: event?.detail?.name,
