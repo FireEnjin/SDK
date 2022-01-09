@@ -232,7 +232,7 @@ export class FireEnjin {
         this.host?.type === "graphql"
           ? variables?.query
             ? this.client.request(variables?.query, variables?.params)
-            : this.sdk[endpoint](variables?.params, options?.headers)
+            : this.sdk[endpoint](variables, options?.headers)
           : this.client.request(endpoint, variables),
       {
         endpoint,
@@ -259,7 +259,7 @@ export class FireEnjin {
     )
       return false;
 
-    return this.fetch(event.detail.endpoint, event?.detail?.data || {}, {
+    return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
       event: event?.detail?.event,
       dataPropsMap: event?.detail?.dataPropsMap,
       name: event?.detail?.name,
