@@ -39,6 +39,7 @@ export declare class FireEnjin {
     host: FireEnjinHost;
     options: FireEnjinOptions;
     constructor(options: FireEnjinOptions);
+    hash(input: string): number;
     upload(input: {
         id?: string | number;
         path?: string;
@@ -57,6 +58,7 @@ export declare class FireEnjin {
         event?: Event;
         dataPropsMap?: any;
         name?: string;
+        headers?: HeadersInit;
     }): Promise<any>;
     private onFetch;
     submit(endpoint: string, variables?: any, options?: {

@@ -12,7 +12,7 @@ type SdkFunctionWrapper = <T>(
 ) => Promise<T>;
 
 export type FireEnjinEndpoints = {
-  [endpoint: string]: (variables: any, requestHeaders) => Promise<any>;
+  [endpoint: string]: (variables: any, requestHeaders: any) => Promise<any>;
 };
 
 export type FireEnjinHost = {
@@ -37,9 +37,9 @@ export type FireEnjinOptions = {
   connections?: FireEnjinHost[];
   token?: string;
   onRequest?: SdkFunctionWrapper;
-  onError?: (error) => void;
-  onSuccess?: (data) => void;
-  onUpload?: (data) => void;
+  onError?: (error: any) => void;
+  onSuccess?: (data: any) => void;
+  onUpload?: (data: any) => void;
   headers?: HeadersInit;
   uploadUrl?: string;
   debug?: boolean;
@@ -49,7 +49,7 @@ export type FireEnjinOptions = {
 
 export class FireEnjin {
   client: Client | GraphQLClient | FirestoreClient;
-  sdk;
+  sdk: any = {};
   host: FireEnjinHost = {
     url: "http://localhost:4000",
   };
@@ -90,10 +90,26 @@ export class FireEnjin {
         ? options.getSdk(this.client, this.options?.onRequest)
         : null;
     if (window) {
-      window.addEventListener("fireenjinUpload", this.onUpload.bind(this));
+      window.addEventListener("fireenjinUpload", (event) => {
+        this.onUpload(event);
+      });
       window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
       window.addEventListener("fireenjinFetch", this.onFetch.bind(this));
     }
+  }
+
+  hash(input: string) {
+    var hash = 0,
+      i,
+      chr;
+    if (input.length === 0) return hash;
+    for (i = 0; i < input.length; i++) {
+      chr = input.charCodeAt(i);
+      hash = (hash << 5) - hash + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+
+    return hash;
   }
 
   async upload(
@@ -130,7 +146,7 @@ export class FireEnjin {
     );
   }
 
-  private async onUpload(event) {
+  private async onUpload(event: any) {
     if (typeof this.options?.onUpload === "function")
       this.options.onUpload(event);
     if (
@@ -168,6 +184,7 @@ export class FireEnjin {
       event?: Event;
       dataPropsMap?: any;
       name?: string;
+      headers?: HeadersInit;
     }
   ) {
     let data: any = null;
@@ -179,11 +196,9 @@ export class FireEnjin {
           variables?.id
             ? `${variables.id}:`
             : variables?.params
-            ? Buffer.from(
-                JSON.stringify(Object.values(variables.params))
-              ).toString("base64")
+            ? this.hash(JSON.stringify(Object.values(variables.params)))
             : ""
-        }${Buffer.from(JSON.stringify(variables || {})).toString("base64")}`;
+        }${this.hash(JSON.stringify(variables || {}))}`;
 
     if (!options?.disableCache) {
       data = await tryOrFail(async () => localforage.getItem(localKey), {
@@ -201,7 +216,7 @@ export class FireEnjin {
         this.host?.type === "graphql"
           ? variables?.query
             ? this.client.request(variables?.query, variables?.params)
-            : this.sdk[endpoint](variables?.params)
+            : this.sdk[endpoint](variables?.params, options?.headers)
           : this.client.request(endpoint, variables),
       {
         endpoint,
@@ -216,7 +231,7 @@ export class FireEnjin {
     return data;
   }
 
-  private async onFetch(event) {
+  private async onFetch(event: any) {
     if (
       !event ||
       !event.detail ||
@@ -268,7 +283,7 @@ export class FireEnjin {
     );
   }
 
-  private async onSubmit(event) {
+  private async onSubmit(event: any) {
     if (
       !event ||
       !event.detail ||
@@ -288,7 +303,7 @@ export class FireEnjin {
   setHeader(key: string, value: string) {
     if (!this.client) return false;
     if (!this.host?.headers) this.host.headers = {};
-    this.host.headers[key] = value;
+    (this.host as any).headers[key] = value;
 
     return this.client.setHeader(key, value);
   }

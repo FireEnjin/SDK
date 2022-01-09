@@ -41,6 +41,7 @@ const firestore_1 = __importDefault(require("./firestore"));
 class FireEnjin {
     constructor(options) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
+        this.sdk = {};
         this.host = {
             url: "http://localhost:4000",
         };
@@ -73,10 +74,23 @@ class FireEnjin {
                 ? options.getSdk(this.client, (_h = this.options) === null || _h === void 0 ? void 0 : _h.onRequest)
                 : null;
         if (window) {
-            window.addEventListener("fireenjinUpload", this.onUpload.bind(this));
+            window.addEventListener("fireenjinUpload", (event) => {
+                this.onUpload(event);
+            });
             window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
             window.addEventListener("fireenjinFetch", this.onFetch.bind(this));
         }
+    }
+    hash(input) {
+        var hash = 0, i, chr;
+        if (input.length === 0)
+            return hash;
+        for (i = 0; i < input.length; i++) {
+            chr = input.charCodeAt(i);
+            hash = (hash << 5) - hash + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash;
     }
     upload(input, options) {
         var _a, _b;
@@ -131,8 +145,8 @@ class FireEnjin {
                 : `${endpoint}_${(variables === null || variables === void 0 ? void 0 : variables.id)
                     ? `${variables.id}:`
                     : (variables === null || variables === void 0 ? void 0 : variables.params)
-                        ? Buffer.from(JSON.stringify(Object.values(variables.params))).toString("base64")
-                        : ""}${Buffer.from(JSON.stringify(variables || {})).toString("base64")}`;
+                        ? this.hash(JSON.stringify(Object.values(variables.params)))
+                        : ""}${this.hash(JSON.stringify(variables || {}))}`;
             if (!(options === null || options === void 0 ? void 0 : options.disableCache)) {
                 data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () { return localforage.getItem(localKey); }), {
                     endpoint,
@@ -148,7 +162,7 @@ class FireEnjin {
                 return ((_e = this.host) === null || _e === void 0 ? void 0 : _e.type) === "graphql"
                     ? (variables === null || variables === void 0 ? void 0 : variables.query)
                         ? this.client.request(variables === null || variables === void 0 ? void 0 : variables.query, variables === null || variables === void 0 ? void 0 : variables.params)
-                        : this.sdk[endpoint](variables === null || variables === void 0 ? void 0 : variables.params)
+                        : this.sdk[endpoint](variables === null || variables === void 0 ? void 0 : variables.params, options === null || options === void 0 ? void 0 : options.headers)
                     : this.client.request(endpoint, variables);
             }), {
                 endpoint,

@@ -6,7 +6,7 @@ import DatabaseService from "./database";
 import FirestoreClient from "./firestore";
 export class FireEnjin {
     client;
-    sdk;
+    sdk = {};
     host = {
         url: "http://localhost:4000",
     };
@@ -44,10 +44,23 @@ export class FireEnjin {
                 ? options.getSdk(this.client, this.options?.onRequest)
                 : null;
         if (window) {
-            window.addEventListener("fireenjinUpload", this.onUpload.bind(this));
+            window.addEventListener("fireenjinUpload", (event) => {
+                this.onUpload(event);
+            });
             window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
             window.addEventListener("fireenjinFetch", this.onFetch.bind(this));
         }
+    }
+    hash(input) {
+        var hash = 0, i, chr;
+        if (input.length === 0)
+            return hash;
+        for (i = 0; i < input.length; i++) {
+            chr = input.charCodeAt(i);
+            hash = (hash << 5) - hash + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash;
     }
     async upload(input, options) {
         const endpoint = options?.endpoint || "upload";
@@ -92,8 +105,8 @@ export class FireEnjin {
             : `${endpoint}_${variables?.id
                 ? `${variables.id}:`
                 : variables?.params
-                    ? Buffer.from(JSON.stringify(Object.values(variables.params))).toString("base64")
-                    : ""}${Buffer.from(JSON.stringify(variables || {})).toString("base64")}`;
+                    ? this.hash(JSON.stringify(Object.values(variables.params)))
+                    : ""}${this.hash(JSON.stringify(variables || {}))}`;
         if (!options?.disableCache) {
             data = await tryOrFail(async () => localforage.getItem(localKey), {
                 endpoint,
@@ -107,7 +120,7 @@ export class FireEnjin {
         data = await tryOrFail(async () => this.host?.type === "graphql"
             ? variables?.query
                 ? this.client.request(variables?.query, variables?.params)
-                : this.sdk[endpoint](variables?.params)
+                : this.sdk[endpoint](variables?.params, options?.headers)
             : this.client.request(endpoint, variables), {
             endpoint,
             event,
