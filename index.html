@@ -5,7 +5,33 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script src="dist/browser.js"></script>
+    <script type="text/javascript">
+      var exports = {};
+
+      const require = (fileName) => {
+        console.log(fileName);
+      };
+
+      window.onload = async () => {
+        const enjin = new FireEnjin({
+          host: "https://us-central1-madness-labs-pwa.cloudfunctions.net/graphql",
+          onRequest: async (action, endpoint) => {
+            const result = await action();
+            console.log(`New Request: ${endpoint}`, result);
+
+            return result;
+          },
+        });
+        const res = await enjin.fetch("findTemplate", {
+          params: {
+            id: "test",
+          },
+        });
+      };
+    </script>
+    <script defer src="dist/index.js"></script>
   </head>
-  <body></body>
+  <body>
+    Hello There...
+  </body>
 </html>

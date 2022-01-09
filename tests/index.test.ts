@@ -1,5 +1,5 @@
-import { FireEnjin } from "../services/fireenjin";
-import Client from "../services/client";
+import { FireEnjin } from "../src/services/fireenjin";
+import Client from "../src/services/client";
 import { getSdk } from "./sdk";
 /**
  * @jest-environment jsdom
