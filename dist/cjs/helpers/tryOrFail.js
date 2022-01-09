@@ -15,13 +15,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const error_1 = __importDefault(require("../events/error"));
 const success_1 = __importDefault(require("../events/success"));
 function tryOrFail(fn, options) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         const baseData = {
             cached: !!(options === null || options === void 0 ? void 0 : options.cached),
             event: (_b = (_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.detail) === null || _b === void 0 ? void 0 : _b.event,
             name: options === null || options === void 0 ? void 0 : options.name,
             endpoint: options === null || options === void 0 ? void 0 : options.endpoint,
+            bubbles: (_c = !!(options === null || options === void 0 ? void 0 : options.bubbles)) !== null && _c !== void 0 ? _c : true,
+            cancelable: (_d = !!(options === null || options === void 0 ? void 0 : options.cancelable)) !== null && _d !== void 0 ? _d : true,
+            composed: !!(options === null || options === void 0 ? void 0 : options.composed),
         };
         try {
             const data = yield fn();

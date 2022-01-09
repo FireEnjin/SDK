@@ -12,5 +12,8 @@ export default async function fireenjinSuccess(input, options) {
     const el = input?.event?.target || document;
     el.dispatchEvent(new CustomEvent("fireenjinSuccess", {
         detail,
+        bubbles: !!input?.bubbles,
+        cancelable: !!input?.cancelable,
+        composed: !!input?.composed,
     }));
 }

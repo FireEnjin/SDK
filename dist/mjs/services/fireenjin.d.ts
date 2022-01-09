@@ -50,6 +50,9 @@ export declare class FireEnjin {
         event?: any;
         name?: string;
         endpoint?: string;
+        bubbles?: boolean;
+        cancelable?: boolean;
+        composed?: boolean;
     }): Promise<any>;
     private onUpload;
     fetch(endpoint: string, variables?: any, options?: {
@@ -59,11 +62,17 @@ export declare class FireEnjin {
         dataPropsMap?: any;
         name?: string;
         headers?: HeadersInit;
+        bubbles?: boolean;
+        cancelable?: boolean;
+        composed?: boolean;
     }): Promise<any>;
     private onFetch;
     submit(endpoint: string, variables?: any, options?: {
         event?: Event;
         name?: string;
+        bubbles?: boolean;
+        cancelable?: boolean;
+        composed?: boolean;
     }): Promise<any>;
     private onSubmit;
     setHeader(key: string, value: string): false | Client | FirestoreClient | GraphQLClient;

@@ -73,6 +73,9 @@ export class FireEnjin {
             : `${this.host.url}/${endpoint}`, input), {
             event: options?.event || null,
             name: options?.name || endpoint,
+            bubbles: !!options?.bubbles,
+            cancelable: !!options?.cancelable,
+            composed: !!options?.composed,
             endpoint,
             cached: true,
             onError: this.options?.onError,
@@ -117,6 +120,9 @@ export class FireEnjin {
                 event,
                 name,
                 cached: true,
+                bubbles: !!options?.bubbles,
+                cancelable: !!options?.cancelable,
+                composed: !!options?.composed,
                 onError: this.options?.onError,
                 onSuccess: this.options?.onSuccess,
             });
@@ -130,6 +136,9 @@ export class FireEnjin {
             event,
             name,
             cached: false,
+            bubbles: !!options?.bubbles,
+            cancelable: !!options?.cancelable,
+            composed: !!options?.composed,
             onError: this.options?.onError,
             onSuccess: this.options?.onSuccess,
         });
@@ -166,6 +175,9 @@ export class FireEnjin {
             event,
             name,
             cached: false,
+            bubbles: !!options?.bubbles,
+            cancelable: !!options?.cancelable,
+            composed: !!options?.composed,
             onError: this.options?.onError,
             onSuccess: this.options?.onSuccess,
         });

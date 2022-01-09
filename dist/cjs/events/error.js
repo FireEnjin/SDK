@@ -24,6 +24,9 @@ function fireenjinError(input, options) {
         const el = ((_b = input === null || input === void 0 ? void 0 : input.event) === null || _b === void 0 ? void 0 : _b.target) || document;
         el.dispatchEvent(new CustomEvent("fireenjinError", {
             detail,
+            bubbles: !!(input === null || input === void 0 ? void 0 : input.bubbles),
+            cancelable: !!(input === null || input === void 0 ? void 0 : input.cancelable),
+            composed: !!(input === null || input === void 0 ? void 0 : input.composed),
         }));
     });
 }

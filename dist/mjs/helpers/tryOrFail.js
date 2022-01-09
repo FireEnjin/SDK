@@ -6,6 +6,9 @@ export default async function tryOrFail(fn, options) {
         event: options?.event?.detail?.event,
         name: options?.name,
         endpoint: options?.endpoint,
+        bubbles: !!options?.bubbles ?? true,
+        cancelable: !!options?.cancelable ?? true,
+        composed: !!options?.composed,
     };
     try {
         const data = await fn();

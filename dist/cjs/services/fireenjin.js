@@ -107,6 +107,9 @@ class FireEnjin {
             }), {
                 event: (options === null || options === void 0 ? void 0 : options.event) || null,
                 name: (options === null || options === void 0 ? void 0 : options.name) || endpoint,
+                bubbles: !!(options === null || options === void 0 ? void 0 : options.bubbles),
+                cancelable: !!(options === null || options === void 0 ? void 0 : options.cancelable),
+                composed: !!(options === null || options === void 0 ? void 0 : options.composed),
                 endpoint,
                 cached: true,
                 onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
@@ -157,6 +160,9 @@ class FireEnjin {
                     event,
                     name,
                     cached: true,
+                    bubbles: !!(options === null || options === void 0 ? void 0 : options.bubbles),
+                    cancelable: !!(options === null || options === void 0 ? void 0 : options.cancelable),
+                    composed: !!(options === null || options === void 0 ? void 0 : options.composed),
                     onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
                     onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
                 });
@@ -173,6 +179,9 @@ class FireEnjin {
                 event,
                 name,
                 cached: false,
+                bubbles: !!(options === null || options === void 0 ? void 0 : options.bubbles),
+                cancelable: !!(options === null || options === void 0 ? void 0 : options.cancelable),
+                composed: !!(options === null || options === void 0 ? void 0 : options.composed),
                 onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
                 onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess,
             });
@@ -218,6 +227,9 @@ class FireEnjin {
                 event,
                 name,
                 cached: false,
+                bubbles: !!(options === null || options === void 0 ? void 0 : options.bubbles),
+                cancelable: !!(options === null || options === void 0 ? void 0 : options.cancelable),
+                composed: !!(options === null || options === void 0 ? void 0 : options.composed),
                 onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
                 onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
             });
