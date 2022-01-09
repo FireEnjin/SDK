@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -38,44 +49,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var error_1 = require("../events/error");
 var success_1 = require("../events/success");
-function tryOrFail(fn, context, options) {
-    var _a, _b, _c, _d, _e, _f, _g;
+function tryOrFail(fn, options) {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function () {
-        var data, error_2;
-        return __generator(this, function (_h) {
-            switch (_h.label) {
+        var baseData, data, error_2;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
-                    _h.trys.push([0, 3, , 5]);
-                    return [4 /*yield*/, fn.apply(context)];
+                    baseData = {
+                        cached: !!(options === null || options === void 0 ? void 0 : options.cached),
+                        event: (_b = (_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.detail) === null || _b === void 0 ? void 0 : _b.event,
+                        name: options === null || options === void 0 ? void 0 : options.name,
+                        endpoint: options === null || options === void 0 ? void 0 : options.endpoint
+                    };
+                    _c.label = 1;
                 case 1:
-                    data = _h.sent();
-                    return [4 /*yield*/, (0, success_1["default"])({
-                            cached: !!(options === null || options === void 0 ? void 0 : options.cached),
-                            event: (_a = options === null || options === void 0 ? void 0 : options.event.detail) === null || _a === void 0 ? void 0 : _a.event,
-                            data: data,
-                            name: options === null || options === void 0 ? void 0 : options.event.detail.name,
-                            endpoint: options === null || options === void 0 ? void 0 : options.event.detail.endpoint
-                        }, {
+                    _c.trys.push([1, 4, , 6]);
+                    return [4 /*yield*/, fn()];
+                case 2:
+                    data = _c.sent();
+                    return [4 /*yield*/, (0, success_1["default"])(__assign(__assign({}, baseData), { data: data }), {
                             onSuccess: options === null || options === void 0 ? void 0 : options.onSuccess
                         })];
-                case 2:
-                    _h.sent();
-                    return [2 /*return*/, data];
                 case 3:
-                    error_2 = _h.sent();
-                    return [4 /*yield*/, (0, error_1["default"])({
-                            cached: !!(options === null || options === void 0 ? void 0 : options.cached),
-                            event: (_c = (_b = options === null || options === void 0 ? void 0 : options.event) === null || _b === void 0 ? void 0 : _b.detail) === null || _c === void 0 ? void 0 : _c.event,
-                            error: error_2,
-                            name: (_e = (_d = options === null || options === void 0 ? void 0 : options.event) === null || _d === void 0 ? void 0 : _d.detail) === null || _e === void 0 ? void 0 : _e.name,
-                            endpoint: (_g = (_f = options === null || options === void 0 ? void 0 : options.event) === null || _f === void 0 ? void 0 : _f.detail) === null || _g === void 0 ? void 0 : _g.endpoint
-                        }, {
+                    _c.sent();
+                    return [2 /*return*/, data];
+                case 4:
+                    error_2 = _c.sent();
+                    return [4 /*yield*/, (0, error_1["default"])(__assign(__assign({}, baseData), { error: error_2 }), {
                             onError: options === null || options === void 0 ? void 0 : options.onError
                         })];
-                case 4:
-                    _h.sent();
+                case 5:
+                    _c.sent();
                     return [2 /*return*/];
-                case 5: return [2 /*return*/];
+                case 6: return [2 /*return*/];
             }
         });
     });

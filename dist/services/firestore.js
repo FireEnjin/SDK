@@ -47,58 +47,57 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-require("isomorphic-unfetch");
-var objectToUrlParams_1 = require("../helpers/objectToUrlParams");
-var Client = /** @class */ (function () {
-    function Client(url, options) {
+var FirestoreClient = /** @class */ (function () {
+    function FirestoreClient(url, options) {
         this.url = url || "http://localhost:4000";
-        this.options = options || {};
+        this.options = __assign(__assign({}, options), { headers: (options === null || options === void 0 ? void 0 : options.headers) || {} });
+        this.db = options === null || options === void 0 ? void 0 : options.db;
     }
-    Client.prototype.rawRequest = function (query, variables, requestOptions) {
-        var _a, _b, _c;
-        return __awaiter(this, void 0, void 0, function () {
-            var method, headers, endpoint, response;
-            var _d;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
-                    case 0:
-                        method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "GET";
-                        headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_b = this.options) === null || _b === void 0 ? void 0 : _b.headers) || {};
-                        endpoint = "".concat(this.url, "/").concat(query).concat(method === "get" ? (0, objectToUrlParams_1["default"])(variables) : "");
-                        return [4 /*yield*/, fetch("".concat(this.url, "/").concat(endpoint), __assign(__assign(__assign({ method: method }, (this.options || {})), (requestOptions || {})), { headers: headers, body: method === "get" ? null : JSON.stringify(variables || {}) }))];
-                    case 1:
-                        response = _e.sent();
-                        _d = {};
-                        return [4 /*yield*/, ((_c = response === null || response === void 0 ? void 0 : response.json) === null || _c === void 0 ? void 0 : _c.call(response))];
-                    case 2: return [2 /*return*/, (_d.data = (_e.sent()) || null,
-                            _d.headers = response.headers,
-                            _d.status = response.status,
-                            _d.extensions = {},
-                            _d)];
-                }
-            });
-        });
-    };
-    Client.prototype.request = function (endpoint, variables, requestOptions) {
+    FirestoreClient.prototype.rawRequest = function (query, variables, requestOptions) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var method, headers, response;
+            var method, headers, endpoint, response;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "GET";
+                        method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "POST";
                         headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_b = this.options) === null || _b === void 0 ? void 0 : _b.headers) || {};
-                        return [4 /*yield*/, fetch("".concat(this.url, "/").concat(endpoint), __assign(__assign(__assign({ method: method }, (this.options || {})), (requestOptions || {})), { headers: headers, body: (!["get", "post"].includes(method.toLowerCase()) &&
-                                    JSON.stringify(variables || {})) ||
-                                    null }))];
+                        endpoint = query;
+                        return [4 /*yield*/, (method.toLowerCase() === "post"
+                                ? this.db.update(endpoint, (variables === null || variables === void 0 ? void 0 : variables.data) || {}, variables === null || variables === void 0 ? void 0 : variables.id)
+                                : this.db.query(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null))];
                     case 1:
                         response = _c.sent();
-                        return [2 /*return*/, response.json()];
+                        return [2 /*return*/, {
+                                data: method.toLowerCase() === "post" ? response : response === null || response === void 0 ? void 0 : response.docs,
+                                headers: headers,
+                                extensions: {
+                                    query: response === null || response === void 0 ? void 0 : response.query,
+                                    metadata: response === null || response === void 0 ? void 0 : response.metadata,
+                                    size: response === null || response === void 0 ? void 0 : response.size
+                                },
+                                status: 200
+                            }];
                 }
             });
         });
     };
-    Client.prototype.batchRequests = function (documents, requestOptions) {
+    FirestoreClient.prototype.request = function (endpoint, variables, requestOptions) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.rawRequest(endpoint, variables, requestOptions)];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                data: response.data
+                            }];
+                }
+            });
+        });
+    };
+    FirestoreClient.prototype.batchRequests = function (documents, requestOptions) {
         return __awaiter(this, void 0, void 0, function () {
             var response, _i, documents_1, _a, document_1, variables, _b, _c, _d;
             return __generator(this, function (_e) {
@@ -131,26 +130,25 @@ var Client = /** @class */ (function () {
             });
         });
     };
-    Client.prototype.setEndpoint = function (value) {
+    FirestoreClient.prototype.setEndpoint = function (value) {
         this.url = value;
         return true;
     };
-    Client.prototype.setHeader = function (key, value) {
+    FirestoreClient.prototype.setHeader = function (key, value) {
         var _a;
-        if (!this.options)
-            this.options = {};
-        if (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.headers))
-            this.options.headers = {};
-        this.options.headers[key] = value;
+        var headers = ((_a = this.options) === null || _a === void 0 ? void 0 : _a.headers) || {};
+        headers[key] = value;
+        //@ts-ignore
+        this.options.headers = headers;
         return this;
     };
-    Client.prototype.setHeaders = function (headers) {
+    FirestoreClient.prototype.setHeaders = function (headers) {
         for (var _i = 0, _a = Object.entries(headers); _i < _a.length; _i++) {
             var _b = _a[_i], key = _b[0], value = _b[1];
             this.setHeader(key, value);
         }
         return this;
     };
-    return Client;
+    return FirestoreClient;
 }());
-exports["default"] = Client;
+exports["default"] = FirestoreClient;

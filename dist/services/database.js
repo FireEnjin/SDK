@@ -50,12 +50,11 @@ var firestore_1 = require("firebase/firestore");
 var functions_1 = require("firebase/functions");
 var DatabaseService = /** @class */ (function () {
     function DatabaseService(options) {
-        var _a;
         this.watchers = {};
         this.app = (options === null || options === void 0 ? void 0 : options.app) || null;
         if (!this.app) {
             try {
-                this.app = (0, app_1.initializeApp)((_a = options === null || options === void 0 ? void 0 : options.config) === null || _a === void 0 ? void 0 : _a.firebase);
+                this.app = (0, app_1.initializeApp)(options === null || options === void 0 ? void 0 : options.config);
                 console.log("Initializing Firebase App...", this.app);
             }
             catch (e) {

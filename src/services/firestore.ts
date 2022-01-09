@@ -1,4 +1,4 @@
-import { DatabaseService } from "../../dist";
+import DatabaseService from "./database";
 
 declare type RequestDocument = string | any;
 
@@ -64,7 +64,7 @@ export default class FirestoreClient {
         method.toLowerCase() === "post" ? response : (response?.docs as any),
       headers,
       extensions: {
-        query: response.query,
+        query: response?.query,
         metadata: response?.metadata,
         size: response?.size,
       },

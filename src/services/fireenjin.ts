@@ -89,8 +89,7 @@ export class FireEnjin {
       this.host.type === "graphql" && typeof options?.getSdk === "function"
         ? options.getSdk(this.client, this.options?.onRequest)
         : null;
-    console.log(this.host);
-    if (window?.addEventListener) {
+    if (window) {
       window.addEventListener("fireenjinUpload", this.onUpload.bind(this));
       window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
       window.addEventListener("fireenjinFetch", this.onFetch.bind(this));
