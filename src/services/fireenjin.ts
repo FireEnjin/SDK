@@ -89,12 +89,16 @@ export class FireEnjin {
       this.host.type === "graphql" && typeof options?.getSdk === "function"
         ? options.getSdk(this.client, this.options?.onRequest)
         : null;
-    if (window) {
-      window.addEventListener("fireenjinUpload", (event) => {
+    if (document) {
+      document.addEventListener("fireenjinUpload", (event) => {
         this.onUpload(event);
       });
-      window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
-      window.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+      document.addEventListener("fireenjinSubmit", (event) => {
+        this.onSubmit(event);
+      });
+      document.addEventListener("fireenjinFetch", (event) => {
+        this.onFetch(event);
+      });
     }
   }
 
@@ -124,6 +128,9 @@ export class FireEnjin {
       event?: any;
       name?: string;
       endpoint?: string;
+      bubbles?: boolean;
+      cancelable?: boolean;
+      composed?: boolean;
     }
   ) {
     const endpoint = options?.endpoint || "upload";
@@ -138,6 +145,9 @@ export class FireEnjin {
       {
         event: options?.event || null,
         name: options?.name || endpoint,
+        bubbles: !!options?.bubbles,
+        cancelable: !!options?.cancelable,
+        composed: !!options?.composed,
         endpoint,
         cached: true,
         onError: this.options?.onError,
@@ -185,6 +195,9 @@ export class FireEnjin {
       dataPropsMap?: any;
       name?: string;
       headers?: HeadersInit;
+      bubbles?: boolean;
+      cancelable?: boolean;
+      composed?: boolean;
     }
   ) {
     let data: any = null;
@@ -206,6 +219,9 @@ export class FireEnjin {
         event,
         name,
         cached: true,
+        bubbles: !!options?.bubbles,
+        cancelable: !!options?.cancelable,
+        composed: !!options?.composed,
         onError: this.options?.onError,
         onSuccess: this.options?.onSuccess,
       });
@@ -223,6 +239,9 @@ export class FireEnjin {
         event,
         name,
         cached: false,
+        bubbles: !!options?.bubbles,
+        cancelable: !!options?.cancelable,
+        composed: !!options?.composed,
         onError: this.options?.onError,
         onSuccess: this.options?.onSuccess,
       }
@@ -255,6 +274,9 @@ export class FireEnjin {
     options?: {
       event?: Event;
       name?: string;
+      bubbles?: boolean;
+      cancelable?: boolean;
+      composed?: boolean;
     }
   ) {
     const event: any = options?.event || null;
@@ -277,6 +299,9 @@ export class FireEnjin {
         event,
         name,
         cached: false,
+        bubbles: !!options?.bubbles,
+        cancelable: !!options?.cancelable,
+        composed: !!options?.composed,
         onError: this.options?.onError,
         onSuccess: this.options?.onSuccess,
       }

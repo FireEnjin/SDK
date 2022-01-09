@@ -8,9 +8,12 @@ export default async function fireenjinSuccess(
     data?: any;
     name?: string;
     endpoint?: string;
+    bubbles?: boolean;
+    cancelable?: boolean;
+    composed?: boolean;
   },
   options?: {
-    onSuccess?: (data) => void;
+    onSuccess?: (data: any) => void;
   }
 ) {
   const detail = {
@@ -21,9 +24,13 @@ export default async function fireenjinSuccess(
     endpoint: input?.endpoint,
   };
   if (typeof options?.onSuccess === "function") options.onSuccess(detail);
-  document.body.dispatchEvent(
+  const el = input?.event?.target || document;
+  el.dispatchEvent(
     new CustomEvent("fireenjinSuccess", {
       detail,
+      bubbles: !!input?.bubbles,
+      cancelable: !!input?.cancelable,
+      composed: !!input?.composed,
     })
   );
 }

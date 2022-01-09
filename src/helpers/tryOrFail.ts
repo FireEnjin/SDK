@@ -9,8 +9,11 @@ export default async function tryOrFail(
     retries?: number;
     event?: any;
     cached?: boolean;
-    onError?: (error) => void;
-    onSuccess?: (data) => void;
+    bubbles?: boolean;
+    cancelable?: boolean;
+    composed?: boolean;
+    onError?: (error: any) => void;
+    onSuccess?: (data: any) => void;
   }
 ) {
   const baseData = {
@@ -18,6 +21,9 @@ export default async function tryOrFail(
     event: options?.event?.detail?.event,
     name: options?.name,
     endpoint: options?.endpoint,
+    bubbles: !!options?.bubbles,
+    cancelable: !!options?.cancelable,
+    composed: !!options?.composed,
   };
   try {
     const data = await fn();

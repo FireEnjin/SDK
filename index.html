@@ -22,16 +22,33 @@
             return result;
           },
         });
-        const res = await enjin.fetch("findTemplate", {
-          params: {
-            id: "test",
+        // const res = await enjin.fetch("findTemplate", {
+        //   params: {
+        //     id: "test",
+        //   },
+        // });
+
+        document
+          .querySelector("button")
+          .addEventListener("fireenjinError", (e) => {
+            console.log(e);
+          });
+      };
+
+      function fetchData(event) {
+        const fetchEvent = new CustomEvent("fireenjinFetch", {
+          detail: {
+            event,
+            endpoint: "testing",
+            name: "testing",
           },
         });
-      };
+        event.target.dispatchEvent(fetchEvent);
+      }
     </script>
     <script defer src="dist/index.js"></script>
   </head>
   <body>
-    Hello There...
+    <button onclick="fetchData(event)">Fetch</button>
   </body>
 </html>

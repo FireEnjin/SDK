@@ -7,9 +7,12 @@ export default async function fireenjinError(
     error?: any;
     name?: string;
     endpoint?: string;
+    bubbles?: boolean;
+    cancelable?: boolean;
+    composed?: boolean;
   },
   options?: {
-    onError?: (error) => void;
+    onError?: (error: any) => void;
   }
 ) {
   const detail = {
@@ -20,9 +23,13 @@ export default async function fireenjinError(
     endpoint: input?.endpoint,
   };
   if (typeof options?.onError === "function") options.onError(detail);
-  document.body.dispatchEvent(
+  const el = input?.event?.target || document;
+  el.dispatchEvent(
     new CustomEvent("fireenjinError", {
       detail,
+      bubbles: !!input?.bubbles,
+      cancelable: !!input?.cancelable,
+      composed: !!input?.composed,
     })
   );
 }

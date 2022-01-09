@@ -73,12 +73,16 @@ class FireEnjin {
             this.host.type === "graphql" && typeof (options === null || options === void 0 ? void 0 : options.getSdk) === "function"
                 ? options.getSdk(this.client, (_h = this.options) === null || _h === void 0 ? void 0 : _h.onRequest)
                 : null;
-        if (window) {
-            window.addEventListener("fireenjinUpload", (event) => {
+        if (document) {
+            document.addEventListener("fireenjinUpload", (event) => {
                 this.onUpload(event);
             });
-            window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
-            window.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+            document.addEventListener("fireenjinSubmit", (event) => {
+                this.onSubmit(event);
+            });
+            document.addEventListener("fireenjinFetch", (event) => {
+                this.onFetch(event);
+            });
         }
     }
     hash(input) {

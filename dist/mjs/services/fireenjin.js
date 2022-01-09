@@ -43,12 +43,16 @@ export class FireEnjin {
             this.host.type === "graphql" && typeof options?.getSdk === "function"
                 ? options.getSdk(this.client, this.options?.onRequest)
                 : null;
-        if (window) {
-            window.addEventListener("fireenjinUpload", (event) => {
+        if (document) {
+            document.addEventListener("fireenjinUpload", (event) => {
                 this.onUpload(event);
             });
-            window.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
-            window.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+            document.addEventListener("fireenjinSubmit", (event) => {
+                this.onSubmit(event);
+            });
+            document.addEventListener("fireenjinFetch", (event) => {
+                this.onFetch(event);
+            });
         }
     }
     hash(input) {

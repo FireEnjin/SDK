@@ -8,7 +8,8 @@ export default async function fireenjinError(input, options) {
     };
     if (typeof options?.onError === "function")
         options.onError(detail);
-    document.body.dispatchEvent(new CustomEvent("fireenjinError", {
+    const el = input?.event?.target || document;
+    el.dispatchEvent(new CustomEvent("fireenjinError", {
         detail,
     }));
 }

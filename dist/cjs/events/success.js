@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const setComponentProps_1 = __importDefault(require("../helpers/setComponentProps"));
 function fireenjinSuccess(input, options) {
-    var _a;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         const detail = {
             event: input === null || input === void 0 ? void 0 : input.event,
@@ -25,7 +25,8 @@ function fireenjinSuccess(input, options) {
         };
         if (typeof (options === null || options === void 0 ? void 0 : options.onSuccess) === "function")
             options.onSuccess(detail);
-        document.body.dispatchEvent(new CustomEvent("fireenjinSuccess", {
+        const el = ((_b = input === null || input === void 0 ? void 0 : input.event) === null || _b === void 0 ? void 0 : _b.target) || document;
+        el.dispatchEvent(new CustomEvent("fireenjinSuccess", {
             detail,
         }));
     });

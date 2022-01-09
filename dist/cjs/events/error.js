@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 function fireenjinError(input, options) {
-    var _a;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         const detail = {
             event: input === null || input === void 0 ? void 0 : input.event,
@@ -21,7 +21,8 @@ function fireenjinError(input, options) {
         };
         if (typeof (options === null || options === void 0 ? void 0 : options.onError) === "function")
             options.onError(detail);
-        document.body.dispatchEvent(new CustomEvent("fireenjinError", {
+        const el = ((_b = input === null || input === void 0 ? void 0 : input.event) === null || _b === void 0 ? void 0 : _b.target) || document;
+        el.dispatchEvent(new CustomEvent("fireenjinError", {
             detail,
         }));
     });
