@@ -4,14 +4,14 @@ import Session from "./session";
 
 export default class SessionManager {
   metadata = true;
-  session = null;
-  user = null;
-  forceOffline = true;
-  auth = null;
-  ref = null;
+  session: any = null;
+  user: any = null;
+  forceOffline: any = true;
+  auth: any = null;
+  ref: any;
   databaseConnected = null;
 
-  constructor(rdb, auth) {
+  constructor(rdb: any, auth: any) {
     this.auth = auth;
     this.user = auth?.currentUser;
     this.ref = ref(rdb, "_firebase_extensions/presence");
@@ -23,7 +23,7 @@ export default class SessionManager {
       }
       this.createSessionIfNeeded();
     });
-    this.auth.onAuthStateChanged((newUser) => {
+    this.auth.onAuthStateChanged((newUser: any) => {
       if (this.session && (!newUser || newUser.uid !== this.user.uid)) {
         // Don't bother ending the session here since the client is no longer
         // authenticated to RTDB as the original user. Writes would be denied.
@@ -44,7 +44,7 @@ export default class SessionManager {
     return id;
   }
 
-  setMetadata(newMetadata) {
+  setMetadata(newMetadata: any) {
     if (newMetadata != null) {
       this.metadata = newMetadata;
     } else {
@@ -95,7 +95,7 @@ export default class SessionManager {
     }
   }
 
-  onSessionError(err) {
+  onSessionError(err: any) {
     console.warn("Error updating presence", err);
     this.session.end();
     this.session = null;

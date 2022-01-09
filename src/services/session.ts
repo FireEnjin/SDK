@@ -6,12 +6,12 @@ import {
 } from "firebase/database";
 
 export default class SessionService {
-  ref: DatabaseReference = null;
-  metadata = null;
-  onError = null;
-  setMetadataPromise = null;
+  ref: DatabaseReference;
+  metadata: any;
+  onError: any;
+  setMetadataPromise: any;
 
-  constructor(ref: DatabaseReference, metadata, onError) {
+  constructor(ref: DatabaseReference, metadata: any, onError: any) {
     this.ref = ref;
     this.metadata = metadata;
     this.onError = onError;
@@ -25,7 +25,7 @@ export default class SessionService {
       }, onError);
   }
 
-  updateMetadata(newMetadata) {
+  updateMetadata(newMetadata: any) {
     this.metadata = newMetadata;
     if (this.setMetadataPromise) {
       this.setMetadataPromise = this.setMetadataPromise.then(() => {

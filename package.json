@@ -2,14 +2,17 @@
   "name": "@fireenjin/sdk",
   "version": "1.1.0",
   "private": false,
+  "type": "module",
   "description": "Roll your own SDK",
   "main": "dist/index.js",
+  "module": "dist/mjs/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/"
   ],
   "scripts": {
-    "build": "tsc src/index.ts --outDir dist --declaration",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && npm run rollup",
+    "rollup": "rollup -c rollup.config.js",
     "browser": "tsc --project tsconfig.browser.json",
     "test": "jest",
     "publish": "npm run build",
@@ -34,10 +37,12 @@
     "graphql-request": "^3.7.0",
     "graphql-tag": "^2.12.6",
     "isomorphic-unfetch": "^3.1.0",
-    "localforage": "^1.10.0"
+    "localforage": "^1.10.0",
+    "rollup": "^2.63.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.16.7",
+    "@rollup/plugin-typescript": "^8.3.0",
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^8.0.3",
@@ -46,6 +51,7 @@
     "babel-jest": "^27.4.5",
     "firebase": "^9.6.2",
     "jest": "^27.4.5",
+    "rollup-plugin-uglify": "^6.0.4",
     "rxjs": "^7.5.1",
     "semantic-release": "^18.0.0",
     "ts-jest": "^27.1.2",

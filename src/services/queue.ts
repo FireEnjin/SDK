@@ -10,12 +10,12 @@ export default class Queue {
     localKey?: string;
     queue?: Promise<any>[];
     historyLimit?: number;
-    history?: any[];
+    history?: { createdAt?: string; data?: any }[];
   }) {
     this.localKey = options?.localKey || "fireenjin:queue";
     this.queue = options?.queue || [];
     this.historyLimit = options?.historyLimit || 0;
-    this.history = options?.history || null;
+    this.history = options?.history || [];
     if (!this.history) {
       localforage?.getItem?.(`${this.localKey}:history`)?.then?.((data) => {
         console.log(data);
