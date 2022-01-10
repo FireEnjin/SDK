@@ -39,6 +39,9 @@ export declare class FireEnjin {
     host: FireEnjinHost;
     options: FireEnjinOptions;
     constructor(options: FireEnjinOptions);
+    private onUpload;
+    private onSubmit;
+    private onFetch;
     private hash;
     upload(input: {
         id?: string | number;
@@ -54,7 +57,6 @@ export declare class FireEnjin {
         cancelable?: boolean;
         composed?: boolean;
     }): Promise<any>;
-    private onUpload;
     fetch(endpoint: string, variables?: any, options?: {
         cacheKey?: string;
         disableCache?: boolean;
@@ -66,7 +68,6 @@ export declare class FireEnjin {
         cancelable?: boolean;
         composed?: boolean;
     }): Promise<any>;
-    private onFetch;
     submit(endpoint: string, variables?: any, options?: {
         event?: Event;
         name?: string;
@@ -74,7 +75,6 @@ export declare class FireEnjin {
         cancelable?: boolean;
         composed?: boolean;
     }): Promise<any>;
-    private onSubmit;
     setHeader(key: string, value: string): false | Client | FirestoreClient | GraphQLClient;
     setHeaders(headers: any): false | Client | FirestoreClient | GraphQLClient;
     setConnection(nameUrlOrIndex: string | number): FireEnjinHost;

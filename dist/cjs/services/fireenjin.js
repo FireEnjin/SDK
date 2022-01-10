@@ -85,6 +85,73 @@ class FireEnjin {
             });
         }
     }
+    onUpload(event) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onUpload) === "function")
+                this.options.onUpload(event);
+            if (!((_c = (_b = event.detail) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.encodedContent) ||
+                typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onUpload) === "function")
+                return false;
+            const data = yield this.upload({
+                id: (_e = event.detail.data) === null || _e === void 0 ? void 0 : _e.id,
+                path: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.path,
+                fileName: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.fileName,
+                file: (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.encodedContent,
+                type: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.type,
+            }, {
+                event,
+                name: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.name,
+                endpoint: (_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.endpoint,
+                bubbles: (_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.bubbles,
+                cancelable: (_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.cancelable,
+                composed: (_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.composed,
+            });
+            if (event === null || event === void 0 ? void 0 : event.target)
+                event.target.value = (data === null || data === void 0 ? void 0 : data.url) || null;
+            return data;
+        });
+    }
+    onSubmit(event) {
+        var _a, _b, _c, _d, _e, _f, _g;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!event ||
+                !event.detail ||
+                !event.detail.endpoint ||
+                event.detail.disableSubmit)
+                return false;
+            return this.submit(event.detail.endpoint, {
+                event,
+                id: (_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.id,
+                data: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.data,
+                params: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.params,
+                query: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.query,
+                bubbles: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.bubbles,
+                cancelable: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.cancelable,
+                composed: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.composed,
+            });
+        });
+    }
+    onFetch(event) {
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!event ||
+                !event.detail ||
+                !event.detail.endpoint ||
+                event.detail.disableFetch)
+                return false;
+            return this.fetch(event.detail.endpoint, ((_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.params) || {}, {
+                event,
+                dataPropsMap: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.dataPropsMap,
+                name: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.name,
+                cacheKey: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.cacheKey,
+                disableCache: !!((_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.disableCache),
+                bubbles: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.bubbles,
+                cancelable: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.cancelable,
+                composed: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.composed,
+            });
+        });
+    }
     hash(input) {
         var hash = 0, i, chr;
         if (input.length === 0)
@@ -107,38 +174,14 @@ class FireEnjin {
             }), {
                 event: (options === null || options === void 0 ? void 0 : options.event) || null,
                 name: (options === null || options === void 0 ? void 0 : options.name) || endpoint,
-                bubbles: !!(options === null || options === void 0 ? void 0 : options.bubbles),
-                cancelable: !!(options === null || options === void 0 ? void 0 : options.cancelable),
-                composed: !!(options === null || options === void 0 ? void 0 : options.composed),
+                bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
+                cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
+                composed: options === null || options === void 0 ? void 0 : options.composed,
                 endpoint,
                 cached: true,
                 onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
                 onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
             });
-        });
-    }
-    onUpload(event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onUpload) === "function")
-                this.options.onUpload(event);
-            if (!((_c = (_b = event.detail) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.encodedContent) ||
-                typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onUpload) === "function")
-                return false;
-            const data = yield this.upload({
-                id: (_e = event.detail.data) === null || _e === void 0 ? void 0 : _e.id,
-                path: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.path,
-                fileName: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.fileName,
-                file: (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.encodedContent,
-                type: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.type,
-            }, {
-                event: (_k = event.detail) === null || _k === void 0 ? void 0 : _k.event,
-                name: (_l = event.detail) === null || _l === void 0 ? void 0 : _l.name,
-                endpoint: (_m = event.detail) === null || _m === void 0 ? void 0 : _m.endpoint,
-            });
-            if (event === null || event === void 0 ? void 0 : event.target)
-                event.target.value = (data === null || data === void 0 ? void 0 : data.url) || null;
-            return data;
         });
     }
     fetch(endpoint, variables, options) {
@@ -160,9 +203,9 @@ class FireEnjin {
                     event,
                     name,
                     cached: true,
-                    bubbles: !!(options === null || options === void 0 ? void 0 : options.bubbles),
-                    cancelable: !!(options === null || options === void 0 ? void 0 : options.cancelable),
-                    composed: !!(options === null || options === void 0 ? void 0 : options.composed),
+                    bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
+                    cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
+                    composed: options === null || options === void 0 ? void 0 : options.composed,
                     onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
                     onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
                 });
@@ -179,30 +222,13 @@ class FireEnjin {
                 event,
                 name,
                 cached: false,
-                bubbles: !!(options === null || options === void 0 ? void 0 : options.bubbles),
-                cancelable: !!(options === null || options === void 0 ? void 0 : options.cancelable),
-                composed: !!(options === null || options === void 0 ? void 0 : options.composed),
+                bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
+                cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
+                composed: options === null || options === void 0 ? void 0 : options.composed,
                 onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
                 onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess,
             });
             return data;
-        });
-    }
-    onFetch(event) {
-        var _a, _b, _c, _d, _e, _f;
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!event ||
-                !event.detail ||
-                !event.detail.endpoint ||
-                event.detail.disableFetch)
-                return false;
-            return this.fetch(event.detail.endpoint, ((_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.params) || {}, {
-                event: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.event,
-                dataPropsMap: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.dataPropsMap,
-                name: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.name,
-                cacheKey: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.cacheKey,
-                disableCache: !!((_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.disableCache),
-            });
         });
     }
     submit(endpoint, variables, options) {
@@ -227,27 +253,11 @@ class FireEnjin {
                 event,
                 name,
                 cached: false,
-                bubbles: !!(options === null || options === void 0 ? void 0 : options.bubbles),
-                cancelable: !!(options === null || options === void 0 ? void 0 : options.cancelable),
-                composed: !!(options === null || options === void 0 ? void 0 : options.composed),
+                bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
+                cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
+                composed: options === null || options === void 0 ? void 0 : options.composed,
                 onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
                 onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
-            });
-        });
-    }
-    onSubmit(event) {
-        var _a, _b, _c, _d;
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!event ||
-                !event.detail ||
-                !event.detail.endpoint ||
-                event.detail.disableSubmit)
-                return false;
-            return this.submit(event.detail.endpoint, {
-                id: (_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.id,
-                data: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.data,
-                params: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.params,
-                query: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.query,
             });
         });
     }

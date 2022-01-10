@@ -55,6 +55,64 @@ export class FireEnjin {
             });
         }
     }
+    async onUpload(event) {
+        if (typeof this.options?.onUpload === "function")
+            this.options.onUpload(event);
+        if (!event.detail?.data?.encodedContent ||
+            typeof this.options?.onUpload === "function")
+            return false;
+        const data = await this.upload({
+            id: event.detail.data?.id,
+            path: event.detail.data?.path,
+            fileName: event.detail.data?.fileName,
+            file: event.detail.data?.encodedContent,
+            type: event.detail.data?.type,
+        }, {
+            event,
+            name: event?.detail?.name,
+            endpoint: event?.detail?.endpoint,
+            bubbles: event?.detail?.bubbles,
+            cancelable: event?.detail?.cancelable,
+            composed: event?.detail?.composed,
+        });
+        if (event?.target)
+            event.target.value = data?.url || null;
+        return data;
+    }
+    async onSubmit(event) {
+        if (!event ||
+            !event.detail ||
+            !event.detail.endpoint ||
+            event.detail.disableSubmit)
+            return false;
+        return this.submit(event.detail.endpoint, {
+            event,
+            id: event?.detail?.id,
+            data: event?.detail?.data,
+            params: event?.detail?.params,
+            query: event?.detail?.query,
+            bubbles: event?.detail?.bubbles,
+            cancelable: event?.detail?.cancelable,
+            composed: event?.detail?.composed,
+        });
+    }
+    async onFetch(event) {
+        if (!event ||
+            !event.detail ||
+            !event.detail.endpoint ||
+            event.detail.disableFetch)
+            return false;
+        return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
+            event,
+            dataPropsMap: event?.detail?.dataPropsMap,
+            name: event?.detail?.name,
+            cacheKey: event?.detail?.cacheKey,
+            disableCache: !!event?.detail?.disableCache,
+            bubbles: event?.detail?.bubbles,
+            cancelable: event?.detail?.cancelable,
+            composed: event?.detail?.composed,
+        });
+    }
     hash(input) {
         var hash = 0, i, chr;
         if (input.length === 0)
@@ -73,35 +131,14 @@ export class FireEnjin {
             : `${this.host.url}/${endpoint}`, input), {
             event: options?.event || null,
             name: options?.name || endpoint,
-            bubbles: !!options?.bubbles,
-            cancelable: !!options?.cancelable,
-            composed: !!options?.composed,
+            bubbles: options?.bubbles,
+            cancelable: options?.cancelable,
+            composed: options?.composed,
             endpoint,
             cached: true,
             onError: this.options?.onError,
             onSuccess: this.options?.onSuccess,
         });
-    }
-    async onUpload(event) {
-        if (typeof this.options?.onUpload === "function")
-            this.options.onUpload(event);
-        if (!event.detail?.data?.encodedContent ||
-            typeof this.options?.onUpload === "function")
-            return false;
-        const data = await this.upload({
-            id: event.detail.data?.id,
-            path: event.detail.data?.path,
-            fileName: event.detail.data?.fileName,
-            file: event.detail.data?.encodedContent,
-            type: event.detail.data?.type,
-        }, {
-            event: event.detail?.event,
-            name: event.detail?.name,
-            endpoint: event.detail?.endpoint,
-        });
-        if (event?.target)
-            event.target.value = data?.url || null;
-        return data;
     }
     async fetch(endpoint, variables, options) {
         let data = null;
@@ -120,9 +157,9 @@ export class FireEnjin {
                 event,
                 name,
                 cached: true,
-                bubbles: !!options?.bubbles,
-                cancelable: !!options?.cancelable,
-                composed: !!options?.composed,
+                bubbles: options?.bubbles,
+                cancelable: options?.cancelable,
+                composed: options?.composed,
                 onError: this.options?.onError,
                 onSuccess: this.options?.onSuccess,
             });
@@ -136,27 +173,13 @@ export class FireEnjin {
             event,
             name,
             cached: false,
-            bubbles: !!options?.bubbles,
-            cancelable: !!options?.cancelable,
-            composed: !!options?.composed,
+            bubbles: options?.bubbles,
+            cancelable: options?.cancelable,
+            composed: options?.composed,
             onError: this.options?.onError,
             onSuccess: this.options?.onSuccess,
         });
         return data;
-    }
-    async onFetch(event) {
-        if (!event ||
-            !event.detail ||
-            !event.detail.endpoint ||
-            event.detail.disableFetch)
-            return false;
-        return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
-            event: event?.detail?.event,
-            dataPropsMap: event?.detail?.dataPropsMap,
-            name: event?.detail?.name,
-            cacheKey: event?.detail?.cacheKey,
-            disableCache: !!event?.detail?.disableCache,
-        });
     }
     async submit(endpoint, variables, options) {
         const event = options?.event || null;
@@ -175,24 +198,11 @@ export class FireEnjin {
             event,
             name,
             cached: false,
-            bubbles: !!options?.bubbles,
-            cancelable: !!options?.cancelable,
-            composed: !!options?.composed,
+            bubbles: options?.bubbles,
+            cancelable: options?.cancelable,
+            composed: options?.composed,
             onError: this.options?.onError,
             onSuccess: this.options?.onSuccess,
-        });
-    }
-    async onSubmit(event) {
-        if (!event ||
-            !event.detail ||
-            !event.detail.endpoint ||
-            event.detail.disableSubmit)
-            return false;
-        return this.submit(event.detail.endpoint, {
-            id: event?.detail?.id,
-            data: event?.detail?.data,
-            params: event?.detail?.params,
-            query: event?.detail?.query,
         });
     }
     setHeader(key, value) {
