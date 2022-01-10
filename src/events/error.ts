@@ -23,7 +23,11 @@ export default async function fireenjinError(
     endpoint: input?.endpoint,
   };
   if (typeof options?.onError === "function") options.onError(detail);
-  const el = input?.event?.target || document;
+  const el =
+    input?.event?.target ||
+    input?.event?.detail?.target ||
+    input?.event?.detail?.event?.target ||
+    document.body;
   el.dispatchEvent(
     new CustomEvent("fireenjinError", {
       detail,

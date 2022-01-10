@@ -18,7 +18,7 @@ export default async function tryOrFail(
 ) {
   const baseData = {
     cached: !!options?.cached,
-    event: options?.event?.detail?.event,
+    event: options?.event,
     name: options?.name,
     endpoint: options?.endpoint,
     bubbles: !!options?.bubbles ?? true,

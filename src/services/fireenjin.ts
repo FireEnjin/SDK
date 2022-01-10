@@ -102,7 +102,7 @@ export class FireEnjin {
     }
   }
 
-  hash(input: string) {
+  private hash(input: string) {
     var hash = 0,
       i,
       chr;
