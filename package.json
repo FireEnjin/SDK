@@ -11,7 +11,7 @@
     "dist/"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && npm run rollup",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && tsc src/index.ts --outDir dist --declaration && npm run rollup",
     "rollup": "rollup -c rollup.config.js",
     "browser": "tsc --project tsconfig.browser.json",
     "test": "jest",

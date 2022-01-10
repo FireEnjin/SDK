@@ -1,4 +1,4 @@
-import { FireEnjinSuccessCallback } from "interfaces";
+import { FireEnjinSuccessCallback } from "../interfaces";
 export default function fireenjinSuccess(input?: {
     event?: CustomEvent;
     cached?: boolean;

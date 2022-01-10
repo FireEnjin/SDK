@@ -1,4 +1,7 @@
-import { FireEnjinErrorCallback, FireEnjinSuccessCallback } from "interfaces";
+import {
+  FireEnjinErrorCallback,
+  FireEnjinSuccessCallback,
+} from "../interfaces";
 import fireenjinError from "../events/error";
 import fireenjinSuccess from "../events/success";
 

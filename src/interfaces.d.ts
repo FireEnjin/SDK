@@ -1,3 +1,7 @@
+import { GraphQLClient } from "graphql-request";
+import DatabaseService from "./services/database";
+import Client from "./services/client";
+
 type SdkFunctionWrapper = <T>(
   action: (requestHeaders?: Record<string, string>) => Promise<T>,
   operationName: string

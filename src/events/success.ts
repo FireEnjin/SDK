@@ -1,4 +1,4 @@
-import { FireEnjinSuccessEvent, FireEnjinSuccessCallback } from "interfaces";
+import { FireEnjinSuccessEvent, FireEnjinSuccessCallback } from "../interfaces";
 import setComponentProps from "../helpers/setComponentProps";
 
 export default async function fireenjinSuccess(

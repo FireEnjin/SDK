@@ -1,4 +1,4 @@
-import { FireEnjinErrorCallback, FireEnjinErrorEvent } from "interfaces";
+import { FireEnjinErrorCallback, FireEnjinErrorEvent } from "../interfaces";
 
 export default async function fireenjinError(
   input?: {

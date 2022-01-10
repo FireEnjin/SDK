@@ -1,4 +1,4 @@
-import { FireEnjinErrorCallback, FireEnjinSuccessCallback } from "interfaces";
+import { FireEnjinErrorCallback, FireEnjinSuccessCallback } from "../interfaces";
 export default function tryOrFail(fn: () => Promise<any>, options?: {
     endpoint?: string;
     name?: string;
