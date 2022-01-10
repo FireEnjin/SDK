@@ -3,11 +3,11 @@ import fireenjinSuccess from "../events/success";
 export default async function tryOrFail(fn, options) {
     const baseData = {
         cached: !!options?.cached,
-        event: options?.event?.detail?.event,
+        event: options?.event,
         name: options?.name,
         endpoint: options?.endpoint,
-        bubbles: !!options?.bubbles ?? true,
-        cancelable: !!options?.cancelable ?? true,
+        bubbles: options?.bubbles ?? true,
+        cancelable: options?.cancelable ?? true,
         composed: !!options?.composed,
     };
     try {

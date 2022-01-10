@@ -9,7 +9,10 @@ export default async function fireenjinSuccess(input, options) {
     };
     if (typeof options?.onSuccess === "function")
         options.onSuccess(detail);
-    const el = input?.event?.target || document;
+    const el = input?.event?.target ||
+        input?.event?.detail?.target ||
+        input?.event?.detail?.event?.target ||
+        document;
     el.dispatchEvent(new CustomEvent("fireenjinSuccess", {
         detail,
         bubbles: !!input?.bubbles,

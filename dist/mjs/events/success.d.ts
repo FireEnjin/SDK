@@ -1,5 +1,5 @@
 export default function fireenjinSuccess(input?: {
-    event?: Event;
+    event?: CustomEvent;
     cached?: boolean;
     dataPropsMap?: any;
     data?: any;

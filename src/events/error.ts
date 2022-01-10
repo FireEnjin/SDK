@@ -3,7 +3,7 @@ import setComponentProps from "../helpers/setComponentProps";
 export default async function fireenjinError(
   input?: {
     cached?: boolean;
-    event?: Event;
+    event?: CustomEvent;
     error?: any;
     name?: string;
     endpoint?: string;
@@ -27,7 +27,7 @@ export default async function fireenjinError(
     input?.event?.target ||
     input?.event?.detail?.target ||
     input?.event?.detail?.event?.target ||
-    document.body;
+    document;
   el.dispatchEvent(
     new CustomEvent("fireenjinError", {
       detail,

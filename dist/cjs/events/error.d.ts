@@ -1,6 +1,6 @@
 export default function fireenjinError(input?: {
     cached?: boolean;
-    event?: Event;
+    event?: CustomEvent;
     error?: any;
     name?: string;
     endpoint?: string;

@@ -21,8 +21,8 @@ export default async function tryOrFail(
     event: options?.event,
     name: options?.name,
     endpoint: options?.endpoint,
-    bubbles: !!options?.bubbles ?? true,
-    cancelable: !!options?.cancelable ?? true,
+    bubbles: options?.bubbles ?? true,
+    cancelable: options?.cancelable ?? true,
     composed: !!options?.composed,
   };
   try {

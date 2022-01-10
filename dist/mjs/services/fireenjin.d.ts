@@ -39,7 +39,7 @@ export declare class FireEnjin {
     host: FireEnjinHost;
     options: FireEnjinOptions;
     constructor(options: FireEnjinOptions);
-    hash(input: string): number;
+    private hash;
     upload(input: {
         id?: string | number;
         path?: string;

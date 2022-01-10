@@ -2,7 +2,7 @@ import setComponentProps from "../helpers/setComponentProps";
 
 export default async function fireenjinSuccess(
   input?: {
-    event?: any;
+    event?: CustomEvent;
     cached?: boolean;
     dataPropsMap?: any;
     data?: any;
@@ -28,7 +28,7 @@ export default async function fireenjinSuccess(
     input?.event?.target ||
     input?.event?.detail?.target ||
     input?.event?.detail?.event?.target ||
-    document.body;
+    document;
   el.dispatchEvent(
     new CustomEvent("fireenjinSuccess", {
       detail,
