@@ -1,3 +1,4 @@
+import { FireEnjinSuccessEvent, FireEnjinSuccessCallback } from "interfaces";
 import setComponentProps from "../helpers/setComponentProps";
 
 export default async function fireenjinSuccess(
@@ -13,15 +14,18 @@ export default async function fireenjinSuccess(
     composed?: boolean;
   },
   options?: {
-    onSuccess?: (data: any) => void;
+    onSuccess?: FireEnjinSuccessCallback;
   }
 ) {
-  const detail = {
+  const detail: FireEnjinSuccessEvent = {
     event: input?.event,
     data: await setComponentProps(input?.dataPropsMap, input?.data),
-    target: input?.event?.target,
     name: input?.name,
     endpoint: input?.endpoint,
+    bubbles: !!input?.bubbles,
+    cancelable: !!input?.cancelable,
+    composed: !!input?.composed,
+    cached: !!input?.cached,
   };
   if (typeof options?.onSuccess === "function") options.onSuccess(detail);
   const el =

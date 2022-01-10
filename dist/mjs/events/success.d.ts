@@ -1,3 +1,4 @@
+import { FireEnjinSuccessCallback } from "interfaces";
 export default function fireenjinSuccess(input?: {
     event?: CustomEvent;
     cached?: boolean;
@@ -9,5 +10,5 @@ export default function fireenjinSuccess(input?: {
     cancelable?: boolean;
     composed?: boolean;
 }, options?: {
-    onSuccess?: (data: any) => void;
+    onSuccess?: FireEnjinSuccessCallback;
 }): Promise<void>;

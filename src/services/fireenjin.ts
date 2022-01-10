@@ -1,58 +1,31 @@
 import * as localforage from "localforage";
 import { GraphQLClient } from "graphql-request";
 
-import Client from "./client";
+import {
+  FireEnjinFetchEvent,
+  FireEnjinFetchInput,
+  FireEnjinFetchOptions,
+  FireEnjinHost,
+  FireEnjinMethodOptions,
+  FireEnjinOptions,
+  FireEnjinSubmitEvent,
+  FireEnjinSubmitInput,
+  FireEnjinSubmitOptions,
+  FireEnjinUploadEvent,
+  FireEnjinUploadInput,
+} from "../interfaces";
 import tryOrFail from "../helpers/tryOrFail";
+import Client from "./client";
 import DatabaseService from "./database";
 import FirestoreClient from "./firestore";
 
-type SdkFunctionWrapper = <T>(
-  action: (requestHeaders?: Record<string, string>) => Promise<T>,
-  operationName: string
-) => Promise<T>;
-
-export type FireEnjinEndpoints = {
-  [endpoint: string]: (variables: any, requestHeaders: any) => Promise<any>;
-};
-
-export type FireEnjinHost = {
-  url: string;
-  db?: DatabaseService;
-  name?: string;
-  readOnly?: boolean;
-  type?: "firebase" | "graphql" | "rest";
-  headers?: HeadersInit;
-  retries?: number;
-  priority?: number;
-  auth?: any;
-  endpoints?: FireEnjinEndpoints;
-};
-
-export type FireEnjinOptions = {
-  getSdk?: (
-    client?: Client | GraphQLClient,
-    withWrapper?: SdkFunctionWrapper
-  ) => FireEnjinEndpoints;
-  host?: string;
-  connections?: FireEnjinHost[];
-  token?: string;
-  onRequest?: SdkFunctionWrapper;
-  onError?: (error: any) => void;
-  onSuccess?: (data: any) => void;
-  onUpload?: (data: any) => void;
-  headers?: HeadersInit;
-  uploadUrl?: string;
-  debug?: boolean;
-  disableCache?: boolean;
-  emulate?: boolean;
-};
-
-export class FireEnjin {
+export default class FireEnjin {
   client: Client | GraphQLClient | FirestoreClient;
   sdk: any = {};
   host: FireEnjinHost = {
     url: "http://localhost:4000",
   };
+  currentConnection = 0;
   options: FireEnjinOptions;
 
   constructor(options: FireEnjinOptions) {
@@ -91,18 +64,18 @@ export class FireEnjin {
         : null;
     if (document) {
       document.addEventListener("fireenjinUpload", (event) => {
-        this.onUpload(event);
+        this.onUpload(event as CustomEvent<FireEnjinUploadEvent>);
       });
       document.addEventListener("fireenjinSubmit", (event) => {
-        this.onSubmit(event);
+        this.onSubmit(event as CustomEvent<FireEnjinSubmitEvent>);
       });
       document.addEventListener("fireenjinFetch", (event) => {
-        this.onFetch(event);
+        this.onFetch(event as CustomEvent<FireEnjinFetchEvent>);
       });
     }
   }
 
-  private async onUpload(event: any) {
+  private async onUpload(event: CustomEvent<FireEnjinUploadEvent>) {
     if (typeof this.options?.onUpload === "function")
       this.options.onUpload(event);
     if (
@@ -129,12 +102,12 @@ export class FireEnjin {
       }
     );
 
-    if (event?.target) event.target.value = data?.url || null;
+    if (event?.target) (event as any).target.value = data?.url || null;
 
     return data;
   }
 
-  private async onSubmit(event: any) {
+  private async onSubmit(event: CustomEvent<FireEnjinSubmitEvent>) {
     if (
       !event ||
       !event.detail ||
@@ -155,7 +128,7 @@ export class FireEnjin {
     });
   }
 
-  private async onFetch(event: any) {
+  private async onFetch(event: CustomEvent<FireEnjinFetchEvent>) {
     if (
       !event ||
       !event.detail ||
@@ -190,23 +163,7 @@ export class FireEnjin {
     return hash;
   }
 
-  async upload(
-    input: {
-      id?: string | number;
-      path?: string;
-      fileName?: string;
-      file?: any;
-      type?: string;
-    },
-    options?: {
-      event?: any;
-      name?: string;
-      endpoint?: string;
-      bubbles?: boolean;
-      cancelable?: boolean;
-      composed?: boolean;
-    }
-  ) {
+  async upload(input: FireEnjinUploadInput, options?: FireEnjinMethodOptions) {
     const endpoint = options?.endpoint || "upload";
     return tryOrFail(
       async () =>
@@ -232,18 +189,8 @@ export class FireEnjin {
 
   async fetch(
     endpoint: string,
-    variables?: any,
-    options?: {
-      cacheKey?: string;
-      disableCache?: boolean;
-      event?: Event;
-      dataPropsMap?: any;
-      name?: string;
-      headers?: HeadersInit;
-      bubbles?: boolean;
-      cancelable?: boolean;
-      composed?: boolean;
-    }
+    input?: FireEnjinFetchInput,
+    options?: FireEnjinFetchOptions
   ) {
     let data: any = null;
     const event: any = options?.event || null;
@@ -251,12 +198,12 @@ export class FireEnjin {
     const localKey = options?.cacheKey
       ? options.cacheKey
       : `${endpoint}_${
-          variables?.id
-            ? `${variables.id}:`
-            : variables?.params
-            ? this.hash(JSON.stringify(Object.values(variables.params)))
+          input?.id
+            ? `${input.id}:`
+            : input?.params
+            ? this.hash(JSON.stringify(Object.values(input.params)))
             : ""
-        }${this.hash(JSON.stringify(variables || {}))}`;
+        }${this.hash(JSON.stringify(input || {}))}`;
 
     if (!options?.disableCache) {
       data = await tryOrFail(async () => localforage.getItem(localKey), {
@@ -275,10 +222,10 @@ export class FireEnjin {
     data = await tryOrFail(
       async () =>
         this.host?.type === "graphql"
-          ? variables?.query
-            ? this.client.request(variables?.query, variables?.params)
-            : this.sdk[endpoint](variables, options?.headers)
-          : this.client.request(endpoint, variables),
+          ? input?.query
+            ? this.client.request(input?.query, input?.params)
+            : this.sdk[endpoint](input, options?.headers)
+          : this.client.request(endpoint, input),
       {
         endpoint,
         event,
@@ -297,14 +244,8 @@ export class FireEnjin {
 
   async submit(
     endpoint: string,
-    variables?: any,
-    options?: {
-      event?: Event;
-      name?: string;
-      bubbles?: boolean;
-      cancelable?: boolean;
-      composed?: boolean;
-    }
+    input?: FireEnjinSubmitInput,
+    options?: FireEnjinSubmitOptions
   ) {
     const event: any = options?.event || null;
     const name: string = options?.name || (null as any);
@@ -312,13 +253,13 @@ export class FireEnjin {
     return tryOrFail(
       async () =>
         this.host?.type === "graphql"
-          ? variables?.query
-            ? this.client.request(variables.query, variables.params)
+          ? input?.query
+            ? this.client.request(input.query, input.params)
             : this.sdk[endpoint]({
-                id: variables.id,
-                data: variables.data,
+                id: input?.id,
+                data: input?.data,
               })
-          : this.client.request(endpoint, variables, {
+          : this.client.request(endpoint, input, {
               method: "POST",
             }),
       {
@@ -352,11 +293,16 @@ export class FireEnjin {
   setConnection(nameUrlOrIndex: string | number) {
     this.host = (
       typeof nameUrlOrIndex === "string"
-        ? (this.options?.connections || []).find(
-            (connection) =>
+        ? (this.options?.connections || []).find((connection, index) => {
+            if (
               connection?.name === nameUrlOrIndex ||
               connection?.url === nameUrlOrIndex
-          )
+            ) {
+              this.currentConnection = index;
+
+              return connection;
+            }
+          })
         : this.options?.connections?.[nameUrlOrIndex]
     ) as FireEnjinHost;
 

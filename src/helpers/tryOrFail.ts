@@ -1,3 +1,4 @@
+import { FireEnjinErrorCallback, FireEnjinSuccessCallback } from "interfaces";
 import fireenjinError from "../events/error";
 import fireenjinSuccess from "../events/success";
 
@@ -12,8 +13,8 @@ export default async function tryOrFail(
     bubbles?: boolean;
     cancelable?: boolean;
     composed?: boolean;
-    onError?: (error: any) => void;
-    onSuccess?: (data: any) => void;
+    onError?: FireEnjinErrorCallback;
+    onSuccess?: FireEnjinSuccessCallback;
   }
 ) {
   const baseData = {

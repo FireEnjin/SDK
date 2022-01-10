@@ -31,11 +31,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FireEnjin = void 0;
 const localforage = __importStar(require("localforage"));
 const graphql_request_1 = require("graphql-request");
-const client_1 = __importDefault(require("./client"));
 const tryOrFail_1 = __importDefault(require("../helpers/tryOrFail"));
+const client_1 = __importDefault(require("./client"));
 const database_1 = __importDefault(require("./database"));
 const firestore_1 = __importDefault(require("./firestore"));
 class FireEnjin {
@@ -45,6 +44,7 @@ class FireEnjin {
         this.host = {
             url: "http://localhost:4000",
         };
+        this.currentConnection = 0;
         this.options = options || {};
         const headers = Object.assign({ Authorization: (options === null || options === void 0 ? void 0 : options.token) ? `Bearer ${options.token}` : "" }, (options.headers ? options.headers : {}));
         this.host = ((_a = options === null || options === void 0 ? void 0 : options.connections) === null || _a === void 0 ? void 0 : _a.length)
@@ -184,7 +184,7 @@ class FireEnjin {
             });
         });
     }
-    fetch(endpoint, variables, options) {
+    fetch(endpoint, input, options) {
         var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             let data = null;
@@ -192,11 +192,11 @@ class FireEnjin {
             const name = (options === null || options === void 0 ? void 0 : options.name) || null;
             const localKey = (options === null || options === void 0 ? void 0 : options.cacheKey)
                 ? options.cacheKey
-                : `${endpoint}_${(variables === null || variables === void 0 ? void 0 : variables.id)
-                    ? `${variables.id}:`
-                    : (variables === null || variables === void 0 ? void 0 : variables.params)
-                        ? this.hash(JSON.stringify(Object.values(variables.params)))
-                        : ""}${this.hash(JSON.stringify(variables || {}))}`;
+                : `${endpoint}_${(input === null || input === void 0 ? void 0 : input.id)
+                    ? `${input.id}:`
+                    : (input === null || input === void 0 ? void 0 : input.params)
+                        ? this.hash(JSON.stringify(Object.values(input.params)))
+                        : ""}${this.hash(JSON.stringify(input || {}))}`;
             if (!(options === null || options === void 0 ? void 0 : options.disableCache)) {
                 data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () { return localforage.getItem(localKey); }), {
                     endpoint,
@@ -213,10 +213,10 @@ class FireEnjin {
             data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
                 var _e;
                 return ((_e = this.host) === null || _e === void 0 ? void 0 : _e.type) === "graphql"
-                    ? (variables === null || variables === void 0 ? void 0 : variables.query)
-                        ? this.client.request(variables === null || variables === void 0 ? void 0 : variables.query, variables === null || variables === void 0 ? void 0 : variables.params)
-                        : this.sdk[endpoint](variables, options === null || options === void 0 ? void 0 : options.headers)
-                    : this.client.request(endpoint, variables);
+                    ? (input === null || input === void 0 ? void 0 : input.query)
+                        ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params)
+                        : this.sdk[endpoint](input, options === null || options === void 0 ? void 0 : options.headers)
+                    : this.client.request(endpoint, input);
             }), {
                 endpoint,
                 event,
@@ -231,7 +231,7 @@ class FireEnjin {
             return data;
         });
     }
-    submit(endpoint, variables, options) {
+    submit(endpoint, input, options) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             const event = (options === null || options === void 0 ? void 0 : options.event) || null;
@@ -239,13 +239,13 @@ class FireEnjin {
             return (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
                 var _c;
                 return ((_c = this.host) === null || _c === void 0 ? void 0 : _c.type) === "graphql"
-                    ? (variables === null || variables === void 0 ? void 0 : variables.query)
-                        ? this.client.request(variables.query, variables.params)
+                    ? (input === null || input === void 0 ? void 0 : input.query)
+                        ? this.client.request(input.query, input.params)
                         : this.sdk[endpoint]({
-                            id: variables.id,
-                            data: variables.data,
+                            id: input === null || input === void 0 ? void 0 : input.id,
+                            data: input === null || input === void 0 ? void 0 : input.data,
                         })
-                    : this.client.request(endpoint, variables, {
+                    : this.client.request(endpoint, input, {
                         method: "POST",
                     });
             }), {
@@ -278,8 +278,13 @@ class FireEnjin {
     setConnection(nameUrlOrIndex) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
         this.host = (typeof nameUrlOrIndex === "string"
-            ? (((_a = this.options) === null || _a === void 0 ? void 0 : _a.connections) || []).find((connection) => (connection === null || connection === void 0 ? void 0 : connection.name) === nameUrlOrIndex ||
-                (connection === null || connection === void 0 ? void 0 : connection.url) === nameUrlOrIndex)
+            ? (((_a = this.options) === null || _a === void 0 ? void 0 : _a.connections) || []).find((connection, index) => {
+                if ((connection === null || connection === void 0 ? void 0 : connection.name) === nameUrlOrIndex ||
+                    (connection === null || connection === void 0 ? void 0 : connection.url) === nameUrlOrIndex) {
+                    this.currentConnection = index;
+                    return connection;
+                }
+            })
             : (_c = (_b = this.options) === null || _b === void 0 ? void 0 : _b.connections) === null || _c === void 0 ? void 0 : _c[nameUrlOrIndex]);
         if (!((_d = this.host) === null || _d === void 0 ? void 0 : _d.name))
             this.host.name = "default";
@@ -305,4 +310,4 @@ class FireEnjin {
         return this.host;
     }
 }
-exports.FireEnjin = FireEnjin;
+exports.default = FireEnjin;

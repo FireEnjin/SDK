@@ -1,3 +1,4 @@
+import { FireEnjinErrorCallback } from "interfaces";
 export default function fireenjinError(input?: {
     cached?: boolean;
     event?: CustomEvent;
@@ -8,5 +9,5 @@ export default function fireenjinError(input?: {
     cancelable?: boolean;
     composed?: boolean;
 }, options?: {
-    onError?: (error: any) => void;
+    onError?: FireEnjinErrorCallback;
 }): Promise<void>;

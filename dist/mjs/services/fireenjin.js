@@ -1,15 +1,16 @@
 import * as localforage from "localforage";
 import { GraphQLClient } from "graphql-request";
-import Client from "./client";
 import tryOrFail from "../helpers/tryOrFail";
+import Client from "./client";
 import DatabaseService from "./database";
 import FirestoreClient from "./firestore";
-export class FireEnjin {
+export default class FireEnjin {
     client;
     sdk = {};
     host = {
         url: "http://localhost:4000",
     };
+    currentConnection = 0;
     options;
     constructor(options) {
         this.options = options || {};
@@ -140,17 +141,17 @@ export class FireEnjin {
             onSuccess: this.options?.onSuccess,
         });
     }
-    async fetch(endpoint, variables, options) {
+    async fetch(endpoint, input, options) {
         let data = null;
         const event = options?.event || null;
         const name = options?.name || null;
         const localKey = options?.cacheKey
             ? options.cacheKey
-            : `${endpoint}_${variables?.id
-                ? `${variables.id}:`
-                : variables?.params
-                    ? this.hash(JSON.stringify(Object.values(variables.params)))
-                    : ""}${this.hash(JSON.stringify(variables || {}))}`;
+            : `${endpoint}_${input?.id
+                ? `${input.id}:`
+                : input?.params
+                    ? this.hash(JSON.stringify(Object.values(input.params)))
+                    : ""}${this.hash(JSON.stringify(input || {}))}`;
         if (!options?.disableCache) {
             data = await tryOrFail(async () => localforage.getItem(localKey), {
                 endpoint,
@@ -165,10 +166,10 @@ export class FireEnjin {
             });
         }
         data = await tryOrFail(async () => this.host?.type === "graphql"
-            ? variables?.query
-                ? this.client.request(variables?.query, variables?.params)
-                : this.sdk[endpoint](variables, options?.headers)
-            : this.client.request(endpoint, variables), {
+            ? input?.query
+                ? this.client.request(input?.query, input?.params)
+                : this.sdk[endpoint](input, options?.headers)
+            : this.client.request(endpoint, input), {
             endpoint,
             event,
             name,
@@ -181,17 +182,17 @@ export class FireEnjin {
         });
         return data;
     }
-    async submit(endpoint, variables, options) {
+    async submit(endpoint, input, options) {
         const event = options?.event || null;
         const name = options?.name || null;
         return tryOrFail(async () => this.host?.type === "graphql"
-            ? variables?.query
-                ? this.client.request(variables.query, variables.params)
+            ? input?.query
+                ? this.client.request(input.query, input.params)
                 : this.sdk[endpoint]({
-                    id: variables.id,
-                    data: variables.data,
+                    id: input?.id,
+                    data: input?.data,
                 })
-            : this.client.request(endpoint, variables, {
+            : this.client.request(endpoint, input, {
                 method: "POST",
             }), {
             endpoint,
@@ -220,8 +221,13 @@ export class FireEnjin {
     }
     setConnection(nameUrlOrIndex) {
         this.host = (typeof nameUrlOrIndex === "string"
-            ? (this.options?.connections || []).find((connection) => connection?.name === nameUrlOrIndex ||
-                connection?.url === nameUrlOrIndex)
+            ? (this.options?.connections || []).find((connection, index) => {
+                if (connection?.name === nameUrlOrIndex ||
+                    connection?.url === nameUrlOrIndex) {
+                    this.currentConnection = index;
+                    return connection;
+                }
+            })
             : this.options?.connections?.[nameUrlOrIndex]);
         if (!this.host?.name)
             this.host.name = "default";
