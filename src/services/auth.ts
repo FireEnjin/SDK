@@ -533,4 +533,8 @@ export default class AuthService {
   async getApp() {
     return this.app;
   }
+
+  async getService() {
+    return this.service;
+  }
 }
