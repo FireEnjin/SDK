@@ -1,4 +1,7 @@
 "use strict";
+// import { Facebook } from "@ionic-native/facebook";
+// import { GooglePlus } from "@ionic-native/google-plus";
+// import { TwitterConnect } from "@ionic-native/twitter-connect";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -47,9 +50,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var facebook_1 = require("@ionic-native/facebook");
-var google_plus_1 = require("@ionic-native/google-plus");
-var twitter_connect_1 = require("@ionic-native/twitter-connect");
 var app_1 = require("firebase/app");
 var auth_1 = require("firebase/auth");
 var messaging_1 = require("firebase/messaging");
@@ -65,13 +65,13 @@ var AuthService = /** @class */ (function () {
                 permissions: ["email", "public_profile", "user_friends"]
             }
         };
-        this.facebook = facebook_1.Facebook;
-        this.googlePlus = google_plus_1.GooglePlus;
-        this.twitter = twitter_connect_1.TwitterConnect;
+        // private facebook: any = Facebook;
+        // private googlePlus: any = GooglePlus;
+        // private twitter: any = TwitterConnect;
         this.isOnline = false;
         this.config = __assign(__assign({}, this.config), ((options === null || options === void 0 ? void 0 : options.config) || {}));
         this.app = (options === null || options === void 0 ? void 0 : options.app) || null;
-        if (!this.app) {
+        if (!this.app && window) {
             try {
                 this.app = (0, app_1.initializeApp)((_a = options === null || options === void 0 ? void 0 : options.config) === null || _a === void 0 ? void 0 : _a.firebase);
                 console.log("Initializing Firebase App...", this.app);
@@ -80,13 +80,13 @@ var AuthService = /** @class */ (function () {
                 console.log(e);
             }
         }
-        this.service = (0, auth_1.getAuth)(this.app);
+        this.service = window ? (0, auth_1.getAuth)(this.app) : {};
         if (!this.config.googlePlus ||
             !this.config.googlePlus.options ||
             !this.config.googlePlus.options.webClientId) {
             console.log("googlePlus.options.webClientId is required for Google Native Auth See Here: https://github.com/EddyVerbruggen/cordova-plugin-googleplus#6-usage");
         }
-        if ((_b = this.config) === null || _b === void 0 ? void 0 : _b.emulate) {
+        if (((_b = this.config) === null || _b === void 0 ? void 0 : _b.emulate) && window) {
             (0, auth_1.connectAuthEmulator)(this.service, "http://localhost:9099");
         }
         this.onEmailLink(window.location.href);
@@ -203,6 +203,8 @@ var AuthService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (!window)
+                            return [2 /*return*/];
                         if (!(0, auth_1.isSignInWithEmailLink)(this.service, link)) return [3 /*break*/, 2];
                         email = window.localStorage.getItem("emailForSignIn");
                         if (!email) {
@@ -355,55 +357,30 @@ var AuthService = /** @class */ (function () {
             }
         });
     };
-    AuthService.prototype.facebookNative = function () {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function () {
-            var result;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0: return [4 /*yield*/, this.facebook.login((_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.facebook) === null || _b === void 0 ? void 0 : _b.permissions)];
-                    case 1:
-                        result = _c.sent();
-                        return [2 /*return*/, this.withCredential(auth_1.FacebookAuthProvider.credential(result.authResponse.accessToken))];
-                }
-            });
-        });
-    };
-    AuthService.prototype.googleNative = function () {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function () {
-            var result, error_3;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _c.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, this.googlePlus.login((_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.googlePlus) === null || _b === void 0 ? void 0 : _b.options)];
-                    case 1:
-                        result = _c.sent();
-                        return [3 /*break*/, 3];
-                    case 2:
-                        error_3 = _c.sent();
-                        console.log("Error with Google Native Login...");
-                        console.log(error_3);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/, this.withCredential(auth_1.GoogleAuthProvider.credential(result.idToken))];
-                }
-            });
-        });
-    };
-    AuthService.prototype.twitterNative = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var result;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.twitter.login()];
-                    case 1:
-                        result = _a.sent();
-                        return [2 /*return*/, this.withCredential(auth_1.TwitterAuthProvider.credential(result.token, result.secret))];
-                }
-            });
-        });
-    };
+    // async facebookNative(): Promise<any> {
+    //   const result = await this.facebook.login(
+    //     this.config?.facebook?.permissions
+    //   );
+    //   return this.withCredential(
+    //     FacebookAuthProvider.credential(result.authResponse.accessToken)
+    //   );
+    // }
+    // async googleNative(): Promise<any> {
+    //   let result;
+    //   try {
+    //     result = await this.googlePlus.login(this.config?.googlePlus?.options);
+    //   } catch (error) {
+    //     console.log("Error with Google Native Login...");
+    //     console.log(error);
+    //   }
+    //   return this.withCredential(GoogleAuthProvider.credential(result.idToken));
+    // }
+    // async twitterNative(): Promise<any> {
+    //   const result = await this.twitter.login();
+    //   return this.withCredential(
+    //     TwitterAuthProvider.credential(result.token, result.secret)
+    //   );
+    // }
     AuthService.prototype.withSocial = function (network, redirect) {
         if (redirect === void 0) { redirect = false; }
         return __awaiter(this, void 0, void 0, function () {
@@ -416,41 +393,43 @@ var AuthService = /** @class */ (function () {
                     shouldRedirect = true;
                 }
                 return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var error_4;
-                        var _this = this;
+                        var error_3;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
                                     if (!window.cordova) return [3 /*break*/, 1];
                                     if (network === "google") {
-                                        this.googleNative()
-                                            .then(function (result) {
-                                            _this.emitLoggedInEvent(result);
-                                            resolve(result);
-                                        })["catch"](function (error) {
-                                            console.log(error);
-                                            reject(error);
-                                        });
+                                        // this.googleNative()
+                                        //   .then((result: any) => {
+                                        //     this.emitLoggedInEvent(result);
+                                        //     resolve(result);
+                                        //   })
+                                        //   .catch((error) => {
+                                        //     console.log(error);
+                                        //     reject(error);
+                                        //   });
                                     }
                                     else if (network === "facebook") {
-                                        this.facebookNative()
-                                            .then(function (result) {
-                                            _this.emitLoggedInEvent(result);
-                                            resolve(result);
-                                        })["catch"](function (error) {
-                                            console.log(error);
-                                            reject(error);
-                                        });
+                                        // this.facebookNative()
+                                        //   .then((result: any) => {
+                                        //     this.emitLoggedInEvent(result);
+                                        //     resolve(result);
+                                        //   })
+                                        //   .catch((error) => {
+                                        //     console.log(error);
+                                        //     reject(error);
+                                        //   });
                                     }
                                     else if (network === "twitter") {
-                                        this.twitterNative()
-                                            .then(function (result) {
-                                            _this.emitLoggedInEvent(result);
-                                            resolve(result);
-                                        })["catch"](function (error) {
-                                            console.log(error);
-                                            reject(error);
-                                        });
+                                        // this.twitterNative()
+                                        //   .then((result) => {
+                                        //     this.emitLoggedInEvent(result);
+                                        //     resolve(result);
+                                        //   })
+                                        //   .catch((error) => {
+                                        //     console.log(error);
+                                        //     reject(error);
+                                        //   });
                                     }
                                     return [3 /*break*/, 8];
                                 case 1:
@@ -484,8 +463,8 @@ var AuthService = /** @class */ (function () {
                                     this.emitLoggedInEvent({ currentUser: this.service.currentUser });
                                     return [3 /*break*/, 8];
                                 case 7:
-                                    error_4 = _a.sent();
-                                    console.log(error_4);
+                                    error_3 = _a.sent();
+                                    console.log(error_3);
                                     return [3 /*break*/, 8];
                                 case 8: return [2 /*return*/];
                             }

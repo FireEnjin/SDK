@@ -29,10 +29,6 @@
   },
   "homepage": "https://github.com/fireenjin/sdk#readme",
   "dependencies": {
-    "@ionic-native/core": "^5.36.0",
-    "@ionic-native/facebook": "^5.36.0",
-    "@ionic-native/google-plus": "^5.36.0",
-    "@ionic-native/twitter-connect": "^5.36.0",
     "graphql": "^16.2.0",
     "graphql-request": "^3.7.0",
     "graphql-tag": "^2.12.6",

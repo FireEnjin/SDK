@@ -35,7 +35,7 @@ export default class DatabaseService {
 
   constructor(options?: { emulate?: boolean; app?: any; config?: any }) {
     this.app = options?.app || null;
-    if (!this.app) {
+    if (!this.app && window) {
       try {
         this.app = initializeApp(options?.config);
         console.log("Initializing Firebase App...", this.app);
