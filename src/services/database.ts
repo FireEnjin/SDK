@@ -197,4 +197,8 @@ export default class DatabaseService {
   ) {
     return getDocs(this.rawQuery(collectionName, where, orderBy, limit));
   }
+
+  async getApp() {
+    return this.app;
+  }
 }
