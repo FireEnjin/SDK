@@ -529,4 +529,8 @@ export default class AuthService {
   async getSessionManager() {
     return this.sessionManager;
   }
+
+  async getApp() {
+    return this.app;
+  }
 }
