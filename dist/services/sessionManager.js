@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-var database_1 = require("firebase/database");
+var database_1 = require("@firebase/database");
 var session_1 = require("./session");
 var SessionManager = /** @class */ (function () {
     function SessionManager(rdb, auth) {

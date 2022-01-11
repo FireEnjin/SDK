@@ -2,7 +2,7 @@ import { Facebook } from "@ionic-native/facebook";
 import { GooglePlus } from "@ionic-native/google-plus";
 import { TwitterConnect } from "@ionic-native/twitter-connect";
 
-import { initializeApp, FirebaseApp } from "firebase/app";
+import { initializeApp, FirebaseApp } from "@firebase/app";
 import {
   getAuth,
   Auth,
@@ -30,9 +30,9 @@ import {
   signInWithPhoneNumber,
   signInWithCredential,
   signInWithCustomToken,
-} from "firebase/auth";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { getDatabase } from "firebase/database";
+} from "@firebase/auth";
+import { getMessaging, getToken, onMessage } from "@firebase/messaging";
+import { getDatabase } from "@firebase/database";
 import SessionManager from "./sessionManager";
 
 interface IFireEnjinAuthConfig {

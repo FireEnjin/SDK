@@ -15,10 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const facebook_1 = require("@ionic-native/facebook");
 const google_plus_1 = require("@ionic-native/google-plus");
 const twitter_connect_1 = require("@ionic-native/twitter-connect");
-const app_1 = require("firebase/app");
-const auth_1 = require("firebase/auth");
-const messaging_1 = require("firebase/messaging");
-const database_1 = require("firebase/database");
+const app_1 = require("@firebase/app");
+const auth_1 = require("@firebase/auth");
+const messaging_1 = require("@firebase/messaging");
+const database_1 = require("@firebase/database");
 const sessionManager_1 = __importDefault(require("./sessionManager"));
 class AuthService {
     constructor(options) {

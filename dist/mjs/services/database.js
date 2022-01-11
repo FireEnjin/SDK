@@ -1,6 +1,6 @@
 import { initializeApp } from "@firebase/app";
-import { getFirestore, addDoc, collection, doc, getDoc, getDocs, query as firestoreQuery, orderBy as firestoreOrderBy, limit as firestoreLimit, where as firestoreWhere, setDoc, updateDoc, onSnapshot, enableIndexedDbPersistence, connectFirestoreEmulator, } from "firebase/firestore";
-import { connectFunctionsEmulator, getFunctions, httpsCallable, } from "firebase/functions";
+import { getFirestore, addDoc, collection, doc, getDoc, getDocs, query as firestoreQuery, orderBy as firestoreOrderBy, limit as firestoreLimit, where as firestoreWhere, setDoc, updateDoc, onSnapshot, enableIndexedDbPersistence, connectFirestoreEmulator, } from "@firebase/firestore";
+import { connectFunctionsEmulator, getFunctions, httpsCallable, } from "@firebase/functions";
 export default class DatabaseService {
     app;
     service;

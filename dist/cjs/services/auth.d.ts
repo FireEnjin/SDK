@@ -1,4 +1,4 @@
-import { Auth } from "firebase/auth";
+import { Auth } from "@firebase/auth";
 import SessionManager from "./sessionManager";
 interface IFireEnjinAuthConfig {
     emulate?: boolean;

@@ -1,4 +1,4 @@
-import { ref, onValue, child } from "firebase/database";
+import { ref, onValue, child } from "@firebase/database";
 import Session from "./session";
 export default class SessionManager {
     metadata = true;

@@ -19,13 +19,13 @@ import {
   connectFirestoreEmulator,
   QueryDocumentSnapshot,
   QuerySnapshot,
-} from "firebase/firestore";
+} from "@firebase/firestore";
 import {
   connectFunctionsEmulator,
   Functions,
   getFunctions,
   httpsCallable,
-} from "firebase/functions";
+} from "@firebase/functions";
 
 export default class DatabaseService {
   app: FirebaseApp;

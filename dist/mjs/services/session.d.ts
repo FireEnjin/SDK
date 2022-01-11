@@ -1,4 +1,4 @@
-import { DatabaseReference } from "firebase/database";
+import { DatabaseReference } from "@firebase/database";
 export default class SessionService {
     ref: DatabaseReference;
     metadata: any;

@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("@firebase/app");
-const firestore_1 = require("firebase/firestore");
-const functions_1 = require("firebase/functions");
+const firestore_1 = require("@firebase/firestore");
+const functions_1 = require("@firebase/functions");
 class DatabaseService {
     constructor(options) {
         this.watchers = {};

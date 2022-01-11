@@ -46,8 +46,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 exports.__esModule = true;
 var app_1 = require("@firebase/app");
-var firestore_1 = require("firebase/firestore");
-var functions_1 = require("firebase/functions");
+var firestore_1 = require("@firebase/firestore");
+var functions_1 = require("@firebase/functions");
 var DatabaseService = /** @class */ (function () {
     function DatabaseService(options) {
         this.watchers = {};

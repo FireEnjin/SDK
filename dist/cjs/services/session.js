@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const database_1 = require("firebase/database");
+const database_1 = require("@firebase/database");
 class SessionService {
     constructor(ref, metadata, onError) {
         this.ref = ref;

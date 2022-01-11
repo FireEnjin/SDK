@@ -1,6 +1,6 @@
 import { FirebaseApp } from "@firebase/app";
-import { Firestore, WhereFilterOp, QueryDocumentSnapshot, QuerySnapshot } from "firebase/firestore";
-import { Functions } from "firebase/functions";
+import { Firestore, WhereFilterOp, QueryDocumentSnapshot, QuerySnapshot } from "@firebase/firestore";
+import { Functions } from "@firebase/functions";
 export default class DatabaseService {
     app: FirebaseApp;
     service: Firestore;

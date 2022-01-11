@@ -50,10 +50,10 @@ exports.__esModule = true;
 var facebook_1 = require("@ionic-native/facebook");
 var google_plus_1 = require("@ionic-native/google-plus");
 var twitter_connect_1 = require("@ionic-native/twitter-connect");
-var app_1 = require("firebase/app");
-var auth_1 = require("firebase/auth");
-var messaging_1 = require("firebase/messaging");
-var database_1 = require("firebase/database");
+var app_1 = require("@firebase/app");
+var auth_1 = require("@firebase/auth");
+var messaging_1 = require("@firebase/messaging");
+var database_1 = require("@firebase/database");
 var sessionManager_1 = require("./sessionManager");
 var AuthService = /** @class */ (function () {
     function AuthService(options) {

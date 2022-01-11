@@ -3,7 +3,7 @@ import {
   DatabaseReference,
   set,
   remove,
-} from "firebase/database";
+} from "@firebase/database";
 
 export default class SessionService {
   ref: DatabaseReference;

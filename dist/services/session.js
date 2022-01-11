@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-var database_1 = require("firebase/database");
+var database_1 = require("@firebase/database");
 var SessionService = /** @class */ (function () {
     function SessionService(ref, metadata, onError) {
         var _this = this;

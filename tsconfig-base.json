@@ -25,7 +25,10 @@
     "types": [
       "node",
       "jest"
-    ]
+    ],
+    "paths": {
+      "@firebase/*": ["build/assets/firebase/*"]
+    }
   },
   "compileOnSave": false,
   "exclude": [
@@ -34,5 +37,5 @@
   ],
   "include": [
     "src"
-  ]
+  ],
 }

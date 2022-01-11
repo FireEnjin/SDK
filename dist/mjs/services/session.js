@@ -1,4 +1,4 @@
-import { onDisconnect, set, remove, } from "firebase/database";
+import { onDisconnect, set, remove, } from "@firebase/database";
 export default class SessionService {
     ref;
     metadata;
