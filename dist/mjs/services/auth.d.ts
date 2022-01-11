@@ -1,3 +1,4 @@
+import { FirebaseApp } from "@firebase/app";
 import { Auth } from "@firebase/auth";
 import SessionManager from "./sessionManager";
 interface IFireEnjinAuthConfig {
@@ -66,5 +67,7 @@ export default class AuthService {
     goOnline(): Promise<void>;
     goOffline(): Promise<any>;
     getSessionManager(): Promise<SessionManager | undefined>;
+    getApp(): Promise<FirebaseApp>;
+    getService(): Promise<Auth>;
 }
 export {};

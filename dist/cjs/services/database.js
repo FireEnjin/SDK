@@ -136,5 +136,15 @@ class DatabaseService {
             return (0, firestore_1.getDocs)(this.rawQuery(collectionName, where, orderBy, limit));
         });
     }
+    getApp() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.app;
+        });
+    }
+    getService() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.service;
+        });
+    }
 }
 exports.default = DatabaseService;

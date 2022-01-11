@@ -120,4 +120,10 @@ export default class DatabaseService {
     async query(collectionName, where, orderBy, limit) {
         return getDocs(this.rawQuery(collectionName, where, orderBy, limit));
     }
+    async getApp() {
+        return this.app;
+    }
+    async getService() {
+        return this.service;
+    }
 }

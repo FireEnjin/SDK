@@ -44,4 +44,6 @@ export default class DatabaseService {
         conditional?: WhereFilterOp;
         value?: any;
     }[], orderBy?: string, limit?: number): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData>>;
+    getApp(): Promise<FirebaseApp>;
+    getService(): Promise<Firestore>;
 }

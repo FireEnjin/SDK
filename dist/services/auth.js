@@ -575,6 +575,20 @@ var AuthService = /** @class */ (function () {
             });
         });
     };
+    AuthService.prototype.getApp = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.app];
+            });
+        });
+    };
+    AuthService.prototype.getService = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.service];
+            });
+        });
+    };
     return AuthService;
 }());
 exports["default"] = AuthService;

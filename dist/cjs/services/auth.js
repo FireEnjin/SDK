@@ -432,5 +432,15 @@ class AuthService {
             return this.sessionManager;
         });
     }
+    getApp() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.app;
+        });
+    }
+    getService() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.service;
+        });
+    }
 }
 exports.default = AuthService;
