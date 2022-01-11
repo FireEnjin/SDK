@@ -1,6 +1,6 @@
-// import { Facebook } from "@ionic-native/facebook";
-// import { GooglePlus } from "@ionic-native/google-plus";
-// import { TwitterConnect } from "@ionic-native/twitter-connect";
+import { Facebook } from "@ionic-native/facebook";
+import { GooglePlus } from "@ionic-native/google-plus";
+import { TwitterConnect } from "@ionic-native/twitter-connect";
 import { initializeApp } from "firebase/app";
 import { getAuth, connectAuthEmulator, getIdTokenResult, signOut, reauthenticateWithCredential, updatePassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, getIdToken, isSignInWithEmailLink, onAuthStateChanged, sendSignInLinkToEmail, signInAnonymously, signInWithEmailAndPassword, signInWithEmailLink, updateEmail, signInWithRedirect, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, signInWithPhoneNumber, signInWithCredential, signInWithCustomToken, } from "firebase/auth";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
@@ -16,15 +16,16 @@ export default class AuthService {
             permissions: ["email", "public_profile", "user_friends"],
         },
     };
-    // private facebook: any = Facebook;
-    // private googlePlus: any = GooglePlus;
-    // private twitter: any = TwitterConnect;
+    facebook = Facebook;
+    googlePlus = GooglePlus;
+    twitter = TwitterConnect;
     isOnline = false;
     service;
     constructor(options) {
         this.config = { ...this.config, ...(options?.config || {}) };
         this.app = options?.app || null;
-        if (!this.app && window) {
+        const isWindow = typeof window !== "undefined" && window;
+        if (!this.app && isWindow) {
             try {
                 this.app = initializeApp(options?.config?.firebase);
                 console.log("Initializing Firebase App...", this.app);
@@ -33,16 +34,17 @@ export default class AuthService {
                 console.log(e);
             }
         }
-        this.service = window ? getAuth(this.app) : {};
+        this.service = isWindow ? getAuth(this.app) : null;
         if (!this.config.googlePlus ||
             !this.config.googlePlus.options ||
             !this.config.googlePlus.options.webClientId) {
             console.log("googlePlus.options.webClientId is required for Google Native Auth See Here: https://github.com/EddyVerbruggen/cordova-plugin-googleplus#6-usage");
         }
-        if (this.config?.emulate && window) {
+        if (this.config?.emulate && isWindow) {
             connectAuthEmulator(this.service, "http://localhost:9099");
         }
-        this.onEmailLink(window.location.href);
+        if (isWindow)
+            this.onEmailLink(window.location.href);
     }
     async initializePushNotifications(onMessageCallback, options) {
         try {
@@ -95,8 +97,6 @@ export default class AuthService {
         return token;
     }
     async onEmailLink(link) {
-        if (!window)
-            return;
         if (isSignInWithEmailLink(this.service, link)) {
             let email = window.localStorage.getItem("emailForSignIn");
             if (!email) {
@@ -227,30 +227,25 @@ export default class AuthService {
             }
         });
     }
-    // async facebookNative(): Promise<any> {
-    //   const result = await this.facebook.login(
-    //     this.config?.facebook?.permissions
-    //   );
-    //   return this.withCredential(
-    //     FacebookAuthProvider.credential(result.authResponse.accessToken)
-    //   );
-    // }
-    // async googleNative(): Promise<any> {
-    //   let result;
-    //   try {
-    //     result = await this.googlePlus.login(this.config?.googlePlus?.options);
-    //   } catch (error) {
-    //     console.log("Error with Google Native Login...");
-    //     console.log(error);
-    //   }
-    //   return this.withCredential(GoogleAuthProvider.credential(result.idToken));
-    // }
-    // async twitterNative(): Promise<any> {
-    //   const result = await this.twitter.login();
-    //   return this.withCredential(
-    //     TwitterAuthProvider.credential(result.token, result.secret)
-    //   );
-    // }
+    async facebookNative() {
+        const result = await this.facebook.login(this.config?.facebook?.permissions);
+        return this.withCredential(FacebookAuthProvider.credential(result.authResponse.accessToken));
+    }
+    async googleNative() {
+        let result;
+        try {
+            result = await this.googlePlus.login(this.config?.googlePlus?.options);
+        }
+        catch (error) {
+            console.log("Error with Google Native Login...");
+            console.log(error);
+        }
+        return this.withCredential(GoogleAuthProvider.credential(result.idToken));
+    }
+    async twitterNative() {
+        const result = await this.twitter.login();
+        return this.withCredential(TwitterAuthProvider.credential(result.token, result.secret));
+    }
     async withSocial(network, redirect = false) {
         let provider;
         let shouldRedirect = redirect;
@@ -261,37 +256,37 @@ export default class AuthService {
         return new Promise(async (resolve, reject) => {
             if (window.cordova) {
                 if (network === "google") {
-                    // this.googleNative()
-                    //   .then((result: any) => {
-                    //     this.emitLoggedInEvent(result);
-                    //     resolve(result);
-                    //   })
-                    //   .catch((error) => {
-                    //     console.log(error);
-                    //     reject(error);
-                    //   });
+                    this.googleNative()
+                        .then((result) => {
+                        this.emitLoggedInEvent(result);
+                        resolve(result);
+                    })
+                        .catch((error) => {
+                        console.log(error);
+                        reject(error);
+                    });
                 }
                 else if (network === "facebook") {
-                    // this.facebookNative()
-                    //   .then((result: any) => {
-                    //     this.emitLoggedInEvent(result);
-                    //     resolve(result);
-                    //   })
-                    //   .catch((error) => {
-                    //     console.log(error);
-                    //     reject(error);
-                    //   });
+                    this.facebookNative()
+                        .then((result) => {
+                        this.emitLoggedInEvent(result);
+                        resolve(result);
+                    })
+                        .catch((error) => {
+                        console.log(error);
+                        reject(error);
+                    });
                 }
                 else if (network === "twitter") {
-                    // this.twitterNative()
-                    //   .then((result) => {
-                    //     this.emitLoggedInEvent(result);
-                    //     resolve(result);
-                    //   })
-                    //   .catch((error) => {
-                    //     console.log(error);
-                    //     reject(error);
-                    //   });
+                    this.twitterNative()
+                        .then((result) => {
+                        this.emitLoggedInEvent(result);
+                        resolve(result);
+                    })
+                        .catch((error) => {
+                        console.log(error);
+                        reject(error);
+                    });
                 }
             }
             else {
