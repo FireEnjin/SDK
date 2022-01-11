@@ -201,4 +201,8 @@ export default class DatabaseService {
   async getApp() {
     return this.app;
   }
+
+  async getService() {
+    return this.service;
+  }
 }
