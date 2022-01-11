@@ -52,7 +52,7 @@ var google_plus_1 = require("@ionic-native/google-plus");
 var twitter_connect_1 = require("@ionic-native/twitter-connect");
 var app_1 = require("@firebase/app");
 var auth_1 = require("@firebase/auth");
-var messaging_1 = require("@firebase/messaging");
+// import { getMessaging, getToken, onMessage } from "@firebase/messaging";
 var database_1 = require("@firebase/database");
 var sessionManager_1 = require("./sessionManager");
 var AuthService = /** @class */ (function () {
@@ -93,63 +93,46 @@ var AuthService = /** @class */ (function () {
         if (isWindow)
             this.onEmailLink(window.location.href);
     }
-    AuthService.prototype.initializePushNotifications = function (onMessageCallback, options) {
-        return __awaiter(this, void 0, void 0, function () {
-            var messaging, vapidKey, messagingToken, _a, _b, permission, _c, _d, error_1;
-            var _e, _f;
-            return __generator(this, function (_g) {
-                switch (_g.label) {
-                    case 0:
-                        _g.trys.push([0, 8, , 9]);
-                        messaging = (0, messaging_1.getMessaging)(this.app);
-                        if (onMessageCallback && typeof onMessageCallback === "function") {
-                            (0, messaging_1.onMessage)(messaging, onMessageCallback);
-                        }
-                        vapidKey = options === null || options === void 0 ? void 0 : options.vapidKey;
-                        _a = messaging_1.getToken;
-                        _b = [messaging];
-                        _e = {
-                            vapidKey: vapidKey
-                        };
-                        return [4 /*yield*/, navigator.serviceWorker.getRegistration()];
-                    case 1: return [4 /*yield*/, _a.apply(void 0, _b.concat([(_e.serviceWorkerRegistration = _g.sent(),
-                                _e)]))];
-                    case 2:
-                        messagingToken = _g.sent();
-                        if (!!messagingToken) return [3 /*break*/, 7];
-                        return [4 /*yield*/, Notification.requestPermission()];
-                    case 3:
-                        permission = _g.sent();
-                        if (!(permission === "granted")) return [3 /*break*/, 6];
-                        console.log("Notification permission granted.");
-                        _c = messaging_1.getToken;
-                        _d = [messaging];
-                        _f = {
-                            vapidKey: vapidKey
-                        };
-                        return [4 /*yield*/, navigator.serviceWorker.getRegistration()];
-                    case 4: return [4 /*yield*/, _c.apply(void 0, _d.concat([(_f.serviceWorkerRegistration = _g.sent(),
-                                _f)]))];
-                    case 5:
-                        messagingToken = _g.sent();
-                        return [3 /*break*/, 7];
-                    case 6:
-                        console.log("Unable to get permission to notify.");
-                        _g.label = 7;
-                    case 7: return [2 /*return*/, messagingToken];
-                    case 8:
-                        error_1 = _g.sent();
-                        console.log("Service worker not enabled, push notifications will not work!", error_1);
-                        return [3 /*break*/, 9];
-                    case 9: return [2 /*return*/];
-                }
-            });
-        });
-    };
+    // async initializePushNotifications(
+    //   onMessageCallback?: (payload: any) => void,
+    //   options?: { vapidKey?: string }
+    // ) {
+    //   try {
+    //     const messaging = getMessaging(this.app);
+    //     if (onMessageCallback && typeof onMessageCallback === "function") {
+    //       onMessage(messaging, onMessageCallback);
+    //     }
+    //     const vapidKey = options?.vapidKey;
+    //     let messagingToken = await getToken(messaging, {
+    //       vapidKey,
+    //       serviceWorkerRegistration:
+    //         await navigator.serviceWorker.getRegistration(),
+    //     });
+    //     if (!messagingToken) {
+    //       const permission = await Notification.requestPermission();
+    //       if (permission === "granted") {
+    //         console.log("Notification permission granted.");
+    //         messagingToken = await getToken(messaging, {
+    //           vapidKey,
+    //           serviceWorkerRegistration:
+    //             await navigator.serviceWorker.getRegistration(),
+    //         });
+    //       } else {
+    //         console.log("Unable to get permission to notify.");
+    //       }
+    //     }
+    //     return messagingToken;
+    //   } catch (error) {
+    //     console.log(
+    //       "Service worker not enabled, push notifications will not work!",
+    //       error
+    //     );
+    //   }
+    // }
     AuthService.prototype.getClaims = function () {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var claims, error_2;
+            var claims, error_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -159,7 +142,7 @@ var AuthService = /** @class */ (function () {
                         claims = (_b.sent()).claims;
                         return [2 /*return*/, claims];
                     case 2:
-                        error_2 = _b.sent();
+                        error_1 = _b.sent();
                         return [2 /*return*/, {}];
                     case 3: return [2 /*return*/];
                 }
@@ -374,7 +357,7 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.googleNative = function () {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var result, error_3;
+            var result, error_2;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -384,9 +367,9 @@ var AuthService = /** @class */ (function () {
                         result = _c.sent();
                         return [3 /*break*/, 3];
                     case 2:
-                        error_3 = _c.sent();
+                        error_2 = _c.sent();
                         console.log("Error with Google Native Login...");
-                        console.log(error_3);
+                        console.log(error_2);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/, this.withCredential(auth_1.GoogleAuthProvider.credential(result.idToken))];
                 }
@@ -418,7 +401,7 @@ var AuthService = /** @class */ (function () {
                     shouldRedirect = true;
                 }
                 return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var error_4;
+                        var error_3;
                         var _this = this;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
@@ -486,8 +469,8 @@ var AuthService = /** @class */ (function () {
                                     this.emitLoggedInEvent({ currentUser: this.service.currentUser });
                                     return [3 /*break*/, 8];
                                 case 7:
-                                    error_4 = _a.sent();
-                                    console.log(error_4);
+                                    error_3 = _a.sent();
+                                    console.log(error_3);
                                     return [3 /*break*/, 8];
                                 case 8: return [2 /*return*/];
                             }

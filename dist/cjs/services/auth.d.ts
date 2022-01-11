@@ -35,9 +35,6 @@ export default class AuthService {
         config?: IFireEnjinAuthConfig;
         app?: any;
     });
-    initializePushNotifications(onMessageCallback?: (payload: any) => void, options?: {
-        vapidKey?: string;
-    }): Promise<string | undefined>;
     getClaims(): Promise<import("@firebase/auth").ParsedToken>;
     getToken(): Promise<string | null>;
     setToken(token: any): Promise<any>;

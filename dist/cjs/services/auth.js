@@ -17,7 +17,7 @@ const google_plus_1 = require("@ionic-native/google-plus");
 const twitter_connect_1 = require("@ionic-native/twitter-connect");
 const app_1 = require("@firebase/app");
 const auth_1 = require("@firebase/auth");
-const messaging_1 = require("@firebase/messaging");
+// import { getMessaging, getToken, onMessage } from "@firebase/messaging";
 const database_1 = require("@firebase/database");
 const sessionManager_1 = __importDefault(require("./sessionManager"));
 class AuthService {
@@ -58,38 +58,42 @@ class AuthService {
         if (isWindow)
             this.onEmailLink(window.location.href);
     }
-    initializePushNotifications(onMessageCallback, options) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const messaging = (0, messaging_1.getMessaging)(this.app);
-                if (onMessageCallback && typeof onMessageCallback === "function") {
-                    (0, messaging_1.onMessage)(messaging, onMessageCallback);
-                }
-                const vapidKey = options === null || options === void 0 ? void 0 : options.vapidKey;
-                let messagingToken = yield (0, messaging_1.getToken)(messaging, {
-                    vapidKey,
-                    serviceWorkerRegistration: yield navigator.serviceWorker.getRegistration(),
-                });
-                if (!messagingToken) {
-                    const permission = yield Notification.requestPermission();
-                    if (permission === "granted") {
-                        console.log("Notification permission granted.");
-                        messagingToken = yield (0, messaging_1.getToken)(messaging, {
-                            vapidKey,
-                            serviceWorkerRegistration: yield navigator.serviceWorker.getRegistration(),
-                        });
-                    }
-                    else {
-                        console.log("Unable to get permission to notify.");
-                    }
-                }
-                return messagingToken;
-            }
-            catch (error) {
-                console.log("Service worker not enabled, push notifications will not work!", error);
-            }
-        });
-    }
+    // async initializePushNotifications(
+    //   onMessageCallback?: (payload: any) => void,
+    //   options?: { vapidKey?: string }
+    // ) {
+    //   try {
+    //     const messaging = getMessaging(this.app);
+    //     if (onMessageCallback && typeof onMessageCallback === "function") {
+    //       onMessage(messaging, onMessageCallback);
+    //     }
+    //     const vapidKey = options?.vapidKey;
+    //     let messagingToken = await getToken(messaging, {
+    //       vapidKey,
+    //       serviceWorkerRegistration:
+    //         await navigator.serviceWorker.getRegistration(),
+    //     });
+    //     if (!messagingToken) {
+    //       const permission = await Notification.requestPermission();
+    //       if (permission === "granted") {
+    //         console.log("Notification permission granted.");
+    //         messagingToken = await getToken(messaging, {
+    //           vapidKey,
+    //           serviceWorkerRegistration:
+    //             await navigator.serviceWorker.getRegistration(),
+    //         });
+    //       } else {
+    //         console.log("Unable to get permission to notify.");
+    //       }
+    //     }
+    //     return messagingToken;
+    //   } catch (error) {
+    //     console.log(
+    //       "Service worker not enabled, push notifications will not work!",
+    //       error
+    //     );
+    //   }
+    // }
     getClaims() {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {

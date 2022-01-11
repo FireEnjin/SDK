@@ -3,7 +3,7 @@ import { GooglePlus } from "@ionic-native/google-plus";
 import { TwitterConnect } from "@ionic-native/twitter-connect";
 import { initializeApp } from "@firebase/app";
 import { getAuth, connectAuthEmulator, getIdTokenResult, signOut, reauthenticateWithCredential, updatePassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, getIdToken, isSignInWithEmailLink, onAuthStateChanged, sendSignInLinkToEmail, signInAnonymously, signInWithEmailAndPassword, signInWithEmailLink, updateEmail, signInWithRedirect, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, signInWithPhoneNumber, signInWithCredential, signInWithCustomToken, } from "@firebase/auth";
-import { getMessaging, getToken, onMessage } from "@firebase/messaging";
+// import { getMessaging, getToken, onMessage } from "@firebase/messaging";
 import { getDatabase } from "@firebase/database";
 import SessionManager from "./sessionManager";
 export default class AuthService {
@@ -46,36 +46,42 @@ export default class AuthService {
         if (isWindow)
             this.onEmailLink(window.location.href);
     }
-    async initializePushNotifications(onMessageCallback, options) {
-        try {
-            const messaging = getMessaging(this.app);
-            if (onMessageCallback && typeof onMessageCallback === "function") {
-                onMessage(messaging, onMessageCallback);
-            }
-            const vapidKey = options?.vapidKey;
-            let messagingToken = await getToken(messaging, {
-                vapidKey,
-                serviceWorkerRegistration: await navigator.serviceWorker.getRegistration(),
-            });
-            if (!messagingToken) {
-                const permission = await Notification.requestPermission();
-                if (permission === "granted") {
-                    console.log("Notification permission granted.");
-                    messagingToken = await getToken(messaging, {
-                        vapidKey,
-                        serviceWorkerRegistration: await navigator.serviceWorker.getRegistration(),
-                    });
-                }
-                else {
-                    console.log("Unable to get permission to notify.");
-                }
-            }
-            return messagingToken;
-        }
-        catch (error) {
-            console.log("Service worker not enabled, push notifications will not work!", error);
-        }
-    }
+    // async initializePushNotifications(
+    //   onMessageCallback?: (payload: any) => void,
+    //   options?: { vapidKey?: string }
+    // ) {
+    //   try {
+    //     const messaging = getMessaging(this.app);
+    //     if (onMessageCallback && typeof onMessageCallback === "function") {
+    //       onMessage(messaging, onMessageCallback);
+    //     }
+    //     const vapidKey = options?.vapidKey;
+    //     let messagingToken = await getToken(messaging, {
+    //       vapidKey,
+    //       serviceWorkerRegistration:
+    //         await navigator.serviceWorker.getRegistration(),
+    //     });
+    //     if (!messagingToken) {
+    //       const permission = await Notification.requestPermission();
+    //       if (permission === "granted") {
+    //         console.log("Notification permission granted.");
+    //         messagingToken = await getToken(messaging, {
+    //           vapidKey,
+    //           serviceWorkerRegistration:
+    //             await navigator.serviceWorker.getRegistration(),
+    //         });
+    //       } else {
+    //         console.log("Unable to get permission to notify.");
+    //       }
+    //     }
+    //     return messagingToken;
+    //   } catch (error) {
+    //     console.log(
+    //       "Service worker not enabled, push notifications will not work!",
+    //       error
+    //     );
+    //   }
+    // }
     async getClaims() {
         try {
             const { claims } = await getIdTokenResult(this.service?.currentUser);
