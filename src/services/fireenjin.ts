@@ -255,10 +255,12 @@ export default class FireEnjin {
         this.host?.type === "graphql"
           ? input?.query
             ? this.client.request(input.query, input.params)
-            : this.sdk[endpoint]({
-                id: input?.id,
-                data: input?.data,
-              })
+            : this.sdk[endpoint](
+                input?.params || {
+                  id: input?.id,
+                  data: input?.data,
+                }
+              )
           : this.client.request(endpoint, input, {
               method: "POST",
             }),
