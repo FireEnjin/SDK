@@ -4,6 +4,7 @@ import setComponentProps from "../helpers/setComponentProps";
 export default async function fireenjinSuccess(
   input?: {
     event?: CustomEvent;
+    target?: any;
     cached?: boolean;
     dataPropsMap?: any;
     data?: any;
@@ -19,6 +20,7 @@ export default async function fireenjinSuccess(
 ) {
   const detail: FireEnjinSuccessEvent = {
     event: input?.event,
+    target: input?.target,
     data: await setComponentProps(input?.dataPropsMap, input?.data),
     name: input?.name,
     endpoint: input?.endpoint,

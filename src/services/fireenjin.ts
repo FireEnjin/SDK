@@ -94,6 +94,7 @@ export default class FireEnjin {
       },
       {
         event,
+        target: event?.detail?.target || event?.target,
         name: event?.detail?.name,
         endpoint: event?.detail?.endpoint,
         bubbles: event?.detail?.bubbles,
@@ -118,6 +119,7 @@ export default class FireEnjin {
 
     return this.submit(event.detail.endpoint, {
       event,
+      target: event?.detail?.target || event?.target,
       id: event?.detail?.id,
       data: event?.detail?.data,
       params: event?.detail?.params,
@@ -139,6 +141,7 @@ export default class FireEnjin {
 
     return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
       event,
+      target: event?.detail?.target || event?.target,
       dataPropsMap: event?.detail?.dataPropsMap,
       name: event?.detail?.name,
       cacheKey: event?.detail?.cacheKey,
@@ -175,6 +178,7 @@ export default class FireEnjin {
         ),
       {
         event: options?.event || null,
+        target: options?.target || options?.event?.target,
         name: options?.name || endpoint,
         bubbles: options?.bubbles,
         cancelable: options?.cancelable,
@@ -209,6 +213,7 @@ export default class FireEnjin {
       data = await tryOrFail(async () => localforage.getItem(localKey), {
         endpoint,
         event,
+        target: options?.target || options?.event?.target,
         name,
         cached: true,
         bubbles: options?.bubbles,
@@ -229,6 +234,7 @@ export default class FireEnjin {
       {
         endpoint,
         event,
+        target: options?.target || options?.event?.target,
         name,
         cached: false,
         bubbles: options?.bubbles,
@@ -267,6 +273,7 @@ export default class FireEnjin {
       {
         endpoint,
         event,
+        target: options?.target || options?.event?.target,
         name,
         cached: false,
         bubbles: options?.bubbles,

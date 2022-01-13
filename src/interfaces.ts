@@ -77,6 +77,7 @@ export interface FireEnjinEvent {
   endpoint?: string;
   name?: string;
   event?: CustomEvent | Event;
+  target?: any;
   bubbles?: boolean;
   cancelable?: boolean;
   composed?: boolean;

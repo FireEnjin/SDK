@@ -12,6 +12,7 @@ export default async function tryOrFail(
     name?: string;
     retries?: number;
     event?: any;
+    target?: any;
     cached?: boolean;
     bubbles?: boolean;
     cancelable?: boolean;
@@ -28,6 +29,7 @@ export default async function tryOrFail(
     bubbles: options?.bubbles ?? true,
     cancelable: options?.cancelable ?? true,
     composed: !!options?.composed,
+    target: options?.target || options?.event?.target,
   };
   try {
     const data = await fn();
