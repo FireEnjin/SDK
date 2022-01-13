@@ -18,7 +18,7 @@ export default async function fireenjinError(
 ) {
   const detail: FireEnjinErrorEvent = {
     event: input?.event,
-    target: input?.target,
+    target: input?.target || input?.event?.target,
     error: input?.error,
     name: input?.name,
     endpoint: input?.endpoint,

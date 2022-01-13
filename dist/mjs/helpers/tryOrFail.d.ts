@@ -4,6 +4,7 @@ export default function tryOrFail(fn: () => Promise<any>, options?: {
     name?: string;
     retries?: number;
     event?: any;
+    target?: any;
     cached?: boolean;
     bubbles?: boolean;
     cancelable?: boolean;

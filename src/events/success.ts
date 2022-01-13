@@ -20,7 +20,7 @@ export default async function fireenjinSuccess(
 ) {
   const detail: FireEnjinSuccessEvent = {
     event: input?.event,
-    target: input?.target,
+    target: input?.target || input?.event?.target,
     data: await setComponentProps(input?.dataPropsMap, input?.data),
     name: input?.name,
     endpoint: input?.endpoint,

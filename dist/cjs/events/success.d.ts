@@ -1,6 +1,7 @@
 import { FireEnjinSuccessCallback } from "../interfaces";
 export default function fireenjinSuccess(input?: {
     event?: CustomEvent;
+    target?: any;
     cached?: boolean;
     dataPropsMap?: any;
     data?: any;

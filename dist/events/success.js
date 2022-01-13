@@ -38,31 +38,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var setComponentProps_1 = require("../helpers/setComponentProps");
 function fireenjinSuccess(input, options) {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g;
     return __awaiter(this, void 0, void 0, function () {
         var detail, el;
-        var _g;
-        return __generator(this, function (_h) {
-            switch (_h.label) {
+        var _h;
+        return __generator(this, function (_j) {
+            switch (_j.label) {
                 case 0:
-                    _g = {
-                        event: input === null || input === void 0 ? void 0 : input.event
+                    _h = {
+                        event: input === null || input === void 0 ? void 0 : input.event,
+                        target: (input === null || input === void 0 ? void 0 : input.target) || ((_a = input === null || input === void 0 ? void 0 : input.event) === null || _a === void 0 ? void 0 : _a.target)
                     };
                     return [4 /*yield*/, (0, setComponentProps_1["default"])(input === null || input === void 0 ? void 0 : input.dataPropsMap, input === null || input === void 0 ? void 0 : input.data)];
                 case 1:
-                    detail = (_g.data = _h.sent(),
-                        _g.name = input === null || input === void 0 ? void 0 : input.name,
-                        _g.endpoint = input === null || input === void 0 ? void 0 : input.endpoint,
-                        _g.bubbles = !!(input === null || input === void 0 ? void 0 : input.bubbles),
-                        _g.cancelable = !!(input === null || input === void 0 ? void 0 : input.cancelable),
-                        _g.composed = !!(input === null || input === void 0 ? void 0 : input.composed),
-                        _g.cached = !!(input === null || input === void 0 ? void 0 : input.cached),
-                        _g);
+                    detail = (_h.data = _j.sent(),
+                        _h.name = input === null || input === void 0 ? void 0 : input.name,
+                        _h.endpoint = input === null || input === void 0 ? void 0 : input.endpoint,
+                        _h.bubbles = !!(input === null || input === void 0 ? void 0 : input.bubbles),
+                        _h.cancelable = !!(input === null || input === void 0 ? void 0 : input.cancelable),
+                        _h.composed = !!(input === null || input === void 0 ? void 0 : input.composed),
+                        _h.cached = !!(input === null || input === void 0 ? void 0 : input.cached),
+                        _h);
                     if (typeof (options === null || options === void 0 ? void 0 : options.onSuccess) === "function")
                         options.onSuccess(detail);
-                    el = ((_a = input === null || input === void 0 ? void 0 : input.event) === null || _a === void 0 ? void 0 : _a.target) ||
-                        ((_c = (_b = input === null || input === void 0 ? void 0 : input.event) === null || _b === void 0 ? void 0 : _b.detail) === null || _c === void 0 ? void 0 : _c.target) ||
-                        ((_f = (_e = (_d = input === null || input === void 0 ? void 0 : input.event) === null || _d === void 0 ? void 0 : _d.detail) === null || _e === void 0 ? void 0 : _e.event) === null || _f === void 0 ? void 0 : _f.target) ||
+                    el = ((_b = input === null || input === void 0 ? void 0 : input.event) === null || _b === void 0 ? void 0 : _b.target) ||
+                        ((_d = (_c = input === null || input === void 0 ? void 0 : input.event) === null || _c === void 0 ? void 0 : _c.detail) === null || _d === void 0 ? void 0 : _d.target) ||
+                        ((_g = (_f = (_e = input === null || input === void 0 ? void 0 : input.event) === null || _e === void 0 ? void 0 : _e.detail) === null || _f === void 0 ? void 0 : _f.event) === null || _g === void 0 ? void 0 : _g.target) ||
                         document;
                     el.dispatchEvent(new CustomEvent("fireenjinSuccess", {
                         detail: detail,

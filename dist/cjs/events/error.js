@@ -10,10 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 function fireenjinError(input, options) {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g;
     return __awaiter(this, void 0, void 0, function* () {
         const detail = {
             event: input === null || input === void 0 ? void 0 : input.event,
+            target: (input === null || input === void 0 ? void 0 : input.target) || ((_a = input === null || input === void 0 ? void 0 : input.event) === null || _a === void 0 ? void 0 : _a.target),
             error: input === null || input === void 0 ? void 0 : input.error,
             name: input === null || input === void 0 ? void 0 : input.name,
             endpoint: input === null || input === void 0 ? void 0 : input.endpoint,
@@ -24,9 +25,9 @@ function fireenjinError(input, options) {
         };
         if (typeof (options === null || options === void 0 ? void 0 : options.onError) === "function")
             options.onError(detail);
-        const el = ((_a = input === null || input === void 0 ? void 0 : input.event) === null || _a === void 0 ? void 0 : _a.target) ||
-            ((_c = (_b = input === null || input === void 0 ? void 0 : input.event) === null || _b === void 0 ? void 0 : _b.detail) === null || _c === void 0 ? void 0 : _c.target) ||
-            ((_f = (_e = (_d = input === null || input === void 0 ? void 0 : input.event) === null || _d === void 0 ? void 0 : _d.detail) === null || _e === void 0 ? void 0 : _e.event) === null || _f === void 0 ? void 0 : _f.target) ||
+        const el = ((_b = input === null || input === void 0 ? void 0 : input.event) === null || _b === void 0 ? void 0 : _b.target) ||
+            ((_d = (_c = input === null || input === void 0 ? void 0 : input.event) === null || _c === void 0 ? void 0 : _c.detail) === null || _d === void 0 ? void 0 : _d.target) ||
+            ((_g = (_f = (_e = input === null || input === void 0 ? void 0 : input.event) === null || _e === void 0 ? void 0 : _e.detail) === null || _f === void 0 ? void 0 : _f.event) === null || _g === void 0 ? void 0 : _g.target) ||
             document;
         el.dispatchEvent(new CustomEvent("fireenjinError", {
             detail,

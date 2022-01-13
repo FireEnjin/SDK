@@ -9,6 +9,7 @@ export default async function tryOrFail(fn, options) {
         bubbles: options?.bubbles ?? true,
         cancelable: options?.cancelable ?? true,
         composed: !!options?.composed,
+        target: options?.target || options?.event?.target,
     };
     try {
         const data = await fn();

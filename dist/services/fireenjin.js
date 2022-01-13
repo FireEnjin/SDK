@@ -103,11 +103,11 @@ var FireEnjin = /** @class */ (function () {
         }
     }
     FireEnjin.prototype.onUpload = function (event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
         return __awaiter(this, void 0, void 0, function () {
             var data;
-            return __generator(this, function (_q) {
-                switch (_q.label) {
+            return __generator(this, function (_r) {
+                switch (_r.label) {
                     case 0:
                         if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onUpload) === "function")
                             this.options.onUpload(event);
@@ -122,14 +122,15 @@ var FireEnjin = /** @class */ (function () {
                                 type: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.type
                             }, {
                                 event: event,
-                                name: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.name,
-                                endpoint: (_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.endpoint,
-                                bubbles: (_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.bubbles,
-                                cancelable: (_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.cancelable,
-                                composed: (_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.composed
+                                target: ((_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.target) || (event === null || event === void 0 ? void 0 : event.target),
+                                name: (_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.name,
+                                endpoint: (_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.endpoint,
+                                bubbles: (_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.bubbles,
+                                cancelable: (_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.cancelable,
+                                composed: (_q = event === null || event === void 0 ? void 0 : event.detail) === null || _q === void 0 ? void 0 : _q.composed
                             })];
                     case 1:
-                        data = _q.sent();
+                        data = _r.sent();
                         if (event === null || event === void 0 ? void 0 : event.target)
                             event.target.value = (data === null || data === void 0 ? void 0 : data.url) || null;
                         return [2 /*return*/, data];
@@ -138,9 +139,9 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.onSubmit = function (event) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_h) {
+            return __generator(this, function (_j) {
                 if (!event ||
                     !event.detail ||
                     !event.detail.endpoint ||
@@ -148,21 +149,22 @@ var FireEnjin = /** @class */ (function () {
                     return [2 /*return*/, false];
                 return [2 /*return*/, this.submit(event.detail.endpoint, {
                         event: event,
-                        id: (_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.id,
-                        data: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.data,
-                        params: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.params,
-                        query: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.query,
-                        bubbles: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.bubbles,
-                        cancelable: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.cancelable,
-                        composed: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.composed
+                        target: ((_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.target) || (event === null || event === void 0 ? void 0 : event.target),
+                        id: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.id,
+                        data: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.data,
+                        params: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.params,
+                        query: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.query,
+                        bubbles: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.bubbles,
+                        cancelable: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.cancelable,
+                        composed: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.composed
                     })];
             });
         });
     };
     FireEnjin.prototype.onFetch = function (event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_j) {
+            return __generator(this, function (_k) {
                 if (!event ||
                     !event.detail ||
                     !event.detail.endpoint ||
@@ -170,13 +172,14 @@ var FireEnjin = /** @class */ (function () {
                     return [2 /*return*/, false];
                 return [2 /*return*/, this.fetch(event.detail.endpoint, ((_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.params) || {}, {
                         event: event,
-                        dataPropsMap: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.dataPropsMap,
-                        name: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.name,
-                        cacheKey: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.cacheKey,
-                        disableCache: !!((_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.disableCache),
-                        bubbles: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.bubbles,
-                        cancelable: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.cancelable,
-                        composed: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.composed
+                        target: ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.target) || (event === null || event === void 0 ? void 0 : event.target),
+                        dataPropsMap: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.dataPropsMap,
+                        name: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.name,
+                        cacheKey: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.cacheKey,
+                        disableCache: !!((_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.disableCache),
+                        bubbles: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.bubbles,
+                        cancelable: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.cancelable,
+                        composed: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.composed
                     })];
             });
         });
@@ -193,11 +196,11 @@ var FireEnjin = /** @class */ (function () {
         return hash;
     };
     FireEnjin.prototype.upload = function (input, options) {
-        var _a, _b;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function () {
             var endpoint;
             var _this = this;
-            return __generator(this, function (_c) {
+            return __generator(this, function (_d) {
                 endpoint = (options === null || options === void 0 ? void 0 : options.endpoint) || "upload";
                 return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
@@ -207,25 +210,26 @@ var FireEnjin = /** @class */ (function () {
                         });
                     }); }, {
                         event: (options === null || options === void 0 ? void 0 : options.event) || null,
+                        target: (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target),
                         name: (options === null || options === void 0 ? void 0 : options.name) || endpoint,
                         bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                         cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                         composed: options === null || options === void 0 ? void 0 : options.composed,
                         endpoint: endpoint,
                         cached: true,
-                        onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
-                        onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
+                        onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
+                        onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess
                     })];
             });
         });
     };
     FireEnjin.prototype.fetch = function (endpoint, input, options) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function () {
             var data, event, name, localKey;
             var _this = this;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            return __generator(this, function (_g) {
+                switch (_g.label) {
                     case 0:
                         data = null;
                         event = (options === null || options === void 0 ? void 0 : options.event) || null;
@@ -243,17 +247,18 @@ var FireEnjin = /** @class */ (function () {
                             }); }); }, {
                                 endpoint: endpoint,
                                 event: event,
+                                target: (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target),
                                 name: name,
                                 cached: true,
                                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                                 composed: options === null || options === void 0 ? void 0 : options.composed,
-                                onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
-                                onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
+                                onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
+                                onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess
                             })];
                     case 1:
-                        data = _e.sent();
-                        _e.label = 2;
+                        data = _g.sent();
+                        _g.label = 2;
                     case 2: return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
                             var _a;
                             return __generator(this, function (_b) {
@@ -266,27 +271,28 @@ var FireEnjin = /** @class */ (function () {
                         }); }, {
                             endpoint: endpoint,
                             event: event,
+                            target: (options === null || options === void 0 ? void 0 : options.target) || ((_d = options === null || options === void 0 ? void 0 : options.event) === null || _d === void 0 ? void 0 : _d.target),
                             name: name,
                             cached: false,
                             bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                             cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                             composed: options === null || options === void 0 ? void 0 : options.composed,
-                            onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
-                            onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess
+                            onError: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onError,
+                            onSuccess: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onSuccess
                         })];
                     case 3:
-                        data = _e.sent();
+                        data = _g.sent();
                         return [2 /*return*/, data];
                 }
             });
         });
     };
     FireEnjin.prototype.submit = function (endpoint, input, options) {
-        var _a, _b;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function () {
             var event, name;
             var _this = this;
-            return __generator(this, function (_c) {
+            return __generator(this, function (_d) {
                 event = (options === null || options === void 0 ? void 0 : options.event) || null;
                 name = (options === null || options === void 0 ? void 0 : options.name) || null;
                 return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
@@ -295,7 +301,7 @@ var FireEnjin = /** @class */ (function () {
                             return [2 /*return*/, ((_a = this.host) === null || _a === void 0 ? void 0 : _a.type) === "graphql"
                                     ? (input === null || input === void 0 ? void 0 : input.query)
                                         ? this.client.request(input.query, input.params)
-                                        : this.sdk[endpoint]({
+                                        : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
                                             id: input === null || input === void 0 ? void 0 : input.id,
                                             data: input === null || input === void 0 ? void 0 : input.data
                                         })
@@ -306,13 +312,14 @@ var FireEnjin = /** @class */ (function () {
                     }); }, {
                         endpoint: endpoint,
                         event: event,
+                        target: (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target),
                         name: name,
                         cached: false,
                         bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                         cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                         composed: options === null || options === void 0 ? void 0 : options.composed,
-                        onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
-                        onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
+                        onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
+                        onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess
                     })];
             });
         });

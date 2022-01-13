@@ -50,11 +50,11 @@ exports.__esModule = true;
 var error_1 = require("../events/error");
 var success_1 = require("../events/success");
 function tryOrFail(fn, options) {
-    var _a, _b;
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function () {
         var baseData, data, error_2;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
                     baseData = {
                         cached: !!(options === null || options === void 0 ? void 0 : options.cached),
@@ -63,27 +63,28 @@ function tryOrFail(fn, options) {
                         endpoint: options === null || options === void 0 ? void 0 : options.endpoint,
                         bubbles: (_a = options === null || options === void 0 ? void 0 : options.bubbles) !== null && _a !== void 0 ? _a : true,
                         cancelable: (_b = options === null || options === void 0 ? void 0 : options.cancelable) !== null && _b !== void 0 ? _b : true,
-                        composed: !!(options === null || options === void 0 ? void 0 : options.composed)
+                        composed: !!(options === null || options === void 0 ? void 0 : options.composed),
+                        target: (options === null || options === void 0 ? void 0 : options.target) || ((_c = options === null || options === void 0 ? void 0 : options.event) === null || _c === void 0 ? void 0 : _c.target)
                     };
-                    _c.label = 1;
+                    _d.label = 1;
                 case 1:
-                    _c.trys.push([1, 4, , 6]);
+                    _d.trys.push([1, 4, , 6]);
                     return [4 /*yield*/, fn()];
                 case 2:
-                    data = _c.sent();
+                    data = _d.sent();
                     return [4 /*yield*/, (0, success_1["default"])(__assign(__assign({}, baseData), { data: data }), {
                             onSuccess: options === null || options === void 0 ? void 0 : options.onSuccess
                         })];
                 case 3:
-                    _c.sent();
+                    _d.sent();
                     return [2 /*return*/, data];
                 case 4:
-                    error_2 = _c.sent();
+                    error_2 = _d.sent();
                     return [4 /*yield*/, (0, error_1["default"])(__assign(__assign({}, baseData), { error: error_2 }), {
                             onError: options === null || options === void 0 ? void 0 : options.onError
                         })];
                 case 5:
-                    _c.sent();
+                    _d.sent();
                     return [2 /*return*/];
                 case 6: return [2 /*return*/];
             }

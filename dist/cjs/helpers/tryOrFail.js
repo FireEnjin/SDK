@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const error_1 = __importDefault(require("../events/error"));
 const success_1 = __importDefault(require("../events/success"));
 function tryOrFail(fn, options) {
-    var _a, _b;
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         const baseData = {
             cached: !!(options === null || options === void 0 ? void 0 : options.cached),
@@ -25,6 +25,7 @@ function tryOrFail(fn, options) {
             bubbles: (_a = options === null || options === void 0 ? void 0 : options.bubbles) !== null && _a !== void 0 ? _a : true,
             cancelable: (_b = options === null || options === void 0 ? void 0 : options.cancelable) !== null && _b !== void 0 ? _b : true,
             composed: !!(options === null || options === void 0 ? void 0 : options.composed),
+            target: (options === null || options === void 0 ? void 0 : options.target) || ((_c = options === null || options === void 0 ? void 0 : options.event) === null || _c === void 0 ? void 0 : _c.target),
         };
         try {
             const data = yield fn();

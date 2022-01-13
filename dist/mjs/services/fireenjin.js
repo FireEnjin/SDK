@@ -70,6 +70,7 @@ export default class FireEnjin {
             type: event.detail.data?.type,
         }, {
             event,
+            target: event?.detail?.target || event?.target,
             name: event?.detail?.name,
             endpoint: event?.detail?.endpoint,
             bubbles: event?.detail?.bubbles,
@@ -88,6 +89,7 @@ export default class FireEnjin {
             return false;
         return this.submit(event.detail.endpoint, {
             event,
+            target: event?.detail?.target || event?.target,
             id: event?.detail?.id,
             data: event?.detail?.data,
             params: event?.detail?.params,
@@ -105,6 +107,7 @@ export default class FireEnjin {
             return false;
         return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
             event,
+            target: event?.detail?.target || event?.target,
             dataPropsMap: event?.detail?.dataPropsMap,
             name: event?.detail?.name,
             cacheKey: event?.detail?.cacheKey,
@@ -131,6 +134,7 @@ export default class FireEnjin {
             ? this.options.uploadUrl
             : `${this.host.url}/${endpoint}`, input), {
             event: options?.event || null,
+            target: options?.target || options?.event?.target,
             name: options?.name || endpoint,
             bubbles: options?.bubbles,
             cancelable: options?.cancelable,
@@ -156,6 +160,7 @@ export default class FireEnjin {
             data = await tryOrFail(async () => localforage.getItem(localKey), {
                 endpoint,
                 event,
+                target: options?.target || options?.event?.target,
                 name,
                 cached: true,
                 bubbles: options?.bubbles,
@@ -172,6 +177,7 @@ export default class FireEnjin {
             : this.client.request(endpoint, input), {
             endpoint,
             event,
+            target: options?.target || options?.event?.target,
             name,
             cached: false,
             bubbles: options?.bubbles,
@@ -188,7 +194,7 @@ export default class FireEnjin {
         return tryOrFail(async () => this.host?.type === "graphql"
             ? input?.query
                 ? this.client.request(input.query, input.params)
-                : this.sdk[endpoint]({
+                : this.sdk[endpoint](input?.params || {
                     id: input?.id,
                     data: input?.data,
                 })
@@ -197,6 +203,7 @@ export default class FireEnjin {
             }), {
             endpoint,
             event,
+            target: options?.target || options?.event?.target,
             name,
             cached: false,
             bubbles: options?.bubbles,
