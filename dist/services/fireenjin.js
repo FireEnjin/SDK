@@ -55,7 +55,6 @@ var database_1 = require("./database");
 var firestore_1 = require("./firestore");
 var FireEnjin = /** @class */ (function () {
     function FireEnjin(options) {
-        var _this = this;
         var _a, _b, _c, _d, _e, _f, _g, _h;
         this.sdk = {};
         this.host = {
@@ -91,46 +90,53 @@ var FireEnjin = /** @class */ (function () {
                 ? options.getSdk(this.client, (_h = this.options) === null || _h === void 0 ? void 0 : _h.onRequest)
                 : null;
         if (document) {
-            document.addEventListener("fireenjinUpload", function (event) {
-                _this.onUpload(event);
-            });
-            document.addEventListener("fireenjinSubmit", function (event) {
-                _this.onSubmit(event);
-            });
-            document.addEventListener("fireenjinFetch", function (event) {
-                _this.onFetch(event);
-            });
+            document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
+            document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
+            document.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+            if (options === null || options === void 0 ? void 0 : options.debug) {
+                document.addEventListener("fireenjinSuccess", function (event) {
+                    console.log("fireenjinSuccess: ", event);
+                });
+                document.addEventListener("fireenjinError", function (event) {
+                    console.log("fireenjinError: ", event);
+                });
+                document.addEventListener("fireenjinTrigger", function (event) {
+                    console.log("fireenjinTrigger: ", event);
+                });
+            }
         }
     }
     FireEnjin.prototype.onUpload = function (event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
         return __awaiter(this, void 0, void 0, function () {
             var data;
-            return __generator(this, function (_r) {
-                switch (_r.label) {
+            return __generator(this, function (_s) {
+                switch (_s.label) {
                     case 0:
-                        if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onUpload) === "function")
+                        if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                            console.log("fireenjinUpload: ", event);
+                        if (typeof ((_b = this.options) === null || _b === void 0 ? void 0 : _b.onUpload) === "function")
                             this.options.onUpload(event);
-                        if (!((_c = (_b = event.detail) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.encodedContent) ||
-                            typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onUpload) === "function")
+                        if (!((_d = (_c = event.detail) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.encodedContent) ||
+                            typeof ((_e = this.options) === null || _e === void 0 ? void 0 : _e.onUpload) === "function")
                             return [2 /*return*/, false];
                         return [4 /*yield*/, this.upload({
-                                id: (_e = event.detail.data) === null || _e === void 0 ? void 0 : _e.id,
-                                path: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.path,
-                                fileName: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.fileName,
-                                file: (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.encodedContent,
-                                type: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.type
+                                id: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.id,
+                                path: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.path,
+                                fileName: (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.fileName,
+                                file: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.encodedContent,
+                                type: (_k = event.detail.data) === null || _k === void 0 ? void 0 : _k.type
                             }, {
                                 event: event,
-                                target: ((_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.target) || (event === null || event === void 0 ? void 0 : event.target),
-                                name: (_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.name,
-                                endpoint: (_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.endpoint,
-                                bubbles: (_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.bubbles,
-                                cancelable: (_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.cancelable,
-                                composed: (_q = event === null || event === void 0 ? void 0 : event.detail) === null || _q === void 0 ? void 0 : _q.composed
+                                target: ((_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.target) || (event === null || event === void 0 ? void 0 : event.target),
+                                name: (_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.name,
+                                endpoint: (_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.endpoint,
+                                bubbles: (_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.bubbles,
+                                cancelable: (_q = event === null || event === void 0 ? void 0 : event.detail) === null || _q === void 0 ? void 0 : _q.cancelable,
+                                composed: (_r = event === null || event === void 0 ? void 0 : event.detail) === null || _r === void 0 ? void 0 : _r.composed
                             })];
                     case 1:
-                        data = _r.sent();
+                        data = _s.sent();
                         if (event === null || event === void 0 ? void 0 : event.target)
                             event.target.value = (data === null || data === void 0 ? void 0 : data.url) || null;
                         return [2 /*return*/, data];
@@ -139,9 +145,11 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.onSubmit = function (event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_j) {
+            return __generator(this, function (_k) {
+                if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                    console.log("fireenjinSubmit: ", event);
                 if (!event ||
                     !event.detail ||
                     !event.detail.endpoint ||
@@ -149,37 +157,39 @@ var FireEnjin = /** @class */ (function () {
                     return [2 /*return*/, false];
                 return [2 /*return*/, this.submit(event.detail.endpoint, {
                         event: event,
-                        target: ((_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.target) || (event === null || event === void 0 ? void 0 : event.target),
-                        id: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.id,
-                        data: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.data,
-                        params: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.params,
-                        query: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.query,
-                        bubbles: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.bubbles,
-                        cancelable: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.cancelable,
-                        composed: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.composed
+                        target: ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.target) || (event === null || event === void 0 ? void 0 : event.target),
+                        id: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.id,
+                        data: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.data,
+                        params: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.params,
+                        query: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.query,
+                        bubbles: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.bubbles,
+                        cancelable: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.cancelable,
+                        composed: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.composed
                     })];
             });
         });
     };
     FireEnjin.prototype.onFetch = function (event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_k) {
+            return __generator(this, function (_l) {
+                if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                    console.log("fireenjinFetch: ", event);
                 if (!event ||
                     !event.detail ||
                     !event.detail.endpoint ||
                     event.detail.disableFetch)
                     return [2 /*return*/, false];
-                return [2 /*return*/, this.fetch(event.detail.endpoint, ((_a = event === null || event === void 0 ? void 0 : event.detail) === null || _a === void 0 ? void 0 : _a.params) || {}, {
+                return [2 /*return*/, this.fetch(event.detail.endpoint, ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.params) || {}, {
                         event: event,
-                        target: ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.target) || (event === null || event === void 0 ? void 0 : event.target),
-                        dataPropsMap: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.dataPropsMap,
-                        name: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.name,
-                        cacheKey: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.cacheKey,
-                        disableCache: !!((_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.disableCache),
-                        bubbles: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.bubbles,
-                        cancelable: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.cancelable,
-                        composed: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.composed
+                        target: ((_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.target) || (event === null || event === void 0 ? void 0 : event.target),
+                        dataPropsMap: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.dataPropsMap,
+                        name: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.name,
+                        cacheKey: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.cacheKey,
+                        disableCache: !!((_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.disableCache),
+                        bubbles: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.bubbles,
+                        cancelable: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.cancelable,
+                        composed: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.composed
                     })];
             });
         });
@@ -224,12 +234,12 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.fetch = function (endpoint, input, options) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function () {
             var data, event, name, localKey;
             var _this = this;
-            return __generator(this, function (_g) {
-                switch (_g.label) {
+            return __generator(this, function (_f) {
+                switch (_f.label) {
                     case 0:
                         data = null;
                         event = (options === null || options === void 0 ? void 0 : options.event) || null;
@@ -247,18 +257,18 @@ var FireEnjin = /** @class */ (function () {
                             }); }); }, {
                                 endpoint: endpoint,
                                 event: event,
-                                target: (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target),
+                                target: (options === null || options === void 0 ? void 0 : options.target) || (event === null || event === void 0 ? void 0 : event.target),
                                 name: name,
                                 cached: true,
                                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                                 composed: options === null || options === void 0 ? void 0 : options.composed,
-                                onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
-                                onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess
+                                onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
+                                onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
                             })];
                     case 1:
-                        data = _g.sent();
-                        _g.label = 2;
+                        data = _f.sent();
+                        _f.label = 2;
                     case 2: return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
                             var _a;
                             return __generator(this, function (_b) {
@@ -271,28 +281,28 @@ var FireEnjin = /** @class */ (function () {
                         }); }, {
                             endpoint: endpoint,
                             event: event,
-                            target: (options === null || options === void 0 ? void 0 : options.target) || ((_d = options === null || options === void 0 ? void 0 : options.event) === null || _d === void 0 ? void 0 : _d.target),
+                            target: (options === null || options === void 0 ? void 0 : options.target) || ((_c = options === null || options === void 0 ? void 0 : options.event) === null || _c === void 0 ? void 0 : _c.target),
                             name: name,
                             cached: false,
                             bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                             cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                             composed: options === null || options === void 0 ? void 0 : options.composed,
-                            onError: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onError,
-                            onSuccess: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onSuccess
+                            onError: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onError,
+                            onSuccess: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onSuccess
                         })];
                     case 3:
-                        data = _g.sent();
+                        data = _f.sent();
                         return [2 /*return*/, data];
                 }
             });
         });
     };
     FireEnjin.prototype.submit = function (endpoint, input, options) {
-        var _a, _b, _c;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var event, name;
             var _this = this;
-            return __generator(this, function (_d) {
+            return __generator(this, function (_c) {
                 event = (options === null || options === void 0 ? void 0 : options.event) || null;
                 name = (options === null || options === void 0 ? void 0 : options.name) || null;
                 return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
@@ -312,14 +322,14 @@ var FireEnjin = /** @class */ (function () {
                     }); }, {
                         endpoint: endpoint,
                         event: event,
-                        target: (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target),
+                        target: (options === null || options === void 0 ? void 0 : options.target) || (event === null || event === void 0 ? void 0 : event.target),
                         name: name,
                         cached: false,
                         bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                         cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                         composed: options === null || options === void 0 ? void 0 : options.composed,
-                        onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
-                        onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess
+                        onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
+                        onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
                     })];
             });
         });

@@ -38,33 +38,42 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var setComponentProps_1 = require("../helpers/setComponentProps");
 function fireenjinSuccess(input, options) {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var detail, el;
-        var _h;
-        return __generator(this, function (_j) {
-            switch (_j.label) {
+        var detail, _b, _c, el;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
-                    _h = {
+                    detail = {
                         event: input === null || input === void 0 ? void 0 : input.event,
-                        target: (input === null || input === void 0 ? void 0 : input.target) || ((_a = input === null || input === void 0 ? void 0 : input.event) === null || _a === void 0 ? void 0 : _a.target)
+                        target: (input === null || input === void 0 ? void 0 : input.target) || ((_a = input === null || input === void 0 ? void 0 : input.event) === null || _a === void 0 ? void 0 : _a.target),
+                        data: (input === null || input === void 0 ? void 0 : input.data) || null,
+                        name: input === null || input === void 0 ? void 0 : input.name,
+                        endpoint: input === null || input === void 0 ? void 0 : input.endpoint,
+                        bubbles: !!(input === null || input === void 0 ? void 0 : input.bubbles),
+                        cancelable: !!(input === null || input === void 0 ? void 0 : input.cancelable),
+                        composed: !!(input === null || input === void 0 ? void 0 : input.composed),
+                        cached: !!(input === null || input === void 0 ? void 0 : input.cached)
                     };
-                    return [4 /*yield*/, (0, setComponentProps_1["default"])(input === null || input === void 0 ? void 0 : input.dataPropsMap, input === null || input === void 0 ? void 0 : input.data)];
+                    if (!(input === null || input === void 0 ? void 0 : input.dataPropsMap)) return [3 /*break*/, 4];
+                    _d.label = 1;
                 case 1:
-                    detail = (_h.data = _j.sent(),
-                        _h.name = input === null || input === void 0 ? void 0 : input.name,
-                        _h.endpoint = input === null || input === void 0 ? void 0 : input.endpoint,
-                        _h.bubbles = !!(input === null || input === void 0 ? void 0 : input.bubbles),
-                        _h.cancelable = !!(input === null || input === void 0 ? void 0 : input.cancelable),
-                        _h.composed = !!(input === null || input === void 0 ? void 0 : input.composed),
-                        _h.cached = !!(input === null || input === void 0 ? void 0 : input.cached),
-                        _h);
+                    _d.trys.push([1, 3, , 4]);
+                    _b = detail;
+                    return [4 /*yield*/, (0, setComponentProps_1["default"])(input === null || input === void 0 ? void 0 : input.dataPropsMap, input === null || input === void 0 ? void 0 : input.data)];
+                case 2:
+                    _b.data = _d.sent();
+                    return [3 /*break*/, 4];
+                case 3:
+                    _c = _d.sent();
+                    console.log("Error setting data props");
+                    if (typeof (options === null || options === void 0 ? void 0 : options.onError) === "function")
+                        options.onError(detail);
+                    return [3 /*break*/, 4];
+                case 4:
                     if (typeof (options === null || options === void 0 ? void 0 : options.onSuccess) === "function")
                         options.onSuccess(detail);
-                    el = ((_b = input === null || input === void 0 ? void 0 : input.event) === null || _b === void 0 ? void 0 : _b.target) ||
-                        ((_d = (_c = input === null || input === void 0 ? void 0 : input.event) === null || _c === void 0 ? void 0 : _c.detail) === null || _d === void 0 ? void 0 : _d.target) ||
-                        ((_g = (_f = (_e = input === null || input === void 0 ? void 0 : input.event) === null || _e === void 0 ? void 0 : _e.detail) === null || _f === void 0 ? void 0 : _f.event) === null || _g === void 0 ? void 0 : _g.target) ||
-                        document;
+                    el = (detail === null || detail === void 0 ? void 0 : detail.target) || document;
                     el.dispatchEvent(new CustomEvent("fireenjinSuccess", {
                         detail: detail,
                         bubbles: !!(input === null || input === void 0 ? void 0 : input.bubbles),

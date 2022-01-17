@@ -15,6 +15,7 @@ export default async function tryOrFail(fn, options) {
         const data = await fn();
         await fireenjinSuccess({ ...baseData, data }, {
             onSuccess: options?.onSuccess,
+            onError: options?.onError,
         });
         return data;
     }

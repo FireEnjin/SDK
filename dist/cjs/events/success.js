@@ -14,12 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const setComponentProps_1 = __importDefault(require("../helpers/setComponentProps"));
 function fireenjinSuccess(input, options) {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const detail = {
             event: input === null || input === void 0 ? void 0 : input.event,
             target: (input === null || input === void 0 ? void 0 : input.target) || ((_a = input === null || input === void 0 ? void 0 : input.event) === null || _a === void 0 ? void 0 : _a.target),
-            data: yield (0, setComponentProps_1.default)(input === null || input === void 0 ? void 0 : input.dataPropsMap, input === null || input === void 0 ? void 0 : input.data),
+            data: (input === null || input === void 0 ? void 0 : input.data) || null,
             name: input === null || input === void 0 ? void 0 : input.name,
             endpoint: input === null || input === void 0 ? void 0 : input.endpoint,
             bubbles: !!(input === null || input === void 0 ? void 0 : input.bubbles),
@@ -27,12 +27,19 @@ function fireenjinSuccess(input, options) {
             composed: !!(input === null || input === void 0 ? void 0 : input.composed),
             cached: !!(input === null || input === void 0 ? void 0 : input.cached),
         };
+        if (input === null || input === void 0 ? void 0 : input.dataPropsMap) {
+            try {
+                detail.data = yield (0, setComponentProps_1.default)(input === null || input === void 0 ? void 0 : input.dataPropsMap, input === null || input === void 0 ? void 0 : input.data);
+            }
+            catch (_b) {
+                console.log("Error setting data props");
+                if (typeof (options === null || options === void 0 ? void 0 : options.onError) === "function")
+                    options.onError(detail);
+            }
+        }
         if (typeof (options === null || options === void 0 ? void 0 : options.onSuccess) === "function")
             options.onSuccess(detail);
-        const el = ((_b = input === null || input === void 0 ? void 0 : input.event) === null || _b === void 0 ? void 0 : _b.target) ||
-            ((_d = (_c = input === null || input === void 0 ? void 0 : input.event) === null || _c === void 0 ? void 0 : _c.detail) === null || _d === void 0 ? void 0 : _d.target) ||
-            ((_g = (_f = (_e = input === null || input === void 0 ? void 0 : input.event) === null || _e === void 0 ? void 0 : _e.detail) === null || _f === void 0 ? void 0 : _f.event) === null || _g === void 0 ? void 0 : _g.target) ||
-            document;
+        const el = (detail === null || detail === void 0 ? void 0 : detail.target) || document;
         el.dispatchEvent(new CustomEvent("fireenjinSuccess", {
             detail,
             bubbles: !!(input === null || input === void 0 ? void 0 : input.bubbles),

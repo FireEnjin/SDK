@@ -31,6 +31,7 @@ function tryOrFail(fn, options) {
             const data = yield fn();
             yield (0, success_1.default)(Object.assign(Object.assign({}, baseData), { data }), {
                 onSuccess: options === null || options === void 0 ? void 0 : options.onSuccess,
+                onError: options === null || options === void 0 ? void 0 : options.onError,
             });
             return data;
         }

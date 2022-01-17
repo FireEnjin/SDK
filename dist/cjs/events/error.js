@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 function fireenjinError(input, options) {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const detail = {
             event: input === null || input === void 0 ? void 0 : input.event,
@@ -25,10 +25,7 @@ function fireenjinError(input, options) {
         };
         if (typeof (options === null || options === void 0 ? void 0 : options.onError) === "function")
             options.onError(detail);
-        const el = ((_b = input === null || input === void 0 ? void 0 : input.event) === null || _b === void 0 ? void 0 : _b.target) ||
-            ((_d = (_c = input === null || input === void 0 ? void 0 : input.event) === null || _c === void 0 ? void 0 : _c.detail) === null || _d === void 0 ? void 0 : _d.target) ||
-            ((_g = (_f = (_e = input === null || input === void 0 ? void 0 : input.event) === null || _e === void 0 ? void 0 : _e.detail) === null || _f === void 0 ? void 0 : _f.event) === null || _g === void 0 ? void 0 : _g.target) ||
-            document;
+        const el = (detail === null || detail === void 0 ? void 0 : detail.target) || document;
         el.dispatchEvent(new CustomEvent("fireenjinError", {
             detail,
             bubbles: !!(input === null || input === void 0 ? void 0 : input.bubbles),

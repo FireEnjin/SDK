@@ -45,18 +45,25 @@ export default class FireEnjin {
                 ? options.getSdk(this.client, this.options?.onRequest)
                 : null;
         if (document) {
-            document.addEventListener("fireenjinUpload", (event) => {
-                this.onUpload(event);
-            });
-            document.addEventListener("fireenjinSubmit", (event) => {
-                this.onSubmit(event);
-            });
-            document.addEventListener("fireenjinFetch", (event) => {
-                this.onFetch(event);
-            });
+            document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
+            document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
+            document.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+            if (options?.debug) {
+                document.addEventListener("fireenjinSuccess", (event) => {
+                    console.log("fireenjinSuccess: ", event);
+                });
+                document.addEventListener("fireenjinError", (event) => {
+                    console.log("fireenjinError: ", event);
+                });
+                document.addEventListener("fireenjinTrigger", (event) => {
+                    console.log("fireenjinTrigger: ", event);
+                });
+            }
         }
     }
     async onUpload(event) {
+        if (this.options?.debug)
+            console.log("fireenjinUpload: ", event);
         if (typeof this.options?.onUpload === "function")
             this.options.onUpload(event);
         if (!event.detail?.data?.encodedContent ||
@@ -82,6 +89,8 @@ export default class FireEnjin {
         return data;
     }
     async onSubmit(event) {
+        if (this.options?.debug)
+            console.log("fireenjinSubmit: ", event);
         if (!event ||
             !event.detail ||
             !event.detail.endpoint ||
@@ -100,6 +109,8 @@ export default class FireEnjin {
         });
     }
     async onFetch(event) {
+        if (this.options?.debug)
+            console.log("fireenjinFetch: ", event);
         if (!event ||
             !event.detail ||
             !event.detail.endpoint ||
@@ -160,7 +171,7 @@ export default class FireEnjin {
             data = await tryOrFail(async () => localforage.getItem(localKey), {
                 endpoint,
                 event,
-                target: options?.target || options?.event?.target,
+                target: options?.target || event?.target,
                 name,
                 cached: true,
                 bubbles: options?.bubbles,
@@ -203,7 +214,7 @@ export default class FireEnjin {
             }), {
             endpoint,
             event,
-            target: options?.target || options?.event?.target,
+            target: options?.target || event?.target,
             name,
             cached: false,
             bubbles: options?.bubbles,

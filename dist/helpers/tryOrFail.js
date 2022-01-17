@@ -73,7 +73,8 @@ function tryOrFail(fn, options) {
                 case 2:
                     data = _d.sent();
                     return [4 /*yield*/, (0, success_1["default"])(__assign(__assign({}, baseData), { data: data }), {
-                            onSuccess: options === null || options === void 0 ? void 0 : options.onSuccess
+                            onSuccess: options === null || options === void 0 ? void 0 : options.onSuccess,
+                            onError: options === null || options === void 0 ? void 0 : options.onError
                         })];
                 case 3:
                     _d.sent();
