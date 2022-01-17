@@ -213,7 +213,7 @@ export default class FireEnjin {
       data = await tryOrFail(async () => localforage.getItem(localKey), {
         endpoint,
         event,
-        target: options?.target || options?.event?.target,
+        target: options?.target || event?.target,
         name,
         cached: true,
         bubbles: options?.bubbles,
@@ -273,7 +273,7 @@ export default class FireEnjin {
       {
         endpoint,
         event,
-        target: options?.target || options?.event?.target,
+        target: options?.target || event?.target,
         name,
         cached: false,
         bubbles: options?.bubbles,

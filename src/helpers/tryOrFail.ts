@@ -37,6 +37,7 @@ export default async function tryOrFail(
       { ...baseData, data },
       {
         onSuccess: options?.onSuccess,
+        onError: options?.onError,
       }
     );
 
