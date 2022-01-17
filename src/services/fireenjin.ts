@@ -63,19 +63,34 @@ export default class FireEnjin {
         ? options.getSdk(this.client, this.options?.onRequest)
         : null;
     if (document) {
-      document.addEventListener("fireenjinUpload", (event) => {
-        this.onUpload(event as CustomEvent<FireEnjinUploadEvent>);
-      });
-      document.addEventListener("fireenjinSubmit", (event) => {
-        this.onSubmit(event as CustomEvent<FireEnjinSubmitEvent>);
-      });
-      document.addEventListener("fireenjinFetch", (event) => {
-        this.onFetch(event as CustomEvent<FireEnjinFetchEvent>);
-      });
+      document.addEventListener(
+        "fireenjinUpload",
+        this.onUpload.bind(this) as any
+      );
+      document.addEventListener(
+        "fireenjinSubmit",
+        this.onSubmit.bind(this) as any
+      );
+      document.addEventListener(
+        "fireenjinFetch",
+        this.onFetch.bind(this) as any
+      );
+      if (options?.debug) {
+        document.addEventListener("fireenjinSuccess", (event) => {
+          console.log("fireenjinSuccess: ", event);
+        });
+        document.addEventListener("fireenjinError", (event) => {
+          console.log("fireenjinError: ", event);
+        });
+        document.addEventListener("fireenjinTrigger", (event) => {
+          console.log("fireenjinTrigger: ", event);
+        });
+      }
     }
   }
 
   private async onUpload(event: CustomEvent<FireEnjinUploadEvent>) {
+    if (this.options?.debug) console.log("fireenjinUpload: ", event);
     if (typeof this.options?.onUpload === "function")
       this.options.onUpload(event);
     if (
@@ -109,6 +124,7 @@ export default class FireEnjin {
   }
 
   private async onSubmit(event: CustomEvent<FireEnjinSubmitEvent>) {
+    if (this.options?.debug) console.log("fireenjinSubmit: ", event);
     if (
       !event ||
       !event.detail ||
@@ -131,6 +147,7 @@ export default class FireEnjin {
   }
 
   private async onFetch(event: CustomEvent<FireEnjinFetchEvent>) {
+    if (this.options?.debug) console.log("fireenjinFetch: ", event);
     if (
       !event ||
       !event.detail ||
