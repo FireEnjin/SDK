@@ -35,13 +35,19 @@ export declare type FireEnjinOptions = {
     disableCache?: boolean;
     emulate?: boolean;
 };
-export interface FireEnjinUploadInput {
+export interface FireEnjinUploadData {
     id?: string | number;
     path?: string;
     fileName?: string;
     file?: any;
     type?: string;
     encodedContent?: any;
+}
+export interface FireEnjinUploadInput {
+    params?: any;
+    id?: string | number;
+    data?: FireEnjinUploadData;
+    query?: string;
 }
 export interface FireEnjinFetchInput {
     id?: string | number;
@@ -102,6 +108,6 @@ export interface FireEnjinSubmitEvent extends FireEnjinEvent {
     query?: any;
 }
 export interface FireEnjinUploadEvent extends FireEnjinEvent {
-    data?: FireEnjinUploadInput;
+    data?: FireEnjinUploadData;
 }
 export {};

@@ -101,11 +101,13 @@ class FireEnjin {
                 typeof ((_e = this.options) === null || _e === void 0 ? void 0 : _e.onUpload) === "function")
                 return false;
             const data = yield this.upload({
-                id: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.id,
-                path: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.path,
-                fileName: (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.fileName,
-                file: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.encodedContent,
-                type: (_k = event.detail.data) === null || _k === void 0 ? void 0 : _k.type,
+                data: {
+                    id: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.id,
+                    path: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.path,
+                    fileName: (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.fileName,
+                    file: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.encodedContent,
+                    type: (_k = event.detail.data) === null || _k === void 0 ? void 0 : _k.type,
+                },
             }, {
                 event,
                 target: ((_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.target) || (event === null || event === void 0 ? void 0 : event.target),
@@ -182,9 +184,17 @@ class FireEnjin {
         return __awaiter(this, void 0, void 0, function* () {
             const endpoint = (options === null || options === void 0 ? void 0 : options.endpoint) || "upload";
             return (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
-                return this.client.request(this.options.uploadUrl
-                    ? this.options.uploadUrl
-                    : `${this.host.url}/${endpoint}`, input);
+                var _d, _e, _f;
+                return ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql" && !((_e = this.options) === null || _e === void 0 ? void 0 : _e.uploadUrl)
+                    ? (input === null || input === void 0 ? void 0 : input.query)
+                        ? this.client.request(input.query, input.params)
+                        : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
+                            id: input === null || input === void 0 ? void 0 : input.id,
+                            data: input === null || input === void 0 ? void 0 : input.data,
+                        })
+                    : this.client.request(((_f = this.options) === null || _f === void 0 ? void 0 : _f.uploadUrl) || endpoint, input, {
+                        method: "POST",
+                    });
             }), {
                 event: (options === null || options === void 0 ? void 0 : options.event) || null,
                 target: (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target),

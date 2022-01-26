@@ -121,11 +121,13 @@ var FireEnjin = /** @class */ (function () {
                             typeof ((_e = this.options) === null || _e === void 0 ? void 0 : _e.onUpload) === "function")
                             return [2 /*return*/, false];
                         return [4 /*yield*/, this.upload({
-                                id: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.id,
-                                path: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.path,
-                                fileName: (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.fileName,
-                                file: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.encodedContent,
-                                type: (_k = event.detail.data) === null || _k === void 0 ? void 0 : _k.type
+                                data: {
+                                    id: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.id,
+                                    path: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.path,
+                                    fileName: (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.fileName,
+                                    file: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.encodedContent,
+                                    type: (_k = event.detail.data) === null || _k === void 0 ? void 0 : _k.type
+                                }
                             }, {
                                 event: event,
                                 target: ((_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.target) || (event === null || event === void 0 ? void 0 : event.target),
@@ -213,10 +215,18 @@ var FireEnjin = /** @class */ (function () {
             return __generator(this, function (_d) {
                 endpoint = (options === null || options === void 0 ? void 0 : options.endpoint) || "upload";
                 return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            return [2 /*return*/, this.client.request(this.options.uploadUrl
-                                    ? this.options.uploadUrl
-                                    : "".concat(this.host.url, "/").concat(endpoint), input)];
+                        var _a, _b, _c;
+                        return __generator(this, function (_d) {
+                            return [2 /*return*/, ((_a = this.host) === null || _a === void 0 ? void 0 : _a.type) === "graphql" && !((_b = this.options) === null || _b === void 0 ? void 0 : _b.uploadUrl)
+                                    ? (input === null || input === void 0 ? void 0 : input.query)
+                                        ? this.client.request(input.query, input.params)
+                                        : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
+                                            id: input === null || input === void 0 ? void 0 : input.id,
+                                            data: input === null || input === void 0 ? void 0 : input.data
+                                        })
+                                    : this.client.request(((_c = this.options) === null || _c === void 0 ? void 0 : _c.uploadUrl) || endpoint, input, {
+                                        method: "POST"
+                                    })];
                         });
                     }); }, {
                         event: (options === null || options === void 0 ? void 0 : options.event) || null,

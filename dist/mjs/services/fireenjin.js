@@ -70,11 +70,13 @@ export default class FireEnjin {
             typeof this.options?.onUpload === "function")
             return false;
         const data = await this.upload({
-            id: event.detail.data?.id,
-            path: event.detail.data?.path,
-            fileName: event.detail.data?.fileName,
-            file: event.detail.data?.encodedContent,
-            type: event.detail.data?.type,
+            data: {
+                id: event.detail.data?.id,
+                path: event.detail.data?.path,
+                fileName: event.detail.data?.fileName,
+                file: event.detail.data?.encodedContent,
+                type: event.detail.data?.type,
+            },
         }, {
             event,
             target: event?.detail?.target || event?.target,
@@ -141,9 +143,16 @@ export default class FireEnjin {
     }
     async upload(input, options) {
         const endpoint = options?.endpoint || "upload";
-        return tryOrFail(async () => this.client.request(this.options.uploadUrl
-            ? this.options.uploadUrl
-            : `${this.host.url}/${endpoint}`, input), {
+        return tryOrFail(async () => this.host?.type === "graphql" && !this.options?.uploadUrl
+            ? input?.query
+                ? this.client.request(input.query, input.params)
+                : this.sdk[endpoint](input?.params || {
+                    id: input?.id,
+                    data: input?.data,
+                })
+            : this.client.request(this.options?.uploadUrl || endpoint, input, {
+                method: "POST",
+            }), {
             event: options?.event || null,
             target: options?.target || options?.event?.target,
             name: options?.name || endpoint,

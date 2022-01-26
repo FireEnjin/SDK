@@ -49,13 +49,20 @@ export type FireEnjinOptions = {
   emulate?: boolean;
 };
 
-export interface FireEnjinUploadInput {
+export interface FireEnjinUploadData {
   id?: string | number;
   path?: string;
   fileName?: string;
   file?: any;
   type?: string;
   encodedContent?: any;
+}
+
+export interface FireEnjinUploadInput {
+  params?: any;
+  id?: string | number;
+  data?: FireEnjinUploadData;
+  query?: string;
 }
 
 export interface FireEnjinFetchInput {
@@ -126,5 +133,5 @@ export interface FireEnjinSubmitEvent extends FireEnjinEvent {
 }
 
 export interface FireEnjinUploadEvent extends FireEnjinEvent {
-  data?: FireEnjinUploadInput;
+  data?: FireEnjinUploadData;
 }
