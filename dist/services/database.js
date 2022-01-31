@@ -95,6 +95,21 @@ var DatabaseService = /** @class */ (function () {
             });
         });
     };
+    DatabaseService.prototype["delete"] = function (path, id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var doc;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        doc = this.document(path, id);
+                        return [4 /*yield*/, (0, firestore_1.deleteDoc)(doc)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, { id: doc.id }];
+                }
+            });
+        });
+    };
     DatabaseService.prototype.collection = function (path) {
         return (0, firestore_1.collection)(this.service, path);
     };

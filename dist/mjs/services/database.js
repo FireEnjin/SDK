@@ -1,5 +1,5 @@
 import { initializeApp } from "@firebase/app";
-import { getFirestore, addDoc, collection, doc, getDoc, getDocs, query as firestoreQuery, orderBy as firestoreOrderBy, limit as firestoreLimit, where as firestoreWhere, setDoc, updateDoc, onSnapshot, enableIndexedDbPersistence, connectFirestoreEmulator, } from "@firebase/firestore";
+import { getFirestore, addDoc, collection, deleteDoc, doc, getDoc, getDocs, query as firestoreQuery, orderBy as firestoreOrderBy, limit as firestoreLimit, where as firestoreWhere, setDoc, updateDoc, onSnapshot, enableIndexedDbPersistence, connectFirestoreEmulator, } from "@firebase/firestore";
 import { connectFunctionsEmulator, getFunctions, httpsCallable, } from "@firebase/functions";
 export default class DatabaseService {
     app;
@@ -39,6 +39,11 @@ export default class DatabaseService {
             await setDoc(this.document(collectionName, id), data);
         }
         return id ? this.document(collectionName, id) : addDoc(collection, data);
+    }
+    async delete(path, id) {
+        const doc = this.document(path, id);
+        await deleteDoc(doc);
+        return { id: doc.id };
     }
     collection(path) {
         return collection(this.service, path);

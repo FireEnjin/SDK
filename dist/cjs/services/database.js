@@ -50,6 +50,13 @@ class DatabaseService {
             return id ? this.document(collectionName, id) : (0, firestore_1.addDoc)(collection, data);
         });
     }
+    delete(path, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const doc = this.document(path, id);
+            yield (0, firestore_1.deleteDoc)(doc);
+            return { id: doc.id };
+        });
+    }
     collection(path) {
         return (0, firestore_1.collection)(this.service, path);
     }

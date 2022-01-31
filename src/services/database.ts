@@ -4,6 +4,7 @@ import {
   getFirestore,
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -67,6 +68,13 @@ export default class DatabaseService {
       await setDoc(this.document(collectionName, id), data);
     }
     return id ? this.document(collectionName, id) : addDoc(collection, data);
+  }
+
+  async delete(path: string, id?: string) {
+    const doc = this.document(path, id);
+    await deleteDoc(doc);
+
+    return { id: doc.id };
   }
 
   collection(path: string) {
