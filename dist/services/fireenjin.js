@@ -86,7 +86,7 @@ var FireEnjin = /** @class */ (function () {
                     })
                     : new client_1["default"](this.host.url, { headers: ((_g = this.host) === null || _g === void 0 ? void 0 : _g.headers) || {} });
         this.sdk =
-            this.host.type === "graphql" && typeof (options === null || options === void 0 ? void 0 : options.getSdk) === "function"
+            typeof (options === null || options === void 0 ? void 0 : options.getSdk) === "function"
                 ? options.getSdk(this.client, (_h = this.options) === null || _h === void 0 ? void 0 : _h.onRequest)
                 : null;
         if (document) {
@@ -147,9 +147,9 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.onSubmit = function (event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_k) {
+            return __generator(this, function (_l) {
                 if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                     console.log("fireenjinSubmit: ", event);
                 if (!event ||
@@ -158,15 +158,17 @@ var FireEnjin = /** @class */ (function () {
                     event.detail.disableSubmit)
                     return [2 /*return*/, false];
                 return [2 /*return*/, this.submit(event.detail.endpoint, {
+                        id: (_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.id,
+                        data: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.data,
+                        params: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.params,
+                        query: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.query
+                    }, {
                         event: event,
-                        target: ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.target) || (event === null || event === void 0 ? void 0 : event.target),
-                        id: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.id,
-                        data: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.data,
-                        params: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.params,
-                        query: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.query,
-                        bubbles: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.bubbles,
-                        cancelable: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.cancelable,
-                        composed: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.composed
+                        target: ((_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.target) || (event === null || event === void 0 ? void 0 : event.target),
+                        name: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.name,
+                        bubbles: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.bubbles,
+                        cancelable: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.cancelable,
+                        composed: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.composed
                     })];
             });
         });
@@ -261,7 +263,6 @@ var FireEnjin = /** @class */ (function () {
                                 : (input === null || input === void 0 ? void 0 : input.params)
                                     ? this.hash(JSON.stringify(Object.values(input.params)))
                                     : "").concat(this.hash(JSON.stringify(input || {})));
-                        console.log(endpoint, input, options);
                         if (!!(options === null || options === void 0 ? void 0 : options.disableCache)) return [3 /*break*/, 2];
                         return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                 return [2 /*return*/, localforage.getItem(localKey)];

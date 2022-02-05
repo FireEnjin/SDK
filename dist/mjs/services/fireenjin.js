@@ -41,7 +41,7 @@ export default class FireEnjin {
                     })
                     : new Client(this.host.url, { headers: this.host?.headers || {} });
         this.sdk =
-            this.host.type === "graphql" && typeof options?.getSdk === "function"
+            typeof options?.getSdk === "function"
                 ? options.getSdk(this.client, this.options?.onRequest)
                 : null;
         if (document) {
@@ -99,12 +99,14 @@ export default class FireEnjin {
             event.detail.disableSubmit)
             return false;
         return this.submit(event.detail.endpoint, {
-            event,
-            target: event?.detail?.target || event?.target,
             id: event?.detail?.id,
             data: event?.detail?.data,
             params: event?.detail?.params,
             query: event?.detail?.query,
+        }, {
+            event,
+            target: event?.detail?.target || event?.target,
+            name: event?.detail?.name,
             bubbles: event?.detail?.bubbles,
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
@@ -176,7 +178,6 @@ export default class FireEnjin {
                 : input?.params
                     ? this.hash(JSON.stringify(Object.values(input.params)))
                     : ""}${this.hash(JSON.stringify(input || {}))}`;
-        console.log(endpoint, input, options);
         if (!options?.disableCache) {
             data = await tryOrFail(async () => localforage.getItem(localKey), {
                 endpoint,

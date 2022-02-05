@@ -1,6 +1,7 @@
 import FireEnjin from "../src/services/fireenjin";
 import Client from "../src/services/client";
 import { getSdk } from "./sdk";
+import DatabaseService from "../src/services/database";
 /**
  * @jest-environment jsdom
  */
@@ -76,20 +77,23 @@ describe("Tests", () => {
     expect(res).toMatchObject({});
   });
   it.only("Should create fireenjin and make a request", async () => {
+    const db = new DatabaseService({
+      config: {
+        apiKey: "AIzaSyBpVG2JOIVTXfO-fWx7-YZq938dSINu9Lc",
+        authDomain: "madness-labs-pwa.firebaseapp.com",
+        databaseURL: "https://madness-labs-pwa.firebaseio.com",
+        projectId: "madness-labs-pwa",
+        storageBucket: "madness-labs-pwa.appspot.com",
+        messagingSenderId: "540141413358",
+        appId: "1:540141413358:web:94a1558c2ed20ecba8a4ff",
+        measurementId: "G-YCRMJPNHJG",
+      },
+    });
     const enjin = new FireEnjin({
       connections: [
         {
           type: "firebase",
-          auth: {
-            apiKey: "AIzaSyBpVG2JOIVTXfO-fWx7-YZq938dSINu9Lc",
-            authDomain: "madness-labs-pwa.firebaseapp.com",
-            databaseURL: "https://madness-labs-pwa.firebaseio.com",
-            projectId: "madness-labs-pwa",
-            storageBucket: "madness-labs-pwa.appspot.com",
-            messagingSenderId: "540141413358",
-            appId: "1:540141413358:web:94a1558c2ed20ecba8a4ff",
-            measurementId: "G-YCRMJPNHJG",
-          },
+          db,
         },
       ],
       onRequest: async (action, endpoint) => {
