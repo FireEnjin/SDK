@@ -1,4 +1,4 @@
-import { FireEnjin } from "../src/services/fireenjin";
+import FireEnjin from "../src/services/fireenjin";
 import Client from "../src/services/client";
 import { getSdk } from "./sdk";
 /**
@@ -75,10 +75,11 @@ describe("Tests", () => {
     console.log(res);
     expect(res).toMatchObject({});
   });
-  it("Should create fireenjin and make a request", async () => {
+  it.only("Should create fireenjin and make a request", async () => {
     const enjin = new FireEnjin({
       connections: [
         {
+          type: "firebase",
           auth: {
             apiKey: "AIzaSyBpVG2JOIVTXfO-fWx7-YZq938dSINu9Lc",
             authDomain: "madness-labs-pwa.firebaseapp.com",
@@ -98,7 +99,7 @@ describe("Tests", () => {
         return result;
       },
     } as any);
-    const res = await enjin.fetch(`templates`);
+    const res = await enjin.fetch(`/templates`);
 
     console.log(res);
     expect(res).toMatchObject({});

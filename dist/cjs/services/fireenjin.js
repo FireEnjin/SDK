@@ -222,6 +222,7 @@ class FireEnjin {
                     : (input === null || input === void 0 ? void 0 : input.params)
                         ? this.hash(JSON.stringify(Object.values(input.params)))
                         : ""}${this.hash(JSON.stringify(input || {}))}`;
+            console.log(endpoint, input, options);
             if (!(options === null || options === void 0 ? void 0 : options.disableCache)) {
                 data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () { return localforage.getItem(localKey); }), {
                     endpoint,

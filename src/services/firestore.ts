@@ -46,7 +46,7 @@ export default class FirestoreClient {
     status: number;
   }> {
     const method: string =
-      requestOptions?.method || this.options?.method || "POST";
+      requestOptions?.method || this.options?.method || "GET";
     const headers: HeadersInit =
       requestOptions?.headers || this.options?.headers || {};
     const endpoint = query;
@@ -77,6 +77,7 @@ export default class FirestoreClient {
     variables?: any,
     requestOptions?: RequestInit
   ): Promise<T> {
+    console.log("firestore request", endpoint);
     const response = await this.rawRequest(endpoint, variables, requestOptions);
 
     return {

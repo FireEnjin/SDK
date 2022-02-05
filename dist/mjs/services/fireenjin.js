@@ -176,6 +176,7 @@ export default class FireEnjin {
                 : input?.params
                     ? this.hash(JSON.stringify(Object.values(input.params)))
                     : ""}${this.hash(JSON.stringify(input || {}))}`;
+        console.log(endpoint, input, options);
         if (!options?.disableCache) {
             data = await tryOrFail(async () => localforage.getItem(localKey), {
                 endpoint,

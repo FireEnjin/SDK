@@ -261,6 +261,7 @@ var FireEnjin = /** @class */ (function () {
                                 : (input === null || input === void 0 ? void 0 : input.params)
                                     ? this.hash(JSON.stringify(Object.values(input.params)))
                                     : "").concat(this.hash(JSON.stringify(input || {})));
+                        console.log(endpoint, input, options);
                         if (!!(options === null || options === void 0 ? void 0 : options.disableCache)) return [3 /*break*/, 2];
                         return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                 return [2 /*return*/, localforage.getItem(localKey)];

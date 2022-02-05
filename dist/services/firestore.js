@@ -60,7 +60,7 @@ var FirestoreClient = /** @class */ (function () {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "POST";
+                        method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "GET";
                         headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_b = this.options) === null || _b === void 0 ? void 0 : _b.headers) || {};
                         endpoint = query;
                         return [4 /*yield*/, (method.toLowerCase() === "post"
@@ -87,7 +87,9 @@ var FirestoreClient = /** @class */ (function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.rawRequest(endpoint, variables, requestOptions)];
+                    case 0:
+                        console.log("firestore request", endpoint);
+                        return [4 /*yield*/, this.rawRequest(endpoint, variables, requestOptions)];
                     case 1:
                         response = _a.sent();
                         return [2 /*return*/, {

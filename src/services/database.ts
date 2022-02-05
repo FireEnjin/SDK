@@ -39,7 +39,7 @@ export default class DatabaseService {
     if (!this.app && window) {
       try {
         this.app = initializeApp(options?.config);
-        console.log("Initializing Firebase App...", this.app);
+        console.log("Initializing Firebase App...");
       } catch (e) {
         console.log(e);
       }

@@ -19,7 +19,7 @@ class DatabaseService {
         if (!this.app && window) {
             try {
                 this.app = (0, app_1.initializeApp)(options === null || options === void 0 ? void 0 : options.config);
-                console.log("Initializing Firebase App...", this.app);
+                console.log("Initializing Firebase App...");
             }
             catch (e) {
                 console.log(e);

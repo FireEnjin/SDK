@@ -11,7 +11,7 @@ export default class FirestoreClient {
         this.db = options?.db;
     }
     async rawRequest(query, variables, requestOptions) {
-        const method = requestOptions?.method || this.options?.method || "POST";
+        const method = requestOptions?.method || this.options?.method || "GET";
         const headers = requestOptions?.headers || this.options?.headers || {};
         const endpoint = query;
         const response = await (method.toLowerCase() === "post"
@@ -29,6 +29,7 @@ export default class FirestoreClient {
         };
     }
     async request(endpoint, variables, requestOptions) {
+        console.log("firestore request", endpoint);
         const response = await this.rawRequest(endpoint, variables, requestOptions);
         return {
             data: response.data,

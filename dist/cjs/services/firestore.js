@@ -18,7 +18,7 @@ class FirestoreClient {
     rawRequest(query, variables, requestOptions) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            const method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "POST";
+            const method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "GET";
             const headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_b = this.options) === null || _b === void 0 ? void 0 : _b.headers) || {};
             const endpoint = query;
             const response = yield (method.toLowerCase() === "post"
@@ -38,6 +38,7 @@ class FirestoreClient {
     }
     request(endpoint, variables, requestOptions) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("firestore request", endpoint);
             const response = yield this.rawRequest(endpoint, variables, requestOptions);
             return {
                 data: response.data,
