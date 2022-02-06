@@ -591,6 +591,10 @@ class DatabaseService {
         await firestore.deleteDoc(doc);
         return { id: doc.id };
     }
+    async find(collectionName, id) {
+        const doc = await this.getDocument(collectionName, id);
+        return doc?.exists() ? doc.data() : null;
+    }
     collection(path) {
         return firestore.collection(this.service, path);
     }
@@ -884,7 +888,9 @@ class FirestoreClient {
                 ? this.db.update(endpoint, variables?.data || {}, variables?.id)
                 : method.toLowerCase() === "delete"
                     ? this.db.delete(endpoint, variables?.id)
-                    : this.db.query(endpoint, variables?.where || [], variables?.orderBy || null, variables?.limit || null));
+                    : variables?.id
+                        ? this.db.find(endpoint, variables.id)
+                        : this.db.query(endpoint, variables?.where || [], variables?.orderBy || null, variables?.limit || null));
         return {
             data: method.toLowerCase() === "post" ? response : response?.docs,
             headers,

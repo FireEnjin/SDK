@@ -20,7 +20,9 @@ export default class FirestoreClient {
                 ? this.db.update(endpoint, variables?.data || {}, variables?.id)
                 : method.toLowerCase() === "delete"
                     ? this.db.delete(endpoint, variables?.id)
-                    : this.db.query(endpoint, variables?.where || [], variables?.orderBy || null, variables?.limit || null));
+                    : variables?.id
+                        ? this.db.find(endpoint, variables.id)
+                        : this.db.query(endpoint, variables?.where || [], variables?.orderBy || null, variables?.limit || null));
         return {
             data: method.toLowerCase() === "post" ? response : response?.docs,
             headers,

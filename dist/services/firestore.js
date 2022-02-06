@@ -69,7 +69,9 @@ var FirestoreClient = /** @class */ (function () {
                                     ? this.db.update(endpoint, (variables === null || variables === void 0 ? void 0 : variables.data) || {}, variables === null || variables === void 0 ? void 0 : variables.id)
                                     : method.toLowerCase() === "delete"
                                         ? this.db["delete"](endpoint, variables === null || variables === void 0 ? void 0 : variables.id)
-                                        : this.db.query(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null))];
+                                        : (variables === null || variables === void 0 ? void 0 : variables.id)
+                                            ? this.db.find(endpoint, variables.id)
+                                            : this.db.query(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null))];
                     case 1:
                         response = _b.sent();
                         return [2 /*return*/, {

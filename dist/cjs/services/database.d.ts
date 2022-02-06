@@ -16,6 +16,7 @@ export default class DatabaseService {
     delete(path: string, id?: string): Promise<{
         id: string;
     }>;
+    find(collectionName: string, id: string): Promise<import("@firebase/firestore").DocumentData | null>;
     collection(path: string): import("@firebase/firestore").CollectionReference<import("@firebase/firestore").DocumentData>;
     getCollection(path: any): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData>>;
     document(path: string, id?: string): import("@firebase/firestore").DocumentReference<import("@firebase/firestore").DocumentData>;

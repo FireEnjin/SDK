@@ -77,6 +77,11 @@ export default class DatabaseService {
     return { id: doc.id };
   }
 
+  async find(collectionName: string, id: string) {
+    const doc = await this.getDocument(collectionName, id);
+    return doc?.exists() ? doc.data() : null;
+  }
+
   collection(path: string) {
     return collection(this.service, path);
   }

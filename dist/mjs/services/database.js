@@ -45,6 +45,10 @@ export default class DatabaseService {
         await deleteDoc(doc);
         return { id: doc.id };
     }
+    async find(collectionName, id) {
+        const doc = await this.getDocument(collectionName, id);
+        return doc?.exists() ? doc.data() : null;
+    }
     collection(path) {
         return collection(this.service, path);
     }

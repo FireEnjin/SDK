@@ -57,6 +57,12 @@ class DatabaseService {
             return { id: doc.id };
         });
     }
+    find(collectionName, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const doc = yield this.getDocument(collectionName, id);
+            return (doc === null || doc === void 0 ? void 0 : doc.exists()) ? doc.data() : null;
+        });
+    }
     collection(path) {
         return (0, firestore_1.collection)(this.service, path);
     }

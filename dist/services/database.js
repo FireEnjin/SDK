@@ -110,6 +110,19 @@ var DatabaseService = /** @class */ (function () {
             });
         });
     };
+    DatabaseService.prototype.find = function (collectionName, id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var doc;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getDocument(collectionName, id)];
+                    case 1:
+                        doc = _a.sent();
+                        return [2 /*return*/, (doc === null || doc === void 0 ? void 0 : doc.exists()) ? doc.data() : null];
+                }
+            });
+        });
+    };
     DatabaseService.prototype.collection = function (path) {
         return (0, firestore_1.collection)(this.service, path);
     };
