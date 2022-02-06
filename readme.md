@@ -71,6 +71,14 @@ document.addEventListener("fireenjinUpload", (event) => {
 });
 ```
 
+- fireenjinTrigger - Trigger some kind of an event you want to listen to elsewhere.
+
+```typescript
+document.addEventListener("fireenjinTrigger", (event) => {
+  console.log(event.detail.data);
+});
+```
+
 - fireenjinSuccess - Fetch, Submit, or Upload has been successful.
 
 ```typescript
