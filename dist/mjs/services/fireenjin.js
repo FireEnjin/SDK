@@ -85,6 +85,7 @@ export default class FireEnjin {
             bubbles: event?.detail?.bubbles,
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
+            method: event?.detail?.method,
         });
         if (event?.target)
             event.target.value = data?.url || null;
@@ -98,6 +99,7 @@ export default class FireEnjin {
             !event.detail.endpoint ||
             event.detail.disableSubmit)
             return false;
+        const target = event?.detail?.target || event?.target;
         return this.submit(event.detail.endpoint, {
             id: event?.detail?.id,
             data: event?.detail?.data,
@@ -105,11 +107,12 @@ export default class FireEnjin {
             query: event?.detail?.query,
         }, {
             event,
-            target: event?.detail?.target || event?.target,
+            target,
             name: event?.detail?.name,
             bubbles: event?.detail?.bubbles,
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
+            method: event?.detail?.method || target?.method,
         });
     }
     async onFetch(event) {
@@ -120,9 +123,10 @@ export default class FireEnjin {
             !event.detail.endpoint ||
             event.detail.disableFetch)
             return false;
+        const target = event?.detail?.target || event?.target;
         return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
             event,
-            target: event?.detail?.target || event?.target,
+            target,
             dataPropsMap: event?.detail?.dataPropsMap,
             name: event?.detail?.name,
             cacheKey: event?.detail?.cacheKey,
@@ -130,6 +134,7 @@ export default class FireEnjin {
             bubbles: event?.detail?.bubbles,
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
+            method: event?.detail?.method || target?.method,
         });
     }
     hash(input) {
@@ -145,15 +150,18 @@ export default class FireEnjin {
     }
     async upload(input, options) {
         const endpoint = options?.endpoint || "upload";
+        const method = options?.method || "post";
         return tryOrFail(async () => this.host?.type === "graphql" && !this.options?.uploadUrl
             ? input?.query
-                ? this.client.request(input.query, input.params)
+                ? this.client.request(input.query, input.params, {
+                    method,
+                })
                 : this.sdk[endpoint](input?.params || {
                     id: input?.id,
                     data: input?.data,
                 })
             : this.client.request(this.options?.uploadUrl || endpoint, input, {
-                method: "POST",
+                method,
             }), {
             event: options?.event || null,
             target: options?.target || options?.event?.target,
@@ -171,6 +179,7 @@ export default class FireEnjin {
         let data = null;
         const event = options?.event || null;
         const name = options?.name || null;
+        const method = options?.method || "get";
         const localKey = options?.cacheKey
             ? options.cacheKey
             : `${endpoint}_${input?.id
@@ -194,9 +203,13 @@ export default class FireEnjin {
         }
         data = await tryOrFail(async () => this.host?.type === "graphql"
             ? input?.query
-                ? this.client.request(input?.query, input?.params)
+                ? this.client.request(input?.query, input?.params, {
+                    method,
+                })
                 : this.sdk[endpoint](input, options?.headers)
-            : this.client.request(endpoint, input), {
+            : this.client.request(endpoint, input, {
+                method,
+            }), {
             endpoint,
             event,
             target: options?.target || options?.event?.target,
@@ -213,15 +226,18 @@ export default class FireEnjin {
     async submit(endpoint, input, options) {
         const event = options?.event || null;
         const name = options?.name || null;
+        const method = options?.method || "post";
         return tryOrFail(async () => this.host?.type === "graphql"
             ? input?.query
-                ? this.client.request(input.query, input.params)
+                ? this.client.request(input.query, input.params, {
+                    method,
+                })
                 : this.sdk[endpoint](input?.params || {
                     id: input?.id,
                     data: input?.data,
                 })
             : this.client.request(endpoint, input, {
-                method: "POST",
+                method,
             }), {
             endpoint,
             event,

@@ -11,12 +11,16 @@ export default class FirestoreClient {
         this.db = options?.db;
     }
     async rawRequest(query, variables, requestOptions) {
-        const method = requestOptions?.method || this.options?.method || "GET";
+        const method = requestOptions?.method || "GET";
         const headers = requestOptions?.headers || this.options?.headers || {};
         const endpoint = query;
         const response = await (method.toLowerCase() === "post"
-            ? this.db.update(endpoint, variables?.data || {}, variables?.id)
-            : this.db.query(endpoint, variables?.where || [], variables?.orderBy || null, variables?.limit || null));
+            ? this.db.add(endpoint, variables?.data || {}, variables?.id)
+            : method.toLowerCase() === "put"
+                ? this.db.update(endpoint, variables?.data || {}, variables?.id)
+                : method.toLowerCase() === "delete"
+                    ? this.db.delete(endpoint, variables?.id)
+                    : this.db.query(endpoint, variables?.where || [], variables?.orderBy || null, variables?.limit || null));
         return {
             data: method.toLowerCase() === "post" ? response : response?.docs,
             headers,
@@ -29,7 +33,6 @@ export default class FirestoreClient {
         };
     }
     async request(endpoint, variables, requestOptions) {
-        console.log("firestore request", endpoint);
         const response = await this.rawRequest(endpoint, variables, requestOptions);
         return {
             data: response.data,

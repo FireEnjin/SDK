@@ -117,6 +117,7 @@ export default class FireEnjin {
         bubbles: event?.detail?.bubbles,
         cancelable: event?.detail?.cancelable,
         composed: event?.detail?.composed,
+        method: event?.detail?.method,
       }
     );
 
@@ -135,6 +136,8 @@ export default class FireEnjin {
     )
       return false;
 
+    const target = event?.detail?.target || event?.target;
+
     return this.submit(
       event.detail.endpoint,
       {
@@ -145,11 +148,12 @@ export default class FireEnjin {
       },
       {
         event,
-        target: event?.detail?.target || event?.target,
+        target,
         name: event?.detail?.name,
         bubbles: event?.detail?.bubbles,
         cancelable: event?.detail?.cancelable,
         composed: event?.detail?.composed,
+        method: event?.detail?.method || target?.method,
       }
     );
   }
@@ -164,9 +168,11 @@ export default class FireEnjin {
     )
       return false;
 
+    const target = event?.detail?.target || event?.target;
+
     return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
       event,
-      target: event?.detail?.target || event?.target,
+      target,
       dataPropsMap: event?.detail?.dataPropsMap,
       name: event?.detail?.name,
       cacheKey: event?.detail?.cacheKey,
@@ -174,6 +180,7 @@ export default class FireEnjin {
       bubbles: event?.detail?.bubbles,
       cancelable: event?.detail?.cancelable,
       composed: event?.detail?.composed,
+      method: event?.detail?.method || target?.method,
     });
   }
 
@@ -193,11 +200,15 @@ export default class FireEnjin {
 
   async upload(input: FireEnjinUploadInput, options?: FireEnjinMethodOptions) {
     const endpoint = options?.endpoint || "upload";
+    const method = options?.method || "post";
+
     return tryOrFail(
       async () =>
         this.host?.type === "graphql" && !this.options?.uploadUrl
           ? input?.query
-            ? this.client.request(input.query, input.params)
+            ? this.client.request(input.query, input.params, {
+                method,
+              })
             : this.sdk[endpoint](
                 input?.params || {
                   id: input?.id,
@@ -205,7 +216,7 @@ export default class FireEnjin {
                 }
               )
           : this.client.request(this.options?.uploadUrl || endpoint, input, {
-              method: "POST",
+              method,
             }),
       {
         event: options?.event || null,
@@ -230,6 +241,7 @@ export default class FireEnjin {
     let data: any = null;
     const event: any = options?.event || null;
     const name: string = options?.name || (null as any);
+    const method = options?.method || "get";
     const localKey = options?.cacheKey
       ? options.cacheKey
       : `${endpoint}_${
@@ -259,9 +271,13 @@ export default class FireEnjin {
       async () =>
         this.host?.type === "graphql"
           ? input?.query
-            ? this.client.request(input?.query, input?.params)
+            ? this.client.request(input?.query, input?.params, {
+                method,
+              })
             : this.sdk[endpoint](input, options?.headers)
-          : this.client.request(endpoint, input),
+          : this.client.request(endpoint, input, {
+              method,
+            }),
       {
         endpoint,
         event,
@@ -286,12 +302,15 @@ export default class FireEnjin {
   ) {
     const event: any = options?.event || null;
     const name: string = options?.name || (null as any);
+    const method = options?.method || "post";
 
     return tryOrFail(
       async () =>
         this.host?.type === "graphql"
           ? input?.query
-            ? this.client.request(input.query, input.params)
+            ? this.client.request(input.query, input.params, {
+                method,
+              })
             : this.sdk[endpoint](
                 input?.params || {
                   id: input?.id,
@@ -299,7 +318,7 @@ export default class FireEnjin {
                 }
               )
           : this.client.request(endpoint, input, {
-              method: "POST",
+              method,
             }),
       {
         endpoint,

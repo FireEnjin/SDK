@@ -70,6 +70,7 @@ export interface FireEnjinEvent {
     bubbles?: boolean;
     cancelable?: boolean;
     composed?: boolean;
+    method?: "get" | "post" | "put" | "delete";
 }
 export interface FireEnjinMethodOptions extends FireEnjinEvent {
 }

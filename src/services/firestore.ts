@@ -15,7 +15,6 @@ export default class FirestoreClient {
   url: string;
   db: DatabaseService;
   options?: {
-    method?: string;
     db: DatabaseService;
     headers?: HeadersInit;
   };
@@ -45,13 +44,16 @@ export default class FirestoreClient {
     headers: HeadersInit;
     status: number;
   }> {
-    const method: string =
-      requestOptions?.method || this.options?.method || "GET";
+    const method: string = requestOptions?.method || "GET";
     const headers: HeadersInit =
       requestOptions?.headers || this.options?.headers || {};
     const endpoint = query;
     const response = await (method.toLowerCase() === "post"
+      ? this.db.add(endpoint, variables?.data || {}, variables?.id)
+      : method.toLowerCase() === "put"
       ? this.db.update(endpoint, variables?.data || {}, variables?.id)
+      : method.toLowerCase() === "delete"
+      ? this.db.delete(endpoint, variables?.id)
       : this.db.query(
           endpoint,
           variables?.where || [],
@@ -77,7 +79,6 @@ export default class FirestoreClient {
     variables?: any,
     requestOptions?: RequestInit
   ): Promise<T> {
-    console.log("firestore request", endpoint);
     const response = await this.rawRequest(endpoint, variables, requestOptions);
 
     return {

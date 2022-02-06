@@ -875,12 +875,16 @@ class FirestoreClient {
         this.db = options?.db;
     }
     async rawRequest(query, variables, requestOptions) {
-        const method = requestOptions?.method || this.options?.method || "GET";
+        const method = requestOptions?.method || "GET";
         const headers = requestOptions?.headers || this.options?.headers || {};
         const endpoint = query;
         const response = await (method.toLowerCase() === "post"
-            ? this.db.update(endpoint, variables?.data || {}, variables?.id)
-            : this.db.query(endpoint, variables?.where || [], variables?.orderBy || null, variables?.limit || null));
+            ? this.db.add(endpoint, variables?.data || {}, variables?.id)
+            : method.toLowerCase() === "put"
+                ? this.db.update(endpoint, variables?.data || {}, variables?.id)
+                : method.toLowerCase() === "delete"
+                    ? this.db.delete(endpoint, variables?.id)
+                    : this.db.query(endpoint, variables?.where || [], variables?.orderBy || null, variables?.limit || null));
         return {
             data: method.toLowerCase() === "post" ? response : response?.docs,
             headers,
@@ -893,7 +897,6 @@ class FirestoreClient {
         };
     }
     async request(endpoint, variables, requestOptions) {
-        console.log("firestore request", endpoint);
         const response = await this.rawRequest(endpoint, variables, requestOptions);
         return {
             data: response.data,
@@ -1011,6 +1014,7 @@ class FireEnjin {
             bubbles: event?.detail?.bubbles,
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
+            method: event?.detail?.method,
         });
         if (event?.target)
             event.target.value = data?.url || null;
@@ -1024,6 +1028,7 @@ class FireEnjin {
             !event.detail.endpoint ||
             event.detail.disableSubmit)
             return false;
+        const target = event?.detail?.target || event?.target;
         return this.submit(event.detail.endpoint, {
             id: event?.detail?.id,
             data: event?.detail?.data,
@@ -1031,11 +1036,12 @@ class FireEnjin {
             query: event?.detail?.query,
         }, {
             event,
-            target: event?.detail?.target || event?.target,
+            target,
             name: event?.detail?.name,
             bubbles: event?.detail?.bubbles,
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
+            method: event?.detail?.method || target?.method,
         });
     }
     async onFetch(event) {
@@ -1046,9 +1052,10 @@ class FireEnjin {
             !event.detail.endpoint ||
             event.detail.disableFetch)
             return false;
+        const target = event?.detail?.target || event?.target;
         return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
             event,
-            target: event?.detail?.target || event?.target,
+            target,
             dataPropsMap: event?.detail?.dataPropsMap,
             name: event?.detail?.name,
             cacheKey: event?.detail?.cacheKey,
@@ -1056,6 +1063,7 @@ class FireEnjin {
             bubbles: event?.detail?.bubbles,
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
+            method: event?.detail?.method || target?.method,
         });
     }
     hash(input) {
@@ -1071,15 +1079,18 @@ class FireEnjin {
     }
     async upload(input, options) {
         const endpoint = options?.endpoint || "upload";
+        const method = options?.method || "post";
         return tryOrFail(async () => this.host?.type === "graphql" && !this.options?.uploadUrl
             ? input?.query
-                ? this.client.request(input.query, input.params)
+                ? this.client.request(input.query, input.params, {
+                    method,
+                })
                 : this.sdk[endpoint](input?.params || {
                     id: input?.id,
                     data: input?.data,
                 })
             : this.client.request(this.options?.uploadUrl || endpoint, input, {
-                method: "POST",
+                method,
             }), {
             event: options?.event || null,
             target: options?.target || options?.event?.target,
@@ -1097,6 +1108,7 @@ class FireEnjin {
         let data = null;
         const event = options?.event || null;
         const name = options?.name || null;
+        const method = options?.method || "get";
         const localKey = options?.cacheKey
             ? options.cacheKey
             : `${endpoint}_${input?.id
@@ -1120,9 +1132,13 @@ class FireEnjin {
         }
         data = await tryOrFail(async () => this.host?.type === "graphql"
             ? input?.query
-                ? this.client.request(input?.query, input?.params)
+                ? this.client.request(input?.query, input?.params, {
+                    method,
+                })
                 : this.sdk[endpoint](input, options?.headers)
-            : this.client.request(endpoint, input), {
+            : this.client.request(endpoint, input, {
+                method,
+            }), {
             endpoint,
             event,
             target: options?.target || options?.event?.target,
@@ -1139,15 +1155,18 @@ class FireEnjin {
     async submit(endpoint, input, options) {
         const event = options?.event || null;
         const name = options?.name || null;
+        const method = options?.method || "post";
         return tryOrFail(async () => this.host?.type === "graphql"
             ? input?.query
-                ? this.client.request(input.query, input.params)
+                ? this.client.request(input.query, input.params, {
+                    method,
+                })
                 : this.sdk[endpoint](input?.params || {
                     id: input?.id,
                     data: input?.data,
                 })
             : this.client.request(endpoint, input, {
-                method: "POST",
+                method,
             }), {
             endpoint,
             event,

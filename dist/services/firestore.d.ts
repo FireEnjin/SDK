@@ -11,7 +11,6 @@ export default class FirestoreClient {
     url: string;
     db: DatabaseService;
     options?: {
-        method?: string;
         db: DatabaseService;
         headers?: HeadersInit;
     };

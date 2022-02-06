@@ -16,14 +16,18 @@ class FirestoreClient {
         this.db = options === null || options === void 0 ? void 0 : options.db;
     }
     rawRequest(query, variables, requestOptions) {
-        var _a, _b;
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "GET";
-            const headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_b = this.options) === null || _b === void 0 ? void 0 : _b.headers) || {};
+            const method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || "GET";
+            const headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.headers) || {};
             const endpoint = query;
             const response = yield (method.toLowerCase() === "post"
-                ? this.db.update(endpoint, (variables === null || variables === void 0 ? void 0 : variables.data) || {}, variables === null || variables === void 0 ? void 0 : variables.id)
-                : this.db.query(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null));
+                ? this.db.add(endpoint, (variables === null || variables === void 0 ? void 0 : variables.data) || {}, variables === null || variables === void 0 ? void 0 : variables.id)
+                : method.toLowerCase() === "put"
+                    ? this.db.update(endpoint, (variables === null || variables === void 0 ? void 0 : variables.data) || {}, variables === null || variables === void 0 ? void 0 : variables.id)
+                    : method.toLowerCase() === "delete"
+                        ? this.db.delete(endpoint, variables === null || variables === void 0 ? void 0 : variables.id)
+                        : this.db.query(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null));
             return {
                 data: method.toLowerCase() === "post" ? response : response === null || response === void 0 ? void 0 : response.docs,
                 headers,
@@ -38,7 +42,6 @@ class FirestoreClient {
     }
     request(endpoint, variables, requestOptions) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("firestore request", endpoint);
             const response = yield this.rawRequest(endpoint, variables, requestOptions);
             return {
                 data: response.data,

@@ -54,20 +54,24 @@ var FirestoreClient = /** @class */ (function () {
         this.db = options === null || options === void 0 ? void 0 : options.db;
     }
     FirestoreClient.prototype.rawRequest = function (query, variables, requestOptions) {
-        var _a, _b;
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
             var method, headers, endpoint, response;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "GET";
-                        headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_b = this.options) === null || _b === void 0 ? void 0 : _b.headers) || {};
+                        method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || "GET";
+                        headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.headers) || {};
                         endpoint = query;
                         return [4 /*yield*/, (method.toLowerCase() === "post"
-                                ? this.db.update(endpoint, (variables === null || variables === void 0 ? void 0 : variables.data) || {}, variables === null || variables === void 0 ? void 0 : variables.id)
-                                : this.db.query(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null))];
+                                ? this.db.add(endpoint, (variables === null || variables === void 0 ? void 0 : variables.data) || {}, variables === null || variables === void 0 ? void 0 : variables.id)
+                                : method.toLowerCase() === "put"
+                                    ? this.db.update(endpoint, (variables === null || variables === void 0 ? void 0 : variables.data) || {}, variables === null || variables === void 0 ? void 0 : variables.id)
+                                    : method.toLowerCase() === "delete"
+                                        ? this.db["delete"](endpoint, variables === null || variables === void 0 ? void 0 : variables.id)
+                                        : this.db.query(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null))];
                     case 1:
-                        response = _c.sent();
+                        response = _b.sent();
                         return [2 /*return*/, {
                                 data: method.toLowerCase() === "post" ? response : response === null || response === void 0 ? void 0 : response.docs,
                                 headers: headers,
@@ -87,9 +91,7 @@ var FirestoreClient = /** @class */ (function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        console.log("firestore request", endpoint);
-                        return [4 /*yield*/, this.rawRequest(endpoint, variables, requestOptions)];
+                    case 0: return [4 /*yield*/, this.rawRequest(endpoint, variables, requestOptions)];
                     case 1:
                         response = _a.sent();
                         return [2 /*return*/, {
