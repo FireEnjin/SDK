@@ -60,7 +60,7 @@ class DatabaseService {
     find(collectionName, id) {
         return __awaiter(this, void 0, void 0, function* () {
             const doc = yield this.getDocument(collectionName, id);
-            return (doc === null || doc === void 0 ? void 0 : doc.exists()) ? doc.data() : null;
+            return doc.data();
         });
     }
     collection(path) {

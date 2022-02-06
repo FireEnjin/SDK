@@ -593,7 +593,7 @@ class DatabaseService {
     }
     async find(collectionName, id) {
         const doc = await this.getDocument(collectionName, id);
-        return doc?.exists() ? doc.data() : null;
+        return doc.data();
     }
     collection(path) {
         return firestore.collection(this.service, path);

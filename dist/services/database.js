@@ -118,7 +118,7 @@ var DatabaseService = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.getDocument(collectionName, id)];
                     case 1:
                         doc = _a.sent();
-                        return [2 /*return*/, (doc === null || doc === void 0 ? void 0 : doc.exists()) ? doc.data() : null];
+                        return [2 /*return*/, doc.data()];
                 }
             });
         });
