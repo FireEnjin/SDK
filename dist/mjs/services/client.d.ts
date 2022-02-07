@@ -1,4 +1,3 @@
-import "isomorphic-unfetch";
 declare type RequestDocument = string | any;
 declare type Variables = {
     [key: string]: any;

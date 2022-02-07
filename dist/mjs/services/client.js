@@ -1,4 +1,3 @@
-import "isomorphic-unfetch";
 import objectToUrlParams from "../helpers/objectToUrlParams";
 export default class Client {
     url;

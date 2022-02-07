@@ -47,7 +47,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-require("isomorphic-unfetch");
 var objectToUrlParams_1 = require("../helpers/objectToUrlParams");
 var Client = /** @class */ (function () {
     function Client(url, options) {

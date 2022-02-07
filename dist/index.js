@@ -12,7 +12,6 @@ var firestore = require('@firebase/firestore');
 var functions = require('@firebase/functions');
 var localforage = require('localforage');
 var graphqlRequest = require('graphql-request');
-require('isomorphic-unfetch');
 
 function _interopNamespace(e) {
     if (e && e.__esModule) return e;
