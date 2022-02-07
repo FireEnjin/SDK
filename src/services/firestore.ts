@@ -82,9 +82,7 @@ export default class FirestoreClient {
   ): Promise<T> {
     const response = await this.rawRequest(endpoint, variables, requestOptions);
 
-    return {
-      data: response.data,
-    } as any;
+    return response?.data || null;
   }
 
   async batchRequests<T extends any = any, V = Variables>(

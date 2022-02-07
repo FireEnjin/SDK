@@ -908,9 +908,7 @@ class FirestoreClient {
     }
     async request(endpoint, variables, requestOptions) {
         const response = await this.rawRequest(endpoint, variables, requestOptions);
-        return {
-            data: response.data,
-        };
+        return response?.data || null;
     }
     async batchRequests(documents, requestOptions) {
         const response = {};

@@ -45,9 +45,7 @@ class FirestoreClient {
     request(endpoint, variables, requestOptions) {
         return __awaiter(this, void 0, void 0, function* () {
             const response = yield this.rawRequest(endpoint, variables, requestOptions);
-            return {
-                data: response.data,
-            };
+            return (response === null || response === void 0 ? void 0 : response.data) || null;
         });
     }
     batchRequests(documents, requestOptions) {

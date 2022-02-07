@@ -96,9 +96,7 @@ var FirestoreClient = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.rawRequest(endpoint, variables, requestOptions)];
                     case 1:
                         response = _a.sent();
-                        return [2 /*return*/, {
-                                data: response.data
-                            }];
+                        return [2 /*return*/, (response === null || response === void 0 ? void 0 : response.data) || null];
                 }
             });
         });
