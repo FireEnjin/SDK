@@ -80,6 +80,12 @@ export interface FireEnjinSubmitInput {
   [key: string]: any;
 }
 
+export interface FireEnjinTriggerInput {
+  name?: string;
+  payload?: any;
+  [key: string]: any;
+}
+
 export interface FireEnjinEvent {
   endpoint?: string;
   name?: string;
