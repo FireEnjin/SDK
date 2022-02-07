@@ -103,6 +103,12 @@ var FireEnjin = /** @class */ (function () {
                 document.addEventListener("fireenjinTrigger", function (event) {
                     console.log("fireenjinTrigger: ", event);
                 });
+                document.addEventListener("fireenjinReset", function (event) {
+                    console.log("fireenjinReset: ", event);
+                });
+                document.addEventListener("fireenjinValidation", function (event) {
+                    console.log("fireenjinValidation: ", event);
+                });
             }
         }
     }

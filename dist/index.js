@@ -993,6 +993,12 @@ class FireEnjin {
                 document.addEventListener("fireenjinTrigger", (event) => {
                     console.log("fireenjinTrigger: ", event);
                 });
+                document.addEventListener("fireenjinReset", (event) => {
+                    console.log("fireenjinReset: ", event);
+                });
+                document.addEventListener("fireenjinValidation", (event) => {
+                    console.log("fireenjinValidation: ", event);
+                });
             }
         }
     }
