@@ -129,6 +129,10 @@ export default class DatabaseService {
     async query(collectionName, where, orderBy, limit) {
         return getDocs(this.rawQuery(collectionName, where, orderBy, limit));
     }
+    async list(collectionName, where, orderBy, limit) {
+        const query = await this.query(collectionName, where, orderBy, limit);
+        return query?.docs || null;
+    }
     async getApp() {
         return this.app;
     }

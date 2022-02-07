@@ -48,7 +48,7 @@ export default class FirestoreClient {
     const headers: HeadersInit =
       requestOptions?.headers || this.options?.headers || {};
     const endpoint = query;
-    const response = await (method.toLowerCase() === "post"
+    const response: any = await (method.toLowerCase() === "post"
       ? this.db.add(endpoint, variables?.data || {}, variables?.id)
       : method.toLowerCase() === "put"
       ? this.db.update(endpoint, variables?.data || {}, variables?.id)
@@ -56,7 +56,7 @@ export default class FirestoreClient {
       ? this.db.delete(endpoint, variables?.id)
       : variables?.id
       ? this.db.find(endpoint, variables.id)
-      : this.db.query(
+      : this.db.list(
           endpoint,
           variables?.where || [],
           variables?.orderBy || null,
@@ -64,8 +64,7 @@ export default class FirestoreClient {
         ));
 
     return {
-      data:
-        method.toLowerCase() === "post" ? response : (response?.docs as any),
+      data: response,
       headers,
       extensions: {
         query: response?.query,

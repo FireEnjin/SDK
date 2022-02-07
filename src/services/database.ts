@@ -211,6 +211,17 @@ export default class DatabaseService {
     return getDocs(this.rawQuery(collectionName, where, orderBy, limit));
   }
 
+  async list(
+    collectionName: string,
+    where: { key?: string; conditional?: WhereFilterOp; value?: any }[],
+    orderBy?: string,
+    limit?: number
+  ) {
+    const query = await this.query(collectionName, where, orderBy, limit);
+
+    return query?.docs || null;
+  }
+
   async getApp() {
     return this.app;
   }

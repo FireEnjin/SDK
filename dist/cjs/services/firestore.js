@@ -29,9 +29,9 @@ class FirestoreClient {
                         ? this.db.delete(endpoint, variables === null || variables === void 0 ? void 0 : variables.id)
                         : (variables === null || variables === void 0 ? void 0 : variables.id)
                             ? this.db.find(endpoint, variables.id)
-                            : this.db.query(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null));
+                            : this.db.list(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null));
             return {
-                data: method.toLowerCase() === "post" ? response : response === null || response === void 0 ? void 0 : response.docs,
+                data: response,
                 headers,
                 extensions: {
                     query: response === null || response === void 0 ? void 0 : response.query,

@@ -22,9 +22,9 @@ export default class FirestoreClient {
                     ? this.db.delete(endpoint, variables?.id)
                     : variables?.id
                         ? this.db.find(endpoint, variables.id)
-                        : this.db.query(endpoint, variables?.where || [], variables?.orderBy || null, variables?.limit || null));
+                        : this.db.list(endpoint, variables?.where || [], variables?.orderBy || null, variables?.limit || null));
         return {
-            data: method.toLowerCase() === "post" ? response : response?.docs,
+            data: response,
             headers,
             extensions: {
                 query: response?.query,

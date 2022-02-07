@@ -149,6 +149,12 @@ class DatabaseService {
             return (0, firestore_1.getDocs)(this.rawQuery(collectionName, where, orderBy, limit));
         });
     }
+    list(collectionName, where, orderBy, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = yield this.query(collectionName, where, orderBy, limit);
+            return (query === null || query === void 0 ? void 0 : query.docs) || null;
+        });
+    }
     getApp() {
         return __awaiter(this, void 0, void 0, function* () {
             return this.app;

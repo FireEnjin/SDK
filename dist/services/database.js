@@ -234,6 +234,19 @@ var DatabaseService = /** @class */ (function () {
             });
         });
     };
+    DatabaseService.prototype.list = function (collectionName, where, orderBy, limit) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.query(collectionName, where, orderBy, limit)];
+                    case 1:
+                        query = _a.sent();
+                        return [2 /*return*/, (query === null || query === void 0 ? void 0 : query.docs) || null];
+                }
+            });
+        });
+    };
     DatabaseService.prototype.getApp = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
