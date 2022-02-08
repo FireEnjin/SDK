@@ -150,9 +150,10 @@ class DatabaseService {
         });
     }
     list(collectionName, where, orderBy, limit) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const query = yield this.query(collectionName, where, orderBy, limit);
-            return (query === null || query === void 0 ? void 0 : query.docs) || null;
+            return (((_a = query === null || query === void 0 ? void 0 : query.docs) === null || _a === void 0 ? void 0 : _a.map((queryDoc) => (Object.assign({ id: queryDoc.id }, ((queryDoc === null || queryDoc === void 0 ? void 0 : queryDoc.exists()) ? queryDoc.data() : {}))))) || null);
         });
     }
     getApp() {

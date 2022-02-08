@@ -219,7 +219,12 @@ export default class DatabaseService {
   ) {
     const query = await this.query(collectionName, where, orderBy, limit);
 
-    return query?.docs || null;
+    return (
+      query?.docs?.map((queryDoc) => ({
+        id: queryDoc.id,
+        ...(queryDoc?.exists() ? queryDoc.data() : {}),
+      })) || null
+    );
   }
 
   async getApp() {

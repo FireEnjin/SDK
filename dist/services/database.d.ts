@@ -52,7 +52,9 @@ export default class DatabaseService {
         key?: string;
         conditional?: WhereFilterOp;
         value?: any;
-    }[], orderBy?: string, limit?: number): Promise<QueryDocumentSnapshot<import("@firebase/firestore").DocumentData>[]>;
+    }[], orderBy?: string, limit?: number): Promise<{
+        id: string;
+    }[]>;
     getApp(): Promise<FirebaseApp>;
     getService(): Promise<Firestore>;
 }

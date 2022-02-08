@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -235,14 +246,15 @@ var DatabaseService = /** @class */ (function () {
         });
     };
     DatabaseService.prototype.list = function (collectionName, where, orderBy, limit) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
             var query;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0: return [4 /*yield*/, this.query(collectionName, where, orderBy, limit)];
                     case 1:
-                        query = _a.sent();
-                        return [2 /*return*/, (query === null || query === void 0 ? void 0 : query.docs) || null];
+                        query = _b.sent();
+                        return [2 /*return*/, (((_a = query === null || query === void 0 ? void 0 : query.docs) === null || _a === void 0 ? void 0 : _a.map(function (queryDoc) { return (__assign({ id: queryDoc.id }, ((queryDoc === null || queryDoc === void 0 ? void 0 : queryDoc.exists()) ? queryDoc.data() : {}))); })) || null)];
                 }
             });
         });
