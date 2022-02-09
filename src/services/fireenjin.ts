@@ -1,3 +1,7 @@
+/* TODO Add typings to fetch and submit
+ * @example (keyof ReturnType<typeof getSdk>)
+ */
+
 import * as localforage from "localforage";
 import { GraphQLClient } from "graphql-request";
 

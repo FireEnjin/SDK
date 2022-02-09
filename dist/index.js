@@ -943,6 +943,9 @@ class FirestoreClient {
     }
 }
 
+/* TODO Add typings to fetch and submit
+ * @example (keyof ReturnType<typeof getSdk>)
+ */
 class FireEnjin {
     client;
     sdk = {};
