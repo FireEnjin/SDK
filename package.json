@@ -33,7 +33,7 @@
     "@ionic-native/google-plus": "^5.36.0",
     "@ionic-native/twitter-connect": "^5.36.0",
     "firebase": "^9.6.6",
-    "graphql": "^16.3.0",
+    "graphql": "^15.8.0",
     "graphql-request": "^4.0.0",
     "graphql-tag": "^2.12.6",
     "localforage": "^1.10.0"
