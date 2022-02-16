@@ -48,7 +48,7 @@
     "@types/jest": "^27.4.0",
     "babel-jest": "^27.5.1",
     "jest": "^27.5.1",
-    "rollup": "^2.67.1",
+    "rollup": "^2.67.2",
     "rxjs": "^7.5.4",
     "semantic-release": "^19.0.2",
     "ts-jest": "^27.1.3",
