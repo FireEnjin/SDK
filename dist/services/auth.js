@@ -137,6 +137,7 @@ var AuthService = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
+                        this.service = (0, auth_1.getAuth)(this.app);
                         return [4 /*yield*/, (0, auth_1.getIdTokenResult)((_a = this.service) === null || _a === void 0 ? void 0 : _a.currentUser)];
                     case 1:
                         claims = (_b.sent()).claims;

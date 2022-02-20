@@ -84,6 +84,7 @@ export default class AuthService {
     // }
     async getClaims() {
         try {
+            this.service = getAuth(this.app);
             const { claims } = await getIdTokenResult(this.service?.currentUser);
             return claims;
         }

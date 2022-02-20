@@ -98,6 +98,7 @@ class AuthService {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                this.service = (0, auth_1.getAuth)(this.app);
                 const { claims } = yield (0, auth_1.getIdTokenResult)((_a = this.service) === null || _a === void 0 ? void 0 : _a.currentUser);
                 return claims;
             }

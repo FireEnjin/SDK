@@ -239,6 +239,7 @@ class AuthService {
     // }
     async getClaims() {
         try {
+            this.service = auth.getAuth(this.app);
             const { claims } = await auth.getIdTokenResult(this.service?.currentUser);
             return claims;
         }
