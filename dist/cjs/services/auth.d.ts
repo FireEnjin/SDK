@@ -36,6 +36,7 @@ export default class AuthService {
         config?: IFireEnjinAuthConfig;
         app?: any;
     });
+    getUser(skipReload?: boolean): Promise<import("@firebase/auth").User | null>;
     getClaims(): Promise<import("@firebase/auth").ParsedToken>;
     getToken(): Promise<string | null>;
     setToken(token: any): Promise<any>;

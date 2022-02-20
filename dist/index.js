@@ -237,9 +237,14 @@ class AuthService {
     //     );
     //   }
     // }
+    async getUser(skipReload) {
+        if (!skipReload)
+            await auth.reload(this.service.currentUser);
+        return this.service.currentUser;
+    }
     async getClaims() {
         try {
-            this.service = auth.getAuth(this.app);
+            await auth.reload(this.service.currentUser);
             const { claims } = await auth.getIdTokenResult(this.service?.currentUser);
             return claims;
         }

@@ -30,6 +30,7 @@ import {
   signInWithPhoneNumber,
   signInWithCredential,
   signInWithCustomToken,
+  reload,
 } from "@firebase/auth";
 // import { getMessaging, getToken, onMessage } from "@firebase/messaging";
 import { getDatabase } from "@firebase/database";
@@ -144,9 +145,14 @@ export default class AuthService {
   //   }
   // }
 
+  async getUser(skipReload?: boolean) {
+    if (!skipReload) await reload(this.service.currentUser as any);
+    return this.service.currentUser;
+  }
+
   async getClaims() {
     try {
-      this.service = getAuth(this.app);
+      await reload(this.service.currentUser as any);
       const { claims } = await getIdTokenResult(
         this.service?.currentUser as any
       );

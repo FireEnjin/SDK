@@ -129,6 +129,21 @@ var AuthService = /** @class */ (function () {
     //     );
     //   }
     // }
+    AuthService.prototype.getUser = function (skipReload) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!!skipReload) return [3 /*break*/, 2];
+                        return [4 /*yield*/, (0, auth_1.reload)(this.service.currentUser)];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [2 /*return*/, this.service.currentUser];
+                }
+            });
+        });
+    };
     AuthService.prototype.getClaims = function () {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
@@ -136,16 +151,18 @@ var AuthService = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 2, , 3]);
-                        this.service = (0, auth_1.getAuth)(this.app);
-                        return [4 /*yield*/, (0, auth_1.getIdTokenResult)((_a = this.service) === null || _a === void 0 ? void 0 : _a.currentUser)];
+                        _b.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, (0, auth_1.reload)(this.service.currentUser)];
                     case 1:
+                        _b.sent();
+                        return [4 /*yield*/, (0, auth_1.getIdTokenResult)((_a = this.service) === null || _a === void 0 ? void 0 : _a.currentUser)];
+                    case 2:
                         claims = (_b.sent()).claims;
                         return [2 /*return*/, claims];
-                    case 2:
+                    case 3:
                         error_1 = _b.sent();
                         return [2 /*return*/, {}];
-                    case 3: return [2 /*return*/];
+                    case 4: return [2 /*return*/];
                 }
             });
         });

@@ -94,11 +94,18 @@ class AuthService {
     //     );
     //   }
     // }
+    getUser(skipReload) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!skipReload)
+                yield (0, auth_1.reload)(this.service.currentUser);
+            return this.service.currentUser;
+        });
+    }
     getClaims() {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                this.service = (0, auth_1.getAuth)(this.app);
+                yield (0, auth_1.reload)(this.service.currentUser);
                 const { claims } = yield (0, auth_1.getIdTokenResult)((_a = this.service) === null || _a === void 0 ? void 0 : _a.currentUser);
                 return claims;
             }

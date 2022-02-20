@@ -2,7 +2,7 @@ import { Facebook } from "@ionic-native/facebook";
 import { GooglePlus } from "@ionic-native/google-plus";
 import { TwitterConnect } from "@ionic-native/twitter-connect";
 import { initializeApp } from "@firebase/app";
-import { getAuth, connectAuthEmulator, getIdTokenResult, signOut, reauthenticateWithCredential, updatePassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, getIdToken, isSignInWithEmailLink, onAuthStateChanged, sendSignInLinkToEmail, signInAnonymously, signInWithEmailAndPassword, signInWithEmailLink, updateEmail, signInWithRedirect, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, signInWithPhoneNumber, signInWithCredential, signInWithCustomToken, } from "@firebase/auth";
+import { getAuth, connectAuthEmulator, getIdTokenResult, signOut, reauthenticateWithCredential, updatePassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, getIdToken, isSignInWithEmailLink, onAuthStateChanged, sendSignInLinkToEmail, signInAnonymously, signInWithEmailAndPassword, signInWithEmailLink, updateEmail, signInWithRedirect, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, signInWithPhoneNumber, signInWithCredential, signInWithCustomToken, reload, } from "@firebase/auth";
 // import { getMessaging, getToken, onMessage } from "@firebase/messaging";
 import { getDatabase } from "@firebase/database";
 import SessionManager from "./sessionManager";
@@ -82,9 +82,14 @@ export default class AuthService {
     //     );
     //   }
     // }
+    async getUser(skipReload) {
+        if (!skipReload)
+            await reload(this.service.currentUser);
+        return this.service.currentUser;
+    }
     async getClaims() {
         try {
-            this.service = getAuth(this.app);
+            await reload(this.service.currentUser);
             const { claims } = await getIdTokenResult(this.service?.currentUser);
             return claims;
         }
