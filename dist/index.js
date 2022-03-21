@@ -1141,19 +1141,11 @@ class FireEnjin {
                 : input?.params
                     ? this.hash(JSON.stringify(Object.values(input.params)))
                     : ""}${this.hash(JSON.stringify(input || {}))}`;
-        if (!options?.disableCache) {
-            data = await tryOrFail(async () => localforage__namespace.getItem(localKey), {
-                endpoint,
-                event,
-                target: options?.target || event?.target,
-                name,
-                cached: true,
-                bubbles: options?.bubbles,
-                cancelable: options?.cancelable,
-                composed: options?.composed,
-                onError: this.options?.onError,
-                onSuccess: this.options?.onSuccess,
-            });
+        try {
+            data = await localforage__namespace.getItem(localKey);
+        }
+        catch {
+            console.log("No Local data found");
         }
         data = await tryOrFail(async () => this.host?.type === "graphql"
             ? input?.query

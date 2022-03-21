@@ -267,10 +267,10 @@ var FireEnjin = /** @class */ (function () {
     FireEnjin.prototype.fetch = function (endpoint, input, options) {
         var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function () {
-            var data, event, name, method, localKey;
+            var data, event, name, method, localKey, localData, _f;
             var _this = this;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
+            return __generator(this, function (_g) {
+                switch (_g.label) {
                     case 0:
                         data = null;
                         event = (options === null || options === void 0 ? void 0 : options.event) || null;
@@ -283,9 +283,22 @@ var FireEnjin = /** @class */ (function () {
                                 : (input === null || input === void 0 ? void 0 : input.params)
                                     ? this.hash(JSON.stringify(Object.values(input.params)))
                                     : "").concat(this.hash(JSON.stringify(input || {})));
-                        if (!!(options === null || options === void 0 ? void 0 : options.disableCache)) return [3 /*break*/, 2];
+                        localData = null;
+                        _g.label = 1;
+                    case 1:
+                        _g.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, localforage.getItem(localKey)];
+                    case 2:
+                        data = _g.sent();
+                        return [3 /*break*/, 4];
+                    case 3:
+                        _f = _g.sent();
+                        console.log("No Local data found");
+                        return [3 /*break*/, 4];
+                    case 4:
+                        if (!(localData && !(options === null || options === void 0 ? void 0 : options.disableCache))) return [3 /*break*/, 6];
                         return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                return [2 /*return*/, localforage.getItem(localKey)];
+                                return [2 /*return*/, localData];
                             }); }); }, {
                                 endpoint: endpoint,
                                 event: event,
@@ -298,10 +311,10 @@ var FireEnjin = /** @class */ (function () {
                                 onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
                                 onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
                             })];
-                    case 1:
-                        data = _f.sent();
-                        _f.label = 2;
-                    case 2: return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
+                    case 5:
+                        data = _g.sent();
+                        _g.label = 6;
+                    case 6: return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
                             var _a;
                             return __generator(this, function (_b) {
                                 return [2 /*return*/, ((_a = this.host) === null || _a === void 0 ? void 0 : _a.type) === "graphql"
@@ -326,8 +339,8 @@ var FireEnjin = /** @class */ (function () {
                             onError: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onError,
                             onSuccess: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onSuccess
                         })];
-                    case 3:
-                        data = _f.sent();
+                    case 7:
+                        data = _g.sent();
                         return [2 /*return*/, data];
                 }
             });

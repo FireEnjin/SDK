@@ -196,8 +196,15 @@ export default class FireEnjin {
                 : input?.params
                     ? this.hash(JSON.stringify(Object.values(input.params)))
                     : ""}${this.hash(JSON.stringify(input || {}))}`;
-        if (!options?.disableCache) {
-            data = await tryOrFail(async () => localforage.getItem(localKey), {
+        let localData = null;
+        try {
+            data = await localforage.getItem(localKey);
+        }
+        catch {
+            console.log("No Local data found");
+        }
+        if (localData && !options?.disableCache) {
+            data = await tryOrFail(async () => localData, {
                 endpoint,
                 event,
                 target: options?.target || event?.target,

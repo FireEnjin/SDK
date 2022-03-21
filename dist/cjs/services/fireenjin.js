@@ -246,8 +246,15 @@ class FireEnjin {
                     : (input === null || input === void 0 ? void 0 : input.params)
                         ? this.hash(JSON.stringify(Object.values(input.params)))
                         : ""}${this.hash(JSON.stringify(input || {}))}`;
-            if (!(options === null || options === void 0 ? void 0 : options.disableCache)) {
-                data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () { return localforage.getItem(localKey); }), {
+            let localData = null;
+            try {
+                data = yield localforage.getItem(localKey);
+            }
+            catch (_f) {
+                console.log("No Local data found");
+            }
+            if (localData && !(options === null || options === void 0 ? void 0 : options.disableCache)) {
+                data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () { return localData; }), {
                     endpoint,
                     event,
                     target: (options === null || options === void 0 ? void 0 : options.target) || (event === null || event === void 0 ? void 0 : event.target),
@@ -261,8 +268,8 @@ class FireEnjin {
                 });
             }
             data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
-                var _f;
-                return ((_f = this.host) === null || _f === void 0 ? void 0 : _f.type) === "graphql"
+                var _g;
+                return ((_g = this.host) === null || _g === void 0 ? void 0 : _g.type) === "graphql"
                     ? (input === null || input === void 0 ? void 0 : input.query)
                         ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
                             method,

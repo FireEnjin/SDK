@@ -8,7 +8,7 @@ import DatabaseService from "../src/services/database";
 describe("Tests", () => {
   it("Should create a client and make a request", async () => {
     const client = new Client(
-      "https://us-central1-madness-labs-pwa.cloudfunctions.net"
+      "https://us-central1-fireenjin-mx.cloudfunctions.net"
     );
     console.log(await client.request("api/template/Ocmq17xVsxRyyngvmct2"));
     expect(client).toMatchObject({});
@@ -16,7 +16,7 @@ describe("Tests", () => {
   it.only("Should create fireenjin and make a request", async () => {
     const enjin = new FireEnjin({
       getSdk,
-      host: "https://us-central1-madness-labs-pwa.cloudfunctions.net/graphql",
+      host: "https://us-central1-fireenjin-mx.cloudfunctions.net/graphql",
       onRequest: async (action, endpoint) => {
         const result = await action();
         console.log(`New Request: ${endpoint}`, result);
@@ -36,7 +36,7 @@ describe("Tests", () => {
   it("Should create fireenjin and make a request", async () => {
     const enjin = new FireEnjin({
       getSdk,
-      host: "https://us-central1-madness-labs-pwa.cloudfunctions.net/graphql",
+      host: "https://us-central1-fireenjin-mx.cloudfunctions.net/graphql",
       onRequest: async (action, endpoint) => {
         const result = await action();
         console.log(`New Request: ${endpoint}`, result);
@@ -57,7 +57,7 @@ describe("Tests", () => {
   it("Should create fireenjin and make a request", async () => {
     const enjin = new FireEnjin({
       getSdk,
-      host: "https://us-central1-madness-labs-pwa.cloudfunctions.net/graphql",
+      host: "https://us-central1-fireenjin-mx.cloudfunctions.net/graphql",
       onRequest: async (action, endpoint) => {
         const result = await action();
         console.log(`New Request: ${endpoint}`, result);
@@ -80,10 +80,10 @@ describe("Tests", () => {
     const db = new DatabaseService({
       config: {
         apiKey: "AIzaSyBpVG2JOIVTXfO-fWx7-YZq938dSINu9Lc",
-        authDomain: "madness-labs-pwa.firebaseapp.com",
-        databaseURL: "https://madness-labs-pwa.firebaseio.com",
-        projectId: "madness-labs-pwa",
-        storageBucket: "madness-labs-pwa.appspot.com",
+        authDomain: "fireenjin-mx.firebaseapp.com",
+        databaseURL: "https://fireenjin-mx.firebaseio.com",
+        projectId: "fireenjin-mx",
+        storageBucket: "fireenjin-mx.appspot.com",
         messagingSenderId: "540141413358",
         appId: "1:540141413358:web:94a1558c2ed20ecba8a4ff",
         measurementId: "G-YCRMJPNHJG",
