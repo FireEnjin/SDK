@@ -141,7 +141,7 @@ var DatabaseService = /** @class */ (function () {
         return (0, firestore_1.getDocs)(this.collection(path));
     };
     DatabaseService.prototype.document = function (path, id) {
-        return id ? (0, firestore_1.doc)(this.collection(path), id) : (0, firestore_1.doc)(this.service, path);
+        return id ? (0, firestore_1.doc)(this.service, path, id) : (0, firestore_1.doc)(this.service, path);
     };
     DatabaseService.prototype.getDocument = function (path, id) {
         return (0, firestore_1.getDoc)(this.document(path, id));

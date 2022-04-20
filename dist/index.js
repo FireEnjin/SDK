@@ -607,7 +607,7 @@ class DatabaseService {
         return firestore.getDocs(this.collection(path));
     }
     document(path, id) {
-        return id ? firestore.doc(this.collection(path), id) : firestore.doc(this.service, path);
+        return id ? firestore.doc(this.service, path, id) : firestore.doc(this.service, path);
     }
     getDocument(path, id) {
         return firestore.getDoc(this.document(path, id));

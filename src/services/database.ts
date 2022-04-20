@@ -77,7 +77,7 @@ export default class DatabaseService {
     return { id: doc.id };
   }
 
-  async find(collectionName: string, id: string) {
+  async find(collectionName: string, id?: string) {
     const doc = await this.getDocument(collectionName, id);
     return doc.data();
   }
@@ -91,7 +91,7 @@ export default class DatabaseService {
   }
 
   document(path: string, id?: string) {
-    return id ? doc(this.collection(path), id) : doc(this.service, path);
+    return id ? doc(this.service, path, id) : doc(this.service, path);
   }
 
   getDocument(path: string, id?: string) {

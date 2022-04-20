@@ -56,7 +56,7 @@ export default class DatabaseService {
         return getDocs(this.collection(path));
     }
     document(path, id) {
-        return id ? doc(this.collection(path), id) : doc(this.service, path);
+        return id ? doc(this.service, path, id) : doc(this.service, path);
     }
     getDocument(path, id) {
         return getDoc(this.document(path, id));
