@@ -334,7 +334,7 @@ export default class FireEnjin {
                 }
               )
           : this.client.request(endpoint, input, {
-              method,
+              method: input?.id ? "put" : "post",
             }),
       {
         endpoint,

@@ -368,7 +368,7 @@ var FireEnjin = /** @class */ (function () {
                                             data: input === null || input === void 0 ? void 0 : input.data
                                         })
                                     : this.client.request(endpoint, input, {
-                                        method: method
+                                        method: (input === null || input === void 0 ? void 0 : input.id) ? "put" : "post"
                                     })];
                         });
                     }); }, {
