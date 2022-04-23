@@ -1,3 +1,4 @@
+import cleanFirestoreData from "../helpers/cleanFirestoreData";
 import DatabaseService from "./database";
 
 declare type RequestDocument = string | any;
@@ -49,9 +50,17 @@ export default class FirestoreClient {
       requestOptions?.headers || this.options?.headers || {};
     const endpoint = query;
     const response: any = await (method.toLowerCase() === "post"
-      ? this.db.add(endpoint, variables?.data || {}, variables?.id)
+      ? this.db.add(
+          endpoint,
+          await cleanFirestoreData(variables?.data || {}),
+          variables?.id
+        )
       : method.toLowerCase() === "put"
-      ? this.db.update(endpoint, variables?.data || {}, variables?.id)
+      ? this.db.update(
+          endpoint,
+          await cleanFirestoreData(variables?.data || {}),
+          variables?.id
+        )
       : method.toLowerCase() === "delete"
       ? this.db.delete(endpoint, variables?.id)
       : variables?.id

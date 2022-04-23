@@ -47,6 +47,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+var cleanFirestoreData_1 = require("../helpers/cleanFirestoreData");
 var FirestoreClient = /** @class */ (function () {
     function FirestoreClient(url, options) {
         this.url = url || "http://localhost:4000";
@@ -56,24 +57,41 @@ var FirestoreClient = /** @class */ (function () {
     FirestoreClient.prototype.rawRequest = function (query, variables, requestOptions) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var method, headers, endpoint, response;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var method, headers, endpoint, response, _b, _c, _d, _e, _f, _g, _h, _j;
+            return __generator(this, function (_k) {
+                switch (_k.label) {
                     case 0:
                         method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || "GET";
                         headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.headers) || {};
                         endpoint = query;
-                        return [4 /*yield*/, (method.toLowerCase() === "post"
-                                ? this.db.add(endpoint, (variables === null || variables === void 0 ? void 0 : variables.data) || {}, variables === null || variables === void 0 ? void 0 : variables.id)
-                                : method.toLowerCase() === "put"
-                                    ? this.db.update(endpoint, (variables === null || variables === void 0 ? void 0 : variables.data) || {}, variables === null || variables === void 0 ? void 0 : variables.id)
-                                    : method.toLowerCase() === "delete"
-                                        ? this.db["delete"](endpoint, variables === null || variables === void 0 ? void 0 : variables.id)
-                                        : (variables === null || variables === void 0 ? void 0 : variables.id)
-                                            ? this.db.find(endpoint, variables.id)
-                                            : this.db.list(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null))];
+                        if (!(method.toLowerCase() === "post")) return [3 /*break*/, 2];
+                        _d = (_c = this.db).add;
+                        _e = [endpoint];
+                        return [4 /*yield*/, (0, cleanFirestoreData_1["default"])((variables === null || variables === void 0 ? void 0 : variables.data) || {})];
                     case 1:
-                        response = _b.sent();
+                        _b = _d.apply(_c, _e.concat([_k.sent(), variables === null || variables === void 0 ? void 0 : variables.id]));
+                        return [3 /*break*/, 6];
+                    case 2:
+                        if (!(method.toLowerCase() === "put")) return [3 /*break*/, 4];
+                        _h = (_g = this.db).update;
+                        _j = [endpoint];
+                        return [4 /*yield*/, (0, cleanFirestoreData_1["default"])((variables === null || variables === void 0 ? void 0 : variables.data) || {})];
+                    case 3:
+                        _f = _h.apply(_g, _j.concat([_k.sent(), variables === null || variables === void 0 ? void 0 : variables.id]));
+                        return [3 /*break*/, 5];
+                    case 4:
+                        _f = method.toLowerCase() === "delete"
+                            ? this.db["delete"](endpoint, variables === null || variables === void 0 ? void 0 : variables.id)
+                            : (variables === null || variables === void 0 ? void 0 : variables.id)
+                                ? this.db.find(endpoint, variables.id)
+                                : this.db.list(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null);
+                        _k.label = 5;
+                    case 5:
+                        _b = _f;
+                        _k.label = 6;
+                    case 6: return [4 /*yield*/, (_b)];
+                    case 7:
+                        response = _k.sent();
                         return [2 /*return*/, {
                                 data: response,
                                 headers: headers,
