@@ -1,5 +1,5 @@
 import { initializeApp } from "@firebase/app";
-import { getFirestore, addDoc, collection, deleteDoc, doc, getDoc, getDocs, query as firestoreQuery, orderBy as firestoreOrderBy, limit as firestoreLimit, where as firestoreWhere, setDoc, updateDoc, onSnapshot, enableIndexedDbPersistence, connectFirestoreEmulator, } from "@firebase/firestore";
+import { getFirestore, addDoc, collection, deleteDoc, doc, getDoc, getDocs, initializeFirestore, query as firestoreQuery, orderBy as firestoreOrderBy, limit as firestoreLimit, where as firestoreWhere, setDoc, updateDoc, onSnapshot, enableIndexedDbPersistence, connectFirestoreEmulator, } from "@firebase/firestore";
 import { connectFunctionsEmulator, getFunctions, httpsCallable, } from "@firebase/functions";
 export default class DatabaseService {
     app;
@@ -17,6 +17,9 @@ export default class DatabaseService {
                 console.log(e);
             }
         }
+        initializeFirestore(this.app, {
+            ignoreUndefinedProperties: true,
+        });
         this.service = getFirestore(this.app);
         this.functions = getFunctions(this.app);
         if (options?.emulate) {
@@ -62,6 +65,8 @@ export default class DatabaseService {
         return getDoc(this.document(path, id));
     }
     async update(collectionName, id, data) {
+        if (!data)
+            throw new Error("No data passed to update method");
         const document = this.document(collectionName, id);
         await updateDoc(document, data, { merge: true });
         const newDocument = await this.getDocument(collectionName, id);

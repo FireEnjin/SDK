@@ -72,6 +72,9 @@ var DatabaseService = /** @class */ (function () {
                 console.log(e);
             }
         }
+        (0, firestore_1.initializeFirestore)(this.app, {
+            ignoreUndefinedProperties: true
+        });
         this.service = (0, firestore_1.getFirestore)(this.app);
         this.functions = (0, functions_1.getFunctions)(this.app);
         if (options === null || options === void 0 ? void 0 : options.emulate) {
@@ -152,6 +155,8 @@ var DatabaseService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (!data)
+                            throw new Error("No data passed to update method");
                         document = this.document(collectionName, id);
                         return [4 /*yield*/, (0, firestore_1.updateDoc)(document, data, { merge: true })];
                     case 1:

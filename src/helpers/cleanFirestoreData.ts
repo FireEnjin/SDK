@@ -1,31 +1,31 @@
-export default async function cleanFirestoreData(input: any) {
-  const data = input;
-  for (const key of Object.keys(input)) {
-    const value = input[key];
-    if (!value) continue;
-    try {
-      if (value?.constructor?.name === "Object") {
-        data[key] = await cleanFirestoreData(value);
-      } else if (value?.constructor?.name === "DocumentReference") {
-        data[key] = { id: value.id };
-      } else if (value?.constructor?.name === "Timestamp") {
-        data[key] = value.toDate();
-      } else if (value?.constructor?.name === "Array") {
-        const cleanArray: any[] = [];
-        for (const item of data[key]) {
-          cleanArray.push(await cleanFirestoreData(item));
-        }
-        data[key] = cleanArray;
-      } else if (
-        typeof value === "object" &&
-        value?.constructor?.name !== "Date"
-      ) {
-        data[key] = await cleanFirestoreData(JSON.parse(JSON.stringify(value)));
-      }
-    } catch (err) {
-      delete data[key];
+export default function cleanFirestoreData(input: any) {
+  const toPlainFirestoreObject = (o: any): any => {
+    if (
+      o &&
+      typeof o === "object" &&
+      !Array.isArray(o) &&
+      !isFirestoreTimestamp(o)
+    ) {
+      return {
+        ...Object.keys(o).reduce(
+          (a: any, c: any) => ((a[c] = toPlainFirestoreObject(o[c])), a),
+          {}
+        ),
+      };
     }
+    return o;
+  };
+
+  function isFirestoreTimestamp(o: any): boolean {
+    if (
+      o &&
+      Object.getPrototypeOf(o).toMillis &&
+      Object.getPrototypeOf(o).constructor.name === "Timestamp"
+    ) {
+      return true;
+    }
+    return false;
   }
 
-  return JSON.parse(JSON.stringify(data));
+  return toPlainFirestoreObject(input);
 }

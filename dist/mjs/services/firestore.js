@@ -16,9 +16,9 @@ export default class FirestoreClient {
         const headers = requestOptions?.headers || this.options?.headers || {};
         const endpoint = query;
         const response = await (method.toLowerCase() === "post"
-            ? this.db.add(endpoint, await cleanFirestoreData(variables?.data || {}), variables?.id)
+            ? this.db.add(endpoint, cleanFirestoreData(variables?.data || {}), variables?.id)
             : method.toLowerCase() === "put"
-                ? this.db.update(endpoint, await cleanFirestoreData(variables?.data || {}), variables?.id)
+                ? this.db.update(endpoint, cleanFirestoreData(variables?.data || {}), variables?.id)
                 : method.toLowerCase() === "delete"
                     ? this.db.delete(endpoint, variables?.id)
                     : variables?.id

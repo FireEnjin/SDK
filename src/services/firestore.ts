@@ -52,13 +52,13 @@ export default class FirestoreClient {
     const response: any = await (method.toLowerCase() === "post"
       ? this.db.add(
           endpoint,
-          await cleanFirestoreData(variables?.data || {}),
+          cleanFirestoreData(variables?.data || {}),
           variables?.id
         )
       : method.toLowerCase() === "put"
       ? this.db.update(
           endpoint,
-          await cleanFirestoreData(variables?.data || {}),
+          cleanFirestoreData(variables?.data || {}),
           variables?.id
         )
       : method.toLowerCase() === "delete"

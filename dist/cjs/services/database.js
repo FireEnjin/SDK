@@ -25,6 +25,9 @@ class DatabaseService {
                 console.log(e);
             }
         }
+        (0, firestore_1.initializeFirestore)(this.app, {
+            ignoreUndefinedProperties: true,
+        });
         this.service = (0, firestore_1.getFirestore)(this.app);
         this.functions = (0, functions_1.getFunctions)(this.app);
         if (options === null || options === void 0 ? void 0 : options.emulate) {
@@ -77,6 +80,8 @@ class DatabaseService {
     }
     update(collectionName, id, data) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!data)
+                throw new Error("No data passed to update method");
             const document = this.document(collectionName, id);
             yield (0, firestore_1.updateDoc)(document, data, { merge: true });
             const newDocument = yield this.getDocument(collectionName, id);

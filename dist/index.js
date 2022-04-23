@@ -568,6 +568,9 @@ class DatabaseService {
                 console.log(e);
             }
         }
+        firestore.initializeFirestore(this.app, {
+            ignoreUndefinedProperties: true,
+        });
         this.service = firestore.getFirestore(this.app);
         this.functions = functions.getFunctions(this.app);
         if (options?.emulate) {
@@ -613,6 +616,8 @@ class DatabaseService {
         return firestore.getDoc(this.document(path, id));
     }
     async update(collectionName, id, data) {
+        if (!data)
+            throw new Error("No data passed to update method");
         const document = this.document(collectionName, id);
         await firestore.updateDoc(document, data, { merge: true });
         const newDocument = await this.getDocument(collectionName, id);
@@ -878,39 +883,27 @@ class Client {
     }
 }
 
-async function cleanFirestoreData(input) {
-    const data = input;
-    for (const key of Object.keys(input)) {
-        const value = input[key];
-        if (!value)
-            continue;
-        try {
-            if (value?.constructor?.name === "Object") {
-                data[key] = await cleanFirestoreData(value);
-            }
-            else if (value?.constructor?.name === "DocumentReference") {
-                data[key] = { id: value.id };
-            }
-            else if (value?.constructor?.name === "Timestamp") {
-                data[key] = value.toDate();
-            }
-            else if (value?.constructor?.name === "Array") {
-                const cleanArray = [];
-                for (const item of data[key]) {
-                    cleanArray.push(await cleanFirestoreData(item));
-                }
-                data[key] = cleanArray;
-            }
-            else if (typeof value === "object" &&
-                value?.constructor?.name !== "Date") {
-                data[key] = await cleanFirestoreData(JSON.parse(JSON.stringify(value)));
-            }
+function cleanFirestoreData(input) {
+    const toPlainFirestoreObject = (o) => {
+        if (o &&
+            typeof o === "object" &&
+            !Array.isArray(o) &&
+            !isFirestoreTimestamp(o)) {
+            return {
+                ...Object.keys(o).reduce((a, c) => ((a[c] = toPlainFirestoreObject(o[c])), a), {}),
+            };
         }
-        catch (err) {
-            delete data[key];
+        return o;
+    };
+    function isFirestoreTimestamp(o) {
+        if (o &&
+            Object.getPrototypeOf(o).toMillis &&
+            Object.getPrototypeOf(o).constructor.name === "Timestamp") {
+            return true;
         }
+        return false;
     }
-    return JSON.parse(JSON.stringify(data));
+    return toPlainFirestoreObject(input);
 }
 
 class FirestoreClient {
@@ -930,9 +923,9 @@ class FirestoreClient {
         const headers = requestOptions?.headers || this.options?.headers || {};
         const endpoint = query;
         const response = await (method.toLowerCase() === "post"
-            ? this.db.add(endpoint, await cleanFirestoreData(variables?.data || {}), variables?.id)
+            ? this.db.add(endpoint, cleanFirestoreData(variables?.data || {}), variables?.id)
             : method.toLowerCase() === "put"
-                ? this.db.update(endpoint, await cleanFirestoreData(variables?.data || {}), variables?.id)
+                ? this.db.update(endpoint, cleanFirestoreData(variables?.data || {}), variables?.id)
                 : method.toLowerCase() === "delete"
                     ? this.db.delete(endpoint, variables?.id)
                     : variables?.id

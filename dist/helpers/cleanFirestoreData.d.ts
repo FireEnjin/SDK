@@ -1,1 +1,1 @@
-export default function cleanFirestoreData(input: any): Promise<any>;
+export default function cleanFirestoreData(input: any): any;

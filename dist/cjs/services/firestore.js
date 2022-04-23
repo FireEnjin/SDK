@@ -26,9 +26,9 @@ class FirestoreClient {
             const headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.headers) || {};
             const endpoint = query;
             const response = yield (method.toLowerCase() === "post"
-                ? this.db.add(endpoint, yield (0, cleanFirestoreData_1.default)((variables === null || variables === void 0 ? void 0 : variables.data) || {}), variables === null || variables === void 0 ? void 0 : variables.id)
+                ? this.db.add(endpoint, (0, cleanFirestoreData_1.default)((variables === null || variables === void 0 ? void 0 : variables.data) || {}), variables === null || variables === void 0 ? void 0 : variables.id)
                 : method.toLowerCase() === "put"
-                    ? this.db.update(endpoint, yield (0, cleanFirestoreData_1.default)((variables === null || variables === void 0 ? void 0 : variables.data) || {}), variables === null || variables === void 0 ? void 0 : variables.id)
+                    ? this.db.update(endpoint, (0, cleanFirestoreData_1.default)((variables === null || variables === void 0 ? void 0 : variables.data) || {}), variables === null || variables === void 0 ? void 0 : variables.id)
                     : method.toLowerCase() === "delete"
                         ? this.db.delete(endpoint, variables === null || variables === void 0 ? void 0 : variables.id)
                         : (variables === null || variables === void 0 ? void 0 : variables.id)

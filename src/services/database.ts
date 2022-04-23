@@ -8,6 +8,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  initializeFirestore,
   query as firestoreQuery,
   orderBy as firestoreOrderBy,
   limit as firestoreLimit,
@@ -44,6 +45,9 @@ export default class DatabaseService {
         console.log(e);
       }
     }
+    initializeFirestore(this.app, {
+      ignoreUndefinedProperties: true,
+    });
     this.service = getFirestore(this.app);
     this.functions = getFunctions(this.app);
     if (options?.emulate) {
@@ -99,6 +103,7 @@ export default class DatabaseService {
   }
 
   async update(collectionName: string, id: string, data: any) {
+    if (!data) throw new Error("No data passed to update method");
     const document = this.document(collectionName, id);
     await updateDoc(document, data, { merge: true });
     const newDocument = await this.getDocument(collectionName, id);
