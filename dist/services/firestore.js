@@ -67,7 +67,7 @@ var FirestoreClient = /** @class */ (function () {
                         return [4 /*yield*/, (method.toLowerCase() === "post"
                                 ? this.db.add(endpoint, (0, cleanFirestoreData_1["default"])((variables === null || variables === void 0 ? void 0 : variables.data) || {}), variables === null || variables === void 0 ? void 0 : variables.id)
                                 : method.toLowerCase() === "put"
-                                    ? this.db.update(endpoint, (0, cleanFirestoreData_1["default"])((variables === null || variables === void 0 ? void 0 : variables.data) || {}), variables === null || variables === void 0 ? void 0 : variables.id)
+                                    ? this.db.update(endpoint, variables === null || variables === void 0 ? void 0 : variables.id, (0, cleanFirestoreData_1["default"])((variables === null || variables === void 0 ? void 0 : variables.data) || {}))
                                     : method.toLowerCase() === "delete"
                                         ? this.db["delete"](endpoint, variables === null || variables === void 0 ? void 0 : variables.id)
                                         : (variables === null || variables === void 0 ? void 0 : variables.id)

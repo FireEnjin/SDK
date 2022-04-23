@@ -58,8 +58,8 @@ export default class FirestoreClient {
       : method.toLowerCase() === "put"
       ? this.db.update(
           endpoint,
-          cleanFirestoreData(variables?.data || {}),
-          variables?.id
+          variables?.id,
+          cleanFirestoreData(variables?.data || {})
         )
       : method.toLowerCase() === "delete"
       ? this.db.delete(endpoint, variables?.id)
