@@ -202,10 +202,10 @@ export default class DatabaseService {
       params.push(firestoreWhere(w.key, w.conditional, w.value));
     }
     if (orderBy)
-      params.push(
-        orderBy
-          .split(",")
-          .map((orderPart) =>
+      orderBy
+        .split(",")
+        .map((orderPart) =>
+          params.push(
             orderPart.includes(":")
               ? firestoreOrderBy(
                   orderPart.split(":")[0],
@@ -213,7 +213,7 @@ export default class DatabaseService {
                 )
               : firestoreOrderBy(orderPart)
           )
-      );
+        );
     if (limit) params.push(firestoreLimit(limit));
 
     return firestoreQuery(this.collection(collectionName), ...params);

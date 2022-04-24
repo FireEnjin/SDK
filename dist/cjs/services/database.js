@@ -144,9 +144,9 @@ class DatabaseService {
             params.push((0, firestore_1.where)(w.key, w.conditional, w.value));
         }
         if (orderBy)
-            params.push(orderBy
+            orderBy
                 .split(",")
-                .map((orderPart) => orderPart.includes(":")
+                .map((orderPart) => params.push(orderPart.includes(":")
                 ? (0, firestore_1.orderBy)(orderPart.split(":")[0], orderPart.split(":")[1].includes("asc") ? "asc" : "desc")
                 : (0, firestore_1.orderBy)(orderPart)));
         if (limit)

@@ -238,13 +238,13 @@ var DatabaseService = /** @class */ (function () {
             params.push((0, firestore_1.where)(w.key, w.conditional, w.value));
         }
         if (orderBy)
-            params.push(orderBy
+            orderBy
                 .split(",")
                 .map(function (orderPart) {
-                return orderPart.includes(":")
+                return params.push(orderPart.includes(":")
                     ? (0, firestore_1.orderBy)(orderPart.split(":")[0], orderPart.split(":")[1].includes("asc") ? "asc" : "desc")
-                    : (0, firestore_1.orderBy)(orderPart);
-            }));
+                    : (0, firestore_1.orderBy)(orderPart));
+            });
         if (limit)
             params.push((0, firestore_1.limit)(limit));
         return firestore_1.query.apply(void 0, __spreadArray([this.collection(collectionName)], params, false));
