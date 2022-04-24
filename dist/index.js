@@ -677,7 +677,11 @@ class DatabaseService {
             params.push(firestore.where(w.key, w.conditional, w.value));
         }
         if (orderBy)
-            params.push(firestore.orderBy(orderBy));
+            params.push(orderBy
+                .split(",")
+                .map((orderPart) => orderPart.includes(":")
+                ? firestore.orderBy(orderPart.split(":")[0], orderPart.split(":")[1].includes("asc") ? "asc" : "desc")
+                : firestore.orderBy(orderPart)));
         if (limit)
             params.push(firestore.limit(limit));
         return firestore.query(this.collection(collectionName), ...params);

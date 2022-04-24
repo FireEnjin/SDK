@@ -126,7 +126,11 @@ export default class DatabaseService {
             params.push(firestoreWhere(w.key, w.conditional, w.value));
         }
         if (orderBy)
-            params.push(firestoreOrderBy(orderBy));
+            params.push(orderBy
+                .split(",")
+                .map((orderPart) => orderPart.includes(":")
+                ? firestoreOrderBy(orderPart.split(":")[0], orderPart.split(":")[1].includes("asc") ? "asc" : "desc")
+                : firestoreOrderBy(orderPart)));
         if (limit)
             params.push(firestoreLimit(limit));
         return firestoreQuery(this.collection(collectionName), ...params);
