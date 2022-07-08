@@ -631,7 +631,7 @@ class DatabaseService {
     }
     subscribe(query, callback, name) {
         const watcherName = name ? name : new Date().toISOString();
-        this.watchers[watcherName] = firestore.onSnapshot(this.rawQuery(query?.collectionName, query?.where, query?.orderBy, query?.limit), async (snapshot) => {
+        this.watchers[watcherName] = firestore.onSnapshot(this.rawQuery(query?.collectionName, query?.where, query?.orderBy, query?.limit, query?.advanced), async (snapshot) => {
             if (callback && typeof callback === "function") {
                 callback({ docs: snapshot?.docs || [] });
             }
@@ -669,7 +669,7 @@ class DatabaseService {
             return false;
         }
     }
-    rawQuery(collectionName, where, orderBy, limit) {
+    rawQuery(collectionName, where, orderBy, limit, { startAfter, startAt, endAt, } = {}) {
         const params = [];
         for (const w of where || []) {
             if (!w?.conditional || !w?.key)
@@ -682,15 +682,25 @@ class DatabaseService {
                 .map((orderPart) => params.push(orderPart.includes(":")
                 ? firestore.orderBy(orderPart.split(":")[0], orderPart.split(":")[1].includes("asc") ? "asc" : "desc")
                 : firestore.orderBy(orderPart)));
+        if (startAt)
+            params.push(startAt?.length
+                ? firestore.startAt(...startAt)
+                : firestore.startAt(startAt));
+        if (startAfter)
+            params.push(startAfter?.length
+                ? firestore.startAfter(...startAfter)
+                : firestore.startAfter(startAfter));
+        if (endAt)
+            params.push(endAt?.length ? firestore.endAt(...endAt) : firestore.endAt(endAt));
         if (limit)
             params.push(firestore.limit(limit));
         return firestore.query(this.collection(collectionName), ...params);
     }
-    async query(collectionName, where, orderBy, limit) {
-        return firestore.getDocs(this.rawQuery(collectionName, where, orderBy, limit));
+    async query(collectionName, where, orderBy, limit, advanced) {
+        return firestore.getDocs(this.rawQuery(collectionName, where, orderBy, limit, advanced));
     }
-    async list(collectionName, where, orderBy, limit) {
-        const query = await this.query(collectionName, where, orderBy, limit);
+    async list(collectionName, where, orderBy, limit, advanced) {
+        const query = await this.query(collectionName, where, orderBy, limit, advanced);
         return (query?.docs?.map((queryDoc) => ({
             id: queryDoc.id,
             ...(queryDoc?.exists() ? queryDoc.data() : {}),

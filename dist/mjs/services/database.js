@@ -1,5 +1,5 @@
 import { initializeApp } from "@firebase/app";
-import { getFirestore, addDoc, collection, deleteDoc, doc, getDoc, getDocs, initializeFirestore, query as firestoreQuery, orderBy as firestoreOrderBy, limit as firestoreLimit, where as firestoreWhere, setDoc, updateDoc, onSnapshot, enableIndexedDbPersistence, connectFirestoreEmulator, } from "@firebase/firestore";
+import { getFirestore, addDoc, collection, deleteDoc, doc, getDoc, getDocs, initializeFirestore, query as firestoreQuery, orderBy as firestoreOrderBy, limit as firestoreLimit, where as firestoreWhere, startAfter as firestoreStartAfter, startAt as firestoreStartAt, endAt as firestoreEndAt, setDoc, updateDoc, onSnapshot, enableIndexedDbPersistence, connectFirestoreEmulator, } from "@firebase/firestore";
 import { connectFunctionsEmulator, getFunctions, httpsCallable, } from "@firebase/functions";
 export default class DatabaseService {
     app;
@@ -80,7 +80,7 @@ export default class DatabaseService {
     }
     subscribe(query, callback, name) {
         const watcherName = name ? name : new Date().toISOString();
-        this.watchers[watcherName] = onSnapshot(this.rawQuery(query?.collectionName, query?.where, query?.orderBy, query?.limit), async (snapshot) => {
+        this.watchers[watcherName] = onSnapshot(this.rawQuery(query?.collectionName, query?.where, query?.orderBy, query?.limit, query?.advanced), async (snapshot) => {
             if (callback && typeof callback === "function") {
                 callback({ docs: snapshot?.docs || [] });
             }
@@ -118,7 +118,7 @@ export default class DatabaseService {
             return false;
         }
     }
-    rawQuery(collectionName, where, orderBy, limit) {
+    rawQuery(collectionName, where, orderBy, limit, { startAfter, startAt, endAt, } = {}) {
         const params = [];
         for (const w of where || []) {
             if (!w?.conditional || !w?.key)
@@ -131,15 +131,25 @@ export default class DatabaseService {
                 .map((orderPart) => params.push(orderPart.includes(":")
                 ? firestoreOrderBy(orderPart.split(":")[0], orderPart.split(":")[1].includes("asc") ? "asc" : "desc")
                 : firestoreOrderBy(orderPart)));
+        if (startAt)
+            params.push(startAt?.length
+                ? firestoreStartAt(...startAt)
+                : firestoreStartAt(startAt));
+        if (startAfter)
+            params.push(startAfter?.length
+                ? firestoreStartAfter(...startAfter)
+                : firestoreStartAfter(startAfter));
+        if (endAt)
+            params.push(endAt?.length ? firestoreEndAt(...endAt) : firestoreEndAt(endAt));
         if (limit)
             params.push(firestoreLimit(limit));
         return firestoreQuery(this.collection(collectionName), ...params);
     }
-    async query(collectionName, where, orderBy, limit) {
-        return getDocs(this.rawQuery(collectionName, where, orderBy, limit));
+    async query(collectionName, where, orderBy, limit, advanced) {
+        return getDocs(this.rawQuery(collectionName, where, orderBy, limit, advanced));
     }
-    async list(collectionName, where, orderBy, limit) {
-        const query = await this.query(collectionName, where, orderBy, limit);
+    async list(collectionName, where, orderBy, limit, advanced) {
+        const query = await this.query(collectionName, where, orderBy, limit, advanced);
         return (query?.docs?.map((queryDoc) => ({
             id: queryDoc.id,
             ...(queryDoc?.exists() ? queryDoc.data() : {}),

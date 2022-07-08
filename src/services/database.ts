@@ -13,6 +13,9 @@ import {
   orderBy as firestoreOrderBy,
   limit as firestoreLimit,
   where as firestoreWhere,
+  startAfter as firestoreStartAfter,
+  startAt as firestoreStartAt,
+  endAt as firestoreEndAt,
   WhereFilterOp,
   setDoc,
   updateDoc,
@@ -125,6 +128,11 @@ export default class DatabaseService {
       where?: { key?: string; conditional?: WhereFilterOp; value?: any }[];
       orderBy?: string;
       limit?: number;
+      advanced?: {
+        startAfter?: any;
+        startAt?: any;
+        endAt?: any;
+      };
     },
     callback: (data: { docs: QueryDocumentSnapshot[] }) => void,
     name?: string
@@ -135,7 +143,8 @@ export default class DatabaseService {
         query?.collectionName,
         query?.where,
         query?.orderBy,
-        query?.limit
+        query?.limit,
+        query?.advanced
       ),
       async (snapshot: QuerySnapshot) => {
         if (callback && typeof callback === "function") {
@@ -194,7 +203,16 @@ export default class DatabaseService {
     collectionName: string,
     where?: { key?: string; conditional?: WhereFilterOp; value?: any }[],
     orderBy?: string,
-    limit?: number
+    limit?: number,
+    {
+      startAfter,
+      startAt,
+      endAt,
+    }: {
+      startAfter?: any;
+      startAt?: any;
+      endAt?: any;
+    } = {}
   ) {
     const params: any = [];
     for (const w of where || []) {
@@ -214,6 +232,22 @@ export default class DatabaseService {
               : firestoreOrderBy(orderPart)
           )
         );
+    if (startAt)
+      params.push(
+        startAt?.length
+          ? firestoreStartAt(...startAt)
+          : firestoreStartAt(startAt)
+      );
+    if (startAfter)
+      params.push(
+        startAfter?.length
+          ? firestoreStartAfter(...startAfter)
+          : firestoreStartAfter(startAfter)
+      );
+    if (endAt)
+      params.push(
+        endAt?.length ? firestoreEndAt(...endAt) : firestoreEndAt(endAt)
+      );
     if (limit) params.push(firestoreLimit(limit));
 
     return firestoreQuery(this.collection(collectionName), ...params);
@@ -223,18 +257,36 @@ export default class DatabaseService {
     collectionName: string,
     where: { key?: string; conditional?: WhereFilterOp; value?: any }[],
     orderBy?: string,
-    limit?: number
+    limit?: number,
+    advanced?: {
+      startAfter?: any;
+      startAt?: any;
+      endAt?: any;
+    }
   ) {
-    return getDocs(this.rawQuery(collectionName, where, orderBy, limit));
+    return getDocs(
+      this.rawQuery(collectionName, where, orderBy, limit, advanced)
+    );
   }
 
   async list(
     collectionName: string,
     where: { key?: string; conditional?: WhereFilterOp; value?: any }[],
     orderBy?: string,
-    limit?: number
+    limit?: number,
+    advanced?: {
+      startAfter?: any;
+      startAt?: any;
+      endAt?: any;
+    }
   ) {
-    const query = await this.query(collectionName, where, orderBy, limit);
+    const query = await this.query(
+      collectionName,
+      where,
+      orderBy,
+      limit,
+      advanced
+    );
 
     return (
       query?.docs?.map((queryDoc) => ({

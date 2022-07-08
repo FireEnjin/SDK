@@ -14,7 +14,7 @@
 
       window.onload = async () => {
         const enjin = new FireEnjin({
-          host: "https://us-central1-fireenjin-mx.cloudfunctions.net/graphql",
+          host: "https://fireenjin.com/graphql",
           onRequest: async (action, endpoint) => {
             const result = await action();
             console.log(`New Request: ${endpoint}`, result);

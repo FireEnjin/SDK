@@ -1,2 +1,2 @@
-declare const _default: (params: any, encode?: boolean | undefined) => string;
+declare const _default: (params: any, encode?: boolean) => string;
 export default _default;

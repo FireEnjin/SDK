@@ -184,7 +184,7 @@ var DatabaseService = /** @class */ (function () {
     DatabaseService.prototype.subscribe = function (query, callback, name) {
         var _this = this;
         var watcherName = name ? name : new Date().toISOString();
-        this.watchers[watcherName] = (0, firestore_1.onSnapshot)(this.rawQuery(query === null || query === void 0 ? void 0 : query.collectionName, query === null || query === void 0 ? void 0 : query.where, query === null || query === void 0 ? void 0 : query.orderBy, query === null || query === void 0 ? void 0 : query.limit), function (snapshot) { return __awaiter(_this, void 0, void 0, function () {
+        this.watchers[watcherName] = (0, firestore_1.onSnapshot)(this.rawQuery(query === null || query === void 0 ? void 0 : query.collectionName, query === null || query === void 0 ? void 0 : query.where, query === null || query === void 0 ? void 0 : query.orderBy, query === null || query === void 0 ? void 0 : query.limit, query === null || query === void 0 ? void 0 : query.advanced), function (snapshot) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 if (callback && typeof callback === "function") {
                     callback({ docs: (snapshot === null || snapshot === void 0 ? void 0 : snapshot.docs) || [] });
@@ -229,10 +229,11 @@ var DatabaseService = /** @class */ (function () {
             return false;
         }
     };
-    DatabaseService.prototype.rawQuery = function (collectionName, where, orderBy, limit) {
+    DatabaseService.prototype.rawQuery = function (collectionName, where, orderBy, limit, _a) {
+        var _b = _a === void 0 ? {} : _a, startAfter = _b.startAfter, startAt = _b.startAt, endAt = _b.endAt;
         var params = [];
-        for (var _i = 0, _a = where || []; _i < _a.length; _i++) {
-            var w = _a[_i];
+        for (var _i = 0, _c = where || []; _i < _c.length; _i++) {
+            var w = _c[_i];
             if (!(w === null || w === void 0 ? void 0 : w.conditional) || !(w === null || w === void 0 ? void 0 : w.key))
                 continue;
             params.push((0, firestore_1.where)(w.key, w.conditional, w.value));
@@ -245,24 +246,32 @@ var DatabaseService = /** @class */ (function () {
                     ? (0, firestore_1.orderBy)(orderPart.split(":")[0], orderPart.split(":")[1].includes("asc") ? "asc" : "desc")
                     : (0, firestore_1.orderBy)(orderPart));
             });
+        if (startAt)
+            params.push((startAt === null || startAt === void 0 ? void 0 : startAt.length)
+                ? firestore_1.startAt.apply(void 0, startAt) : (0, firestore_1.startAt)(startAt));
+        if (startAfter)
+            params.push((startAfter === null || startAfter === void 0 ? void 0 : startAfter.length)
+                ? firestore_1.startAfter.apply(void 0, startAfter) : (0, firestore_1.startAfter)(startAfter));
+        if (endAt)
+            params.push((endAt === null || endAt === void 0 ? void 0 : endAt.length) ? firestore_1.endAt.apply(void 0, endAt) : (0, firestore_1.endAt)(endAt));
         if (limit)
             params.push((0, firestore_1.limit)(limit));
         return firestore_1.query.apply(void 0, __spreadArray([this.collection(collectionName)], params, false));
     };
-    DatabaseService.prototype.query = function (collectionName, where, orderBy, limit) {
+    DatabaseService.prototype.query = function (collectionName, where, orderBy, limit, advanced) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, (0, firestore_1.getDocs)(this.rawQuery(collectionName, where, orderBy, limit))];
+                return [2 /*return*/, (0, firestore_1.getDocs)(this.rawQuery(collectionName, where, orderBy, limit, advanced))];
             });
         });
     };
-    DatabaseService.prototype.list = function (collectionName, where, orderBy, limit) {
+    DatabaseService.prototype.list = function (collectionName, where, orderBy, limit, advanced) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
             var query;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.query(collectionName, where, orderBy, limit)];
+                    case 0: return [4 /*yield*/, this.query(collectionName, where, orderBy, limit, advanced)];
                     case 1:
                         query = _b.sent();
                         return [2 /*return*/, (((_a = query === null || query === void 0 ? void 0 : query.docs) === null || _a === void 0 ? void 0 : _a.map(function (queryDoc) { return (__assign({ id: queryDoc.id }, ((queryDoc === null || queryDoc === void 0 ? void 0 : queryDoc.exists()) ? queryDoc.data() : {}))); })) || null)];

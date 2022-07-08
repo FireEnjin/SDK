@@ -98,7 +98,7 @@ class DatabaseService {
     }
     subscribe(query, callback, name) {
         const watcherName = name ? name : new Date().toISOString();
-        this.watchers[watcherName] = (0, firestore_1.onSnapshot)(this.rawQuery(query === null || query === void 0 ? void 0 : query.collectionName, query === null || query === void 0 ? void 0 : query.where, query === null || query === void 0 ? void 0 : query.orderBy, query === null || query === void 0 ? void 0 : query.limit), (snapshot) => __awaiter(this, void 0, void 0, function* () {
+        this.watchers[watcherName] = (0, firestore_1.onSnapshot)(this.rawQuery(query === null || query === void 0 ? void 0 : query.collectionName, query === null || query === void 0 ? void 0 : query.where, query === null || query === void 0 ? void 0 : query.orderBy, query === null || query === void 0 ? void 0 : query.limit, query === null || query === void 0 ? void 0 : query.advanced), (snapshot) => __awaiter(this, void 0, void 0, function* () {
             if (callback && typeof callback === "function") {
                 callback({ docs: (snapshot === null || snapshot === void 0 ? void 0 : snapshot.docs) || [] });
             }
@@ -136,7 +136,7 @@ class DatabaseService {
             return false;
         }
     }
-    rawQuery(collectionName, where, orderBy, limit) {
+    rawQuery(collectionName, where, orderBy, limit, { startAfter, startAt, endAt, } = {}) {
         const params = [];
         for (const w of where || []) {
             if (!(w === null || w === void 0 ? void 0 : w.conditional) || !(w === null || w === void 0 ? void 0 : w.key))
@@ -149,19 +149,29 @@ class DatabaseService {
                 .map((orderPart) => params.push(orderPart.includes(":")
                 ? (0, firestore_1.orderBy)(orderPart.split(":")[0], orderPart.split(":")[1].includes("asc") ? "asc" : "desc")
                 : (0, firestore_1.orderBy)(orderPart)));
+        if (startAt)
+            params.push((startAt === null || startAt === void 0 ? void 0 : startAt.length)
+                ? (0, firestore_1.startAt)(...startAt)
+                : (0, firestore_1.startAt)(startAt));
+        if (startAfter)
+            params.push((startAfter === null || startAfter === void 0 ? void 0 : startAfter.length)
+                ? (0, firestore_1.startAfter)(...startAfter)
+                : (0, firestore_1.startAfter)(startAfter));
+        if (endAt)
+            params.push((endAt === null || endAt === void 0 ? void 0 : endAt.length) ? (0, firestore_1.endAt)(...endAt) : (0, firestore_1.endAt)(endAt));
         if (limit)
             params.push((0, firestore_1.limit)(limit));
         return (0, firestore_1.query)(this.collection(collectionName), ...params);
     }
-    query(collectionName, where, orderBy, limit) {
+    query(collectionName, where, orderBy, limit, advanced) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, firestore_1.getDocs)(this.rawQuery(collectionName, where, orderBy, limit));
+            return (0, firestore_1.getDocs)(this.rawQuery(collectionName, where, orderBy, limit, advanced));
         });
     }
-    list(collectionName, where, orderBy, limit) {
+    list(collectionName, where, orderBy, limit, advanced) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const query = yield this.query(collectionName, where, orderBy, limit);
+            const query = yield this.query(collectionName, where, orderBy, limit, advanced);
             return (((_a = query === null || query === void 0 ? void 0 : query.docs) === null || _a === void 0 ? void 0 : _a.map((queryDoc) => (Object.assign({ id: queryDoc.id }, ((queryDoc === null || queryDoc === void 0 ? void 0 : queryDoc.exists()) ? queryDoc.data() : {}))))) || null);
         });
     }

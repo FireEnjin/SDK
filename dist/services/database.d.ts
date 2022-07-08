@@ -32,6 +32,11 @@ export default class DatabaseService {
         }[];
         orderBy?: string;
         limit?: number;
+        advanced?: {
+            startAfter?: any;
+            startAt?: any;
+            endAt?: any;
+        };
     }, callback: (data: {
         docs: QueryDocumentSnapshot[];
     }) => void, name?: string): any;
@@ -42,17 +47,29 @@ export default class DatabaseService {
         key?: string;
         conditional?: WhereFilterOp;
         value?: any;
-    }[], orderBy?: string, limit?: number): import("@firebase/firestore").Query<import("@firebase/firestore").DocumentData>;
+    }[], orderBy?: string, limit?: number, { startAfter, startAt, endAt, }?: {
+        startAfter?: any;
+        startAt?: any;
+        endAt?: any;
+    }): import("@firebase/firestore").Query<import("@firebase/firestore").DocumentData>;
     query(collectionName: string, where: {
         key?: string;
         conditional?: WhereFilterOp;
         value?: any;
-    }[], orderBy?: string, limit?: number): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData>>;
+    }[], orderBy?: string, limit?: number, advanced?: {
+        startAfter?: any;
+        startAt?: any;
+        endAt?: any;
+    }): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData>>;
     list(collectionName: string, where: {
         key?: string;
         conditional?: WhereFilterOp;
         value?: any;
-    }[], orderBy?: string, limit?: number): Promise<{
+    }[], orderBy?: string, limit?: number, advanced?: {
+        startAfter?: any;
+        startAt?: any;
+        endAt?: any;
+    }): Promise<{
         id: string;
     }[]>;
     getApp(): Promise<FirebaseApp>;
