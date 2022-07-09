@@ -234,19 +234,19 @@ export default class DatabaseService {
         );
     if (startAt)
       params.push(
-        startAt?.length
+        Array.isArray(startAt)
           ? firestoreStartAt(...startAt)
           : firestoreStartAt(startAt)
       );
     if (startAfter)
       params.push(
-        startAfter?.length
+        Array.isArray(startAfter)
           ? firestoreStartAfter(...startAfter)
           : firestoreStartAfter(startAfter)
       );
     if (endAt)
       params.push(
-        endAt?.length ? firestoreEndAt(...endAt) : firestoreEndAt(endAt)
+        Array.isArray(endAt) ? firestoreEndAt(...endAt) : firestoreEndAt(endAt)
       );
     if (limit) params.push(firestoreLimit(limit));
 

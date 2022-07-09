@@ -132,15 +132,15 @@ export default class DatabaseService {
                 ? firestoreOrderBy(orderPart.split(":")[0], orderPart.split(":")[1].includes("asc") ? "asc" : "desc")
                 : firestoreOrderBy(orderPart)));
         if (startAt)
-            params.push(startAt?.length
+            params.push(Array.isArray(startAt)
                 ? firestoreStartAt(...startAt)
                 : firestoreStartAt(startAt));
         if (startAfter)
-            params.push(startAfter?.length
+            params.push(Array.isArray(startAfter)
                 ? firestoreStartAfter(...startAfter)
                 : firestoreStartAfter(startAfter));
         if (endAt)
-            params.push(endAt?.length ? firestoreEndAt(...endAt) : firestoreEndAt(endAt));
+            params.push(Array.isArray(endAt) ? firestoreEndAt(...endAt) : firestoreEndAt(endAt));
         if (limit)
             params.push(firestoreLimit(limit));
         return firestoreQuery(this.collection(collectionName), ...params);

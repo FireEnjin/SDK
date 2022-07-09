@@ -247,13 +247,13 @@ var DatabaseService = /** @class */ (function () {
                     : (0, firestore_1.orderBy)(orderPart));
             });
         if (startAt)
-            params.push((startAt === null || startAt === void 0 ? void 0 : startAt.length)
+            params.push(Array.isArray(startAt)
                 ? firestore_1.startAt.apply(void 0, startAt) : (0, firestore_1.startAt)(startAt));
         if (startAfter)
-            params.push((startAfter === null || startAfter === void 0 ? void 0 : startAfter.length)
+            params.push(Array.isArray(startAfter)
                 ? firestore_1.startAfter.apply(void 0, startAfter) : (0, firestore_1.startAfter)(startAfter));
         if (endAt)
-            params.push((endAt === null || endAt === void 0 ? void 0 : endAt.length) ? firestore_1.endAt.apply(void 0, endAt) : (0, firestore_1.endAt)(endAt));
+            params.push(Array.isArray(endAt) ? firestore_1.endAt.apply(void 0, endAt) : (0, firestore_1.endAt)(endAt));
         if (limit)
             params.push((0, firestore_1.limit)(limit));
         return firestore_1.query.apply(void 0, __spreadArray([this.collection(collectionName)], params, false));

@@ -150,15 +150,15 @@ class DatabaseService {
                 ? (0, firestore_1.orderBy)(orderPart.split(":")[0], orderPart.split(":")[1].includes("asc") ? "asc" : "desc")
                 : (0, firestore_1.orderBy)(orderPart)));
         if (startAt)
-            params.push((startAt === null || startAt === void 0 ? void 0 : startAt.length)
+            params.push(Array.isArray(startAt)
                 ? (0, firestore_1.startAt)(...startAt)
                 : (0, firestore_1.startAt)(startAt));
         if (startAfter)
-            params.push((startAfter === null || startAfter === void 0 ? void 0 : startAfter.length)
+            params.push(Array.isArray(startAfter)
                 ? (0, firestore_1.startAfter)(...startAfter)
                 : (0, firestore_1.startAfter)(startAfter));
         if (endAt)
-            params.push((endAt === null || endAt === void 0 ? void 0 : endAt.length) ? (0, firestore_1.endAt)(...endAt) : (0, firestore_1.endAt)(endAt));
+            params.push(Array.isArray(endAt) ? (0, firestore_1.endAt)(...endAt) : (0, firestore_1.endAt)(endAt));
         if (limit)
             params.push((0, firestore_1.limit)(limit));
         return (0, firestore_1.query)(this.collection(collectionName), ...params);
