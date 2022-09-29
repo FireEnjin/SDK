@@ -25,8 +25,12 @@ import {
   FireEnjinUploadCallback,
 } from "./interfaces";
 
-if (window && !(window as any).FireEnjin) {
-  (window as any).FireEnjin = FireEnjin;
+try {
+  if (window && !(window as any).FireEnjin) {
+    (window as any).FireEnjin = FireEnjin;
+  }
+} catch (error) {
+  console.log(error);
 }
 
 export {

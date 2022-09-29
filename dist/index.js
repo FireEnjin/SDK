@@ -1228,8 +1228,13 @@ class FireEnjin {
     }
 }
 
-if (window && !window.FireEnjin) {
-    window.FireEnjin = FireEnjin;
+try {
+    if (window && !window.FireEnjin) {
+        window.FireEnjin = FireEnjin;
+    }
+}
+catch (error) {
+    console.log(error);
 }
 
 exports.AuthService = AuthService;

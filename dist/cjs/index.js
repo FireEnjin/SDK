@@ -12,6 +12,11 @@ const fireenjin_1 = __importDefault(require("./services/fireenjin"));
 exports.FireEnjin = fireenjin_1.default;
 const session_1 = __importDefault(require("./services/session"));
 exports.SessionService = session_1.default;
-if (window && !window.FireEnjin) {
-    window.FireEnjin = fireenjin_1.default;
+try {
+    if (window && !window.FireEnjin) {
+        window.FireEnjin = fireenjin_1.default;
+    }
+}
+catch (error) {
+    console.log(error);
 }
