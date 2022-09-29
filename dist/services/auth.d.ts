@@ -27,20 +27,17 @@ export default class AuthService {
     private app;
     private sessionManager?;
     private config;
-    private facebook;
-    private googlePlus;
-    private twitter;
     isOnline: boolean;
     service: Auth;
     constructor(options?: {
         config?: IFireEnjinAuthConfig;
         app?: any;
     });
-    getUser(skipReload?: boolean): Promise<import("@firebase/auth").User>;
+    getUser(skipReload?: boolean): Promise<import("@firebase/auth").User | null>;
     getClaims(): Promise<import("@firebase/auth").ParsedToken>;
-    getToken(): Promise<string>;
+    getToken(): Promise<string | null>;
     setToken(token: any): Promise<any>;
-    onEmailLink(link: any): Promise<import("@firebase/auth").UserCredential>;
+    onEmailLink(link: any): Promise<import("@firebase/auth").UserCredential | undefined>;
     withGoogleCredential(token: any): import("@firebase/auth").OAuthCredential;
     withCredential(credential: any): Promise<import("@firebase/auth").UserCredential>;
     withToken(token: string): Promise<import("@firebase/auth").UserCredential>;
@@ -57,9 +54,6 @@ export default class AuthService {
     sendPasswordReset(emailAddress: string, options?: any): Promise<void>;
     withEmail(email: string, password: string): Promise<unknown>;
     updateEmail(newEmail: string, actionOptions: any): Promise<unknown>;
-    facebookNative(): Promise<any>;
-    googleNative(): Promise<any>;
-    twitterNative(): Promise<any>;
     withSocial(network: string, redirect?: boolean): Promise<any>;
     logout(): Promise<void>;
     updatePassword(newPassword: string, credential: any): Promise<void>;
@@ -67,7 +61,7 @@ export default class AuthService {
     checkRolePermission(roleId: string, permission: string, ignoreAdmin?: boolean): Promise<boolean>;
     goOnline(): Promise<void>;
     goOffline(): Promise<any>;
-    getSessionManager(): Promise<SessionManager>;
+    getSessionManager(): Promise<SessionManager | undefined>;
     getApp(): Promise<FirebaseApp>;
     getService(): Promise<Auth>;
 }

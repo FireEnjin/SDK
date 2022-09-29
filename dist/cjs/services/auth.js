@@ -12,9 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const facebook_1 = require("@ionic-native/facebook");
-const google_plus_1 = require("@ionic-native/google-plus");
-const twitter_connect_1 = require("@ionic-native/twitter-connect");
 const app_1 = require("@firebase/app");
 const auth_1 = require("@firebase/auth");
 // import { getMessaging, getToken, onMessage } from "@firebase/messaging";
@@ -30,9 +27,6 @@ class AuthService {
                 permissions: ["email", "public_profile", "user_friends"],
             },
         };
-        this.facebook = facebook_1.Facebook;
-        this.googlePlus = google_plus_1.GooglePlus;
-        this.twitter = twitter_connect_1.TwitterConnect;
         this.isOnline = false;
         this.config = Object.assign(Object.assign({}, this.config), ((options === null || options === void 0 ? void 0 : options.config) || {}));
         this.app = (options === null || options === void 0 ? void 0 : options.app) || null;
@@ -267,33 +261,6 @@ class AuthService {
             }
         });
     }
-    facebookNative() {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.facebook.login((_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.facebook) === null || _b === void 0 ? void 0 : _b.permissions);
-            return this.withCredential(auth_1.FacebookAuthProvider.credential(result.authResponse.accessToken));
-        });
-    }
-    googleNative() {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
-            let result;
-            try {
-                result = yield this.googlePlus.login((_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.googlePlus) === null || _b === void 0 ? void 0 : _b.options);
-            }
-            catch (error) {
-                console.log("Error with Google Native Login...");
-                console.log(error);
-            }
-            return this.withCredential(auth_1.GoogleAuthProvider.credential(result.idToken));
-        });
-    }
-    twitterNative() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.twitter.login();
-            return this.withCredential(auth_1.TwitterAuthProvider.credential(result.token, result.secret));
-        });
-    }
     withSocial(network, redirect = false) {
         return __awaiter(this, void 0, void 0, function* () {
             let provider;
@@ -303,68 +270,31 @@ class AuthService {
                 shouldRedirect = true;
             }
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                if (window.cordova) {
-                    if (network === "google") {
-                        this.googleNative()
-                            .then((result) => {
-                            this.emitLoggedInEvent(result);
-                            resolve(result);
-                        })
-                            .catch((error) => {
-                            console.log(error);
-                            reject(error);
-                        });
-                    }
-                    else if (network === "facebook") {
-                        this.facebookNative()
-                            .then((result) => {
-                            this.emitLoggedInEvent(result);
-                            resolve(result);
-                        })
-                            .catch((error) => {
-                            console.log(error);
-                            reject(error);
-                        });
-                    }
-                    else if (network === "twitter") {
-                        this.twitterNative()
-                            .then((result) => {
-                            this.emitLoggedInEvent(result);
-                            resolve(result);
-                        })
-                            .catch((error) => {
-                            console.log(error);
-                            reject(error);
-                        });
-                    }
+                if (network === "facebook") {
+                    provider = new auth_1.FacebookAuthProvider();
+                }
+                else if (network === "google") {
+                    provider = new auth_1.GoogleAuthProvider();
+                }
+                else if (network === "twitter") {
+                    provider = new auth_1.TwitterAuthProvider();
                 }
                 else {
-                    if (network === "facebook") {
-                        provider = new auth_1.FacebookAuthProvider();
-                    }
-                    else if (network === "google") {
-                        provider = new auth_1.GoogleAuthProvider();
-                    }
-                    else if (network === "twitter") {
-                        provider = new auth_1.TwitterAuthProvider();
+                    reject({
+                        message: "A social network is required or the one provided is not yet supported.",
+                    });
+                }
+                try {
+                    if (shouldRedirect) {
+                        yield (0, auth_1.signInWithRedirect)(this.service, provider);
                     }
                     else {
-                        reject({
-                            message: "A social network is required or the one provided is not yet supported.",
-                        });
+                        yield (0, auth_1.signInWithPopup)(this.service, provider);
                     }
-                    try {
-                        if (shouldRedirect) {
-                            yield (0, auth_1.signInWithRedirect)(this.service, provider);
-                        }
-                        else {
-                            yield (0, auth_1.signInWithPopup)(this.service, provider);
-                        }
-                        this.emitLoggedInEvent({ currentUser: this.service.currentUser });
-                    }
-                    catch (error) {
-                        console.log(error);
-                    }
+                    this.emitLoggedInEvent({ currentUser: this.service.currentUser });
+                }
+                catch (error) {
+                    console.log(error);
                 }
             }));
         });

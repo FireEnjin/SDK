@@ -47,9 +47,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var facebook_1 = require("@ionic-native/facebook");
-var google_plus_1 = require("@ionic-native/google-plus");
-var twitter_connect_1 = require("@ionic-native/twitter-connect");
 var app_1 = require("@firebase/app");
 var auth_1 = require("@firebase/auth");
 // import { getMessaging, getToken, onMessage } from "@firebase/messaging";
@@ -65,9 +62,6 @@ var AuthService = /** @class */ (function () {
                 permissions: ["email", "public_profile", "user_friends"]
             }
         };
-        this.facebook = facebook_1.Facebook;
-        this.googlePlus = google_plus_1.GooglePlus;
-        this.twitter = twitter_connect_1.TwitterConnect;
         this.isOnline = false;
         this.config = __assign(__assign({}, this.config), ((options === null || options === void 0 ? void 0 : options.config) || {}));
         this.app = (options === null || options === void 0 ? void 0 : options.app) || null;
@@ -358,55 +352,6 @@ var AuthService = /** @class */ (function () {
             }
         });
     };
-    AuthService.prototype.facebookNative = function () {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function () {
-            var result;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0: return [4 /*yield*/, this.facebook.login((_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.facebook) === null || _b === void 0 ? void 0 : _b.permissions)];
-                    case 1:
-                        result = _c.sent();
-                        return [2 /*return*/, this.withCredential(auth_1.FacebookAuthProvider.credential(result.authResponse.accessToken))];
-                }
-            });
-        });
-    };
-    AuthService.prototype.googleNative = function () {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function () {
-            var result, error_2;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _c.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, this.googlePlus.login((_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.googlePlus) === null || _b === void 0 ? void 0 : _b.options)];
-                    case 1:
-                        result = _c.sent();
-                        return [3 /*break*/, 3];
-                    case 2:
-                        error_2 = _c.sent();
-                        console.log("Error with Google Native Login...");
-                        console.log(error_2);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/, this.withCredential(auth_1.GoogleAuthProvider.credential(result.idToken))];
-                }
-            });
-        });
-    };
-    AuthService.prototype.twitterNative = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var result;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.twitter.login()];
-                    case 1:
-                        result = _a.sent();
-                        return [2 /*return*/, this.withCredential(auth_1.TwitterAuthProvider.credential(result.token, result.secret))];
-                }
-            });
-        });
-    };
     AuthService.prototype.withSocial = function (network, redirect) {
         if (redirect === void 0) { redirect = false; }
         return __awaiter(this, void 0, void 0, function () {
@@ -419,44 +364,10 @@ var AuthService = /** @class */ (function () {
                     shouldRedirect = true;
                 }
                 return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var error_3;
-                        var _this = this;
+                        var error_2;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
-                                    if (!window.cordova) return [3 /*break*/, 1];
-                                    if (network === "google") {
-                                        this.googleNative()
-                                            .then(function (result) {
-                                            _this.emitLoggedInEvent(result);
-                                            resolve(result);
-                                        })["catch"](function (error) {
-                                            console.log(error);
-                                            reject(error);
-                                        });
-                                    }
-                                    else if (network === "facebook") {
-                                        this.facebookNative()
-                                            .then(function (result) {
-                                            _this.emitLoggedInEvent(result);
-                                            resolve(result);
-                                        })["catch"](function (error) {
-                                            console.log(error);
-                                            reject(error);
-                                        });
-                                    }
-                                    else if (network === "twitter") {
-                                        this.twitterNative()
-                                            .then(function (result) {
-                                            _this.emitLoggedInEvent(result);
-                                            resolve(result);
-                                        })["catch"](function (error) {
-                                            console.log(error);
-                                            reject(error);
-                                        });
-                                    }
-                                    return [3 /*break*/, 8];
-                                case 1:
                                     if (network === "facebook") {
                                         provider = new auth_1.FacebookAuthProvider();
                                     }
@@ -471,26 +382,26 @@ var AuthService = /** @class */ (function () {
                                             message: "A social network is required or the one provided is not yet supported."
                                         });
                                     }
-                                    _a.label = 2;
-                                case 2:
-                                    _a.trys.push([2, 7, , 8]);
-                                    if (!shouldRedirect) return [3 /*break*/, 4];
+                                    _a.label = 1;
+                                case 1:
+                                    _a.trys.push([1, 6, , 7]);
+                                    if (!shouldRedirect) return [3 /*break*/, 3];
                                     return [4 /*yield*/, (0, auth_1.signInWithRedirect)(this.service, provider)];
-                                case 3:
+                                case 2:
                                     _a.sent();
-                                    return [3 /*break*/, 6];
-                                case 4: return [4 /*yield*/, (0, auth_1.signInWithPopup)(this.service, provider)];
+                                    return [3 /*break*/, 5];
+                                case 3: return [4 /*yield*/, (0, auth_1.signInWithPopup)(this.service, provider)];
+                                case 4:
+                                    _a.sent();
+                                    _a.label = 5;
                                 case 5:
-                                    _a.sent();
-                                    _a.label = 6;
-                                case 6:
                                     this.emitLoggedInEvent({ currentUser: this.service.currentUser });
-                                    return [3 /*break*/, 8];
-                                case 7:
-                                    error_3 = _a.sent();
-                                    console.log(error_3);
-                                    return [3 /*break*/, 8];
-                                case 8: return [2 /*return*/];
+                                    return [3 /*break*/, 7];
+                                case 6:
+                                    error_2 = _a.sent();
+                                    console.log(error_2);
+                                    return [3 /*break*/, 7];
+                                case 7: return [2 /*return*/];
                             }
                         });
                     }); })];

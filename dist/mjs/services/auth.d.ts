@@ -27,9 +27,6 @@ export default class AuthService {
     private app;
     private sessionManager?;
     private config;
-    private facebook;
-    private googlePlus;
-    private twitter;
     isOnline: boolean;
     service: Auth;
     constructor(options?: {
@@ -57,9 +54,6 @@ export default class AuthService {
     sendPasswordReset(emailAddress: string, options?: any): Promise<void>;
     withEmail(email: string, password: string): Promise<unknown>;
     updateEmail(newEmail: string, actionOptions: any): Promise<unknown>;
-    facebookNative(): Promise<any>;
-    googleNative(): Promise<any>;
-    twitterNative(): Promise<any>;
     withSocial(network: string, redirect?: boolean): Promise<any>;
     logout(): Promise<void>;
     updatePassword(newPassword: string, credential: any): Promise<void>;

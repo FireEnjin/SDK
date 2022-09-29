@@ -1,6 +1,3 @@
-import { Facebook } from "@ionic-native/facebook";
-import { GooglePlus } from "@ionic-native/google-plus";
-import { TwitterConnect } from "@ionic-native/twitter-connect";
 import { initializeApp } from "@firebase/app";
 import { getAuth, connectAuthEmulator, getIdTokenResult, signOut, reauthenticateWithCredential, updatePassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, getIdToken, isSignInWithEmailLink, onAuthStateChanged, sendSignInLinkToEmail, signInAnonymously, signInWithEmailAndPassword, signInWithEmailLink, updateEmail, signInWithRedirect, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, signInWithPhoneNumber, signInWithCredential, signInWithCustomToken, reload, } from "@firebase/auth";
 // import { getMessaging, getToken, onMessage } from "@firebase/messaging";
@@ -16,9 +13,6 @@ export default class AuthService {
             permissions: ["email", "public_profile", "user_friends"],
         },
     };
-    facebook = Facebook;
-    googlePlus = GooglePlus;
-    twitter = TwitterConnect;
     isOnline = false;
     service;
     constructor(options) {
@@ -239,25 +233,6 @@ export default class AuthService {
             }
         });
     }
-    async facebookNative() {
-        const result = await this.facebook.login(this.config?.facebook?.permissions);
-        return this.withCredential(FacebookAuthProvider.credential(result.authResponse.accessToken));
-    }
-    async googleNative() {
-        let result;
-        try {
-            result = await this.googlePlus.login(this.config?.googlePlus?.options);
-        }
-        catch (error) {
-            console.log("Error with Google Native Login...");
-            console.log(error);
-        }
-        return this.withCredential(GoogleAuthProvider.credential(result.idToken));
-    }
-    async twitterNative() {
-        const result = await this.twitter.login();
-        return this.withCredential(TwitterAuthProvider.credential(result.token, result.secret));
-    }
     async withSocial(network, redirect = false) {
         let provider;
         let shouldRedirect = redirect;
@@ -266,68 +241,31 @@ export default class AuthService {
             shouldRedirect = true;
         }
         return new Promise(async (resolve, reject) => {
-            if (window.cordova) {
-                if (network === "google") {
-                    this.googleNative()
-                        .then((result) => {
-                        this.emitLoggedInEvent(result);
-                        resolve(result);
-                    })
-                        .catch((error) => {
-                        console.log(error);
-                        reject(error);
-                    });
-                }
-                else if (network === "facebook") {
-                    this.facebookNative()
-                        .then((result) => {
-                        this.emitLoggedInEvent(result);
-                        resolve(result);
-                    })
-                        .catch((error) => {
-                        console.log(error);
-                        reject(error);
-                    });
-                }
-                else if (network === "twitter") {
-                    this.twitterNative()
-                        .then((result) => {
-                        this.emitLoggedInEvent(result);
-                        resolve(result);
-                    })
-                        .catch((error) => {
-                        console.log(error);
-                        reject(error);
-                    });
-                }
+            if (network === "facebook") {
+                provider = new FacebookAuthProvider();
+            }
+            else if (network === "google") {
+                provider = new GoogleAuthProvider();
+            }
+            else if (network === "twitter") {
+                provider = new TwitterAuthProvider();
             }
             else {
-                if (network === "facebook") {
-                    provider = new FacebookAuthProvider();
-                }
-                else if (network === "google") {
-                    provider = new GoogleAuthProvider();
-                }
-                else if (network === "twitter") {
-                    provider = new TwitterAuthProvider();
+                reject({
+                    message: "A social network is required or the one provided is not yet supported.",
+                });
+            }
+            try {
+                if (shouldRedirect) {
+                    await signInWithRedirect(this.service, provider);
                 }
                 else {
-                    reject({
-                        message: "A social network is required or the one provided is not yet supported.",
-                    });
+                    await signInWithPopup(this.service, provider);
                 }
-                try {
-                    if (shouldRedirect) {
-                        await signInWithRedirect(this.service, provider);
-                    }
-                    else {
-                        await signInWithPopup(this.service, provider);
-                    }
-                    this.emitLoggedInEvent({ currentUser: this.service.currentUser });
-                }
-                catch (error) {
-                    console.log(error);
-                }
+                this.emitLoggedInEvent({ currentUser: this.service.currentUser });
+            }
+            catch (error) {
+                console.log(error);
             }
         });
     }

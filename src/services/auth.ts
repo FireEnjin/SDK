@@ -1,7 +1,3 @@
-import { Facebook } from "@ionic-native/facebook";
-import { GooglePlus } from "@ionic-native/google-plus";
-import { TwitterConnect } from "@ionic-native/twitter-connect";
-
 import { initializeApp, FirebaseApp } from "@firebase/app";
 import {
   getAuth,
@@ -69,9 +65,6 @@ export default class AuthService {
       permissions: ["email", "public_profile", "user_friends"],
     },
   };
-  private facebook: any = Facebook;
-  private googlePlus: any = GooglePlus;
-  private twitter: any = TwitterConnect;
 
   public isOnline = false;
   public service: Auth;
@@ -357,36 +350,6 @@ export default class AuthService {
     });
   }
 
-  async facebookNative(): Promise<any> {
-    const result = await this.facebook.login(
-      this.config?.facebook?.permissions
-    );
-
-    return this.withCredential(
-      FacebookAuthProvider.credential(result.authResponse.accessToken)
-    );
-  }
-
-  async googleNative(): Promise<any> {
-    let result;
-    try {
-      result = await this.googlePlus.login(this.config?.googlePlus?.options);
-    } catch (error) {
-      console.log("Error with Google Native Login...");
-      console.log(error);
-    }
-
-    return this.withCredential(GoogleAuthProvider.credential(result.idToken));
-  }
-
-  async twitterNative(): Promise<any> {
-    const result = await this.twitter.login();
-
-    return this.withCredential(
-      TwitterAuthProvider.credential(result.token, result.secret)
-    );
-  }
-
   async withSocial(network: string, redirect = false): Promise<any> {
     let provider;
     let shouldRedirect = redirect;
@@ -396,61 +359,27 @@ export default class AuthService {
     }
 
     return new Promise(async (resolve, reject) => {
-      if ((window as any).cordova) {
-        if (network === "google") {
-          this.googleNative()
-            .then((result: any) => {
-              this.emitLoggedInEvent(result);
-              resolve(result);
-            })
-            .catch((error) => {
-              console.log(error);
-              reject(error);
-            });
-        } else if (network === "facebook") {
-          this.facebookNative()
-            .then((result: any) => {
-              this.emitLoggedInEvent(result);
-              resolve(result);
-            })
-            .catch((error) => {
-              console.log(error);
-              reject(error);
-            });
-        } else if (network === "twitter") {
-          this.twitterNative()
-            .then((result) => {
-              this.emitLoggedInEvent(result);
-              resolve(result);
-            })
-            .catch((error) => {
-              console.log(error);
-              reject(error);
-            });
-        }
+      if (network === "facebook") {
+        provider = new FacebookAuthProvider();
+      } else if (network === "google") {
+        provider = new GoogleAuthProvider();
+      } else if (network === "twitter") {
+        provider = new TwitterAuthProvider();
       } else {
-        if (network === "facebook") {
-          provider = new FacebookAuthProvider();
-        } else if (network === "google") {
-          provider = new GoogleAuthProvider();
-        } else if (network === "twitter") {
-          provider = new TwitterAuthProvider();
+        reject({
+          message:
+            "A social network is required or the one provided is not yet supported.",
+        });
+      }
+      try {
+        if (shouldRedirect) {
+          await signInWithRedirect(this.service, provider);
         } else {
-          reject({
-            message:
-              "A social network is required or the one provided is not yet supported.",
-          });
+          await signInWithPopup(this.service, provider);
         }
-        try {
-          if (shouldRedirect) {
-            await signInWithRedirect(this.service, provider);
-          } else {
-            await signInWithPopup(this.service, provider);
-          }
-          this.emitLoggedInEvent({ currentUser: this.service.currentUser });
-        } catch (error) {
-          console.log(error);
-        }
+        this.emitLoggedInEvent({ currentUser: this.service.currentUser });
+      } catch (error) {
+        console.log(error);
       }
     });
   }
