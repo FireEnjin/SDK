@@ -48,7 +48,7 @@ class DatabaseService {
         return __awaiter(this, void 0, void 0, function* () {
             const collection = yield this.collection(collectionName);
             if (id) {
-                yield (0, firestore_1.setDoc)(this.document(collectionName, id), data);
+                yield (0, firestore_1.setDoc)(this.document(collectionName, id), data, { merge: true });
             }
             return id ? this.document(collectionName, id) : (0, firestore_1.addDoc)(collection, data);
         });
@@ -77,6 +77,16 @@ class DatabaseService {
     }
     getDocument(path, id) {
         return (0, firestore_1.getDoc)(this.document(path, id));
+    }
+    setDocument(path, data, id, { merge, mergeFields } = {}) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const doc = this.document(path, id);
+            yield (0, firestore_1.setDoc)(doc, data, {
+                merge,
+                mergeFields,
+            });
+            return doc;
+        });
     }
     update(collectionName, id, data) {
         return __awaiter(this, void 0, void 0, function* () {

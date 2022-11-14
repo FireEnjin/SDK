@@ -528,7 +528,7 @@ class DatabaseService {
     async add(collectionName, data, id) {
         const collection = await this.collection(collectionName);
         if (id) {
-            await firestore.setDoc(this.document(collectionName, id), data);
+            await firestore.setDoc(this.document(collectionName, id), data, { merge: true });
         }
         return id ? this.document(collectionName, id) : firestore.addDoc(collection, data);
     }
@@ -552,6 +552,14 @@ class DatabaseService {
     }
     getDocument(path, id) {
         return firestore.getDoc(this.document(path, id));
+    }
+    async setDocument(path, data, id, { merge, mergeFields } = {}) {
+        const doc = this.document(path, id);
+        await firestore.setDoc(doc, data, {
+            merge,
+            mergeFields,
+        });
+        return doc;
     }
     async update(collectionName, id, data) {
         if (!data)

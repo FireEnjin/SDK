@@ -72,7 +72,7 @@ export default class DatabaseService {
     const collection = await this.collection(collectionName);
 
     if (id) {
-      await setDoc(this.document(collectionName, id), data);
+      await setDoc(this.document(collectionName, id), data, { merge: true });
     }
     return id ? this.document(collectionName, id) : addDoc(collection, data);
   }
@@ -103,6 +103,20 @@ export default class DatabaseService {
 
   getDocument(path: string, id?: string) {
     return getDoc(this.document(path, id));
+  }
+
+  async setDocument(
+    path: string,
+    data: any,
+    id?: string,
+    { merge, mergeFields }: { merge?: boolean; mergeFields?: any } = {}
+  ) {
+    const doc = this.document(path, id);
+    await setDoc(doc, data, {
+      merge,
+      mergeFields,
+    });
+    return doc;
   }
 
   async update(collectionName: string, id: string, data: any) {

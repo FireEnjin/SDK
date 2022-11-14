@@ -100,7 +100,7 @@ var DatabaseService = /** @class */ (function () {
                     case 1:
                         collection = _a.sent();
                         if (!id) return [3 /*break*/, 3];
-                        return [4 /*yield*/, (0, firestore_1.setDoc)(this.document(collectionName, id), data)];
+                        return [4 /*yield*/, (0, firestore_1.setDoc)(this.document(collectionName, id), data, { merge: true })];
                     case 2:
                         _a.sent();
                         _a.label = 3;
@@ -148,6 +148,25 @@ var DatabaseService = /** @class */ (function () {
     };
     DatabaseService.prototype.getDocument = function (path, id) {
         return (0, firestore_1.getDoc)(this.document(path, id));
+    };
+    DatabaseService.prototype.setDocument = function (path, data, id, _a) {
+        var _b = _a === void 0 ? {} : _a, merge = _b.merge, mergeFields = _b.mergeFields;
+        return __awaiter(this, void 0, void 0, function () {
+            var doc;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        doc = this.document(path, id);
+                        return [4 /*yield*/, (0, firestore_1.setDoc)(doc, data, {
+                                merge: merge,
+                                mergeFields: mergeFields
+                            })];
+                    case 1:
+                        _c.sent();
+                        return [2 /*return*/, doc];
+                }
+            });
+        });
     };
     DatabaseService.prototype.update = function (collectionName, id, data) {
         return __awaiter(this, void 0, void 0, function () {
