@@ -143,6 +143,22 @@ var DatabaseService = /** @class */ (function () {
     DatabaseService.prototype.getCollection = function (path) {
         return (0, firestore_1.getDocs)(this.collection(path));
     };
+    /**
+     * Credit: https://stackoverflow.com/users/1701600/boern
+     * generates a string, e.g. used as document ID
+     * @param {number} len length of random string, default with firebase is 20
+     * @return {string} a strich such as tyCiv5FpxRexG9JX4wjP
+     */
+    DatabaseService.prototype.getDocumentId = function (len) {
+        if (len === void 0) { len = 20; }
+        var list = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ123456789";
+        var res = "";
+        for (var i = 0; i < len; i++) {
+            var rnd = Math.floor(Math.random() * list.length);
+            res = res + list.charAt(rnd);
+        }
+        return res;
+    };
     DatabaseService.prototype.document = function (path, id) {
         return id ? (0, firestore_1.doc)(this.service, path, id) : (0, firestore_1.doc)(this.service, path);
     };

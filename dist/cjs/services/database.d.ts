@@ -19,6 +19,13 @@ export default class DatabaseService {
     find(collectionName: string, id?: string): Promise<import("@firebase/firestore").DocumentData | undefined>;
     collection(path: string): import("@firebase/firestore").CollectionReference<import("@firebase/firestore").DocumentData>;
     getCollection(path: any): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData>>;
+    /**
+     * Credit: https://stackoverflow.com/users/1701600/boern
+     * generates a string, e.g. used as document ID
+     * @param {number} len length of random string, default with firebase is 20
+     * @return {string} a strich such as tyCiv5FpxRexG9JX4wjP
+     */
+    getDocumentId(len?: number): string;
     document(path: string, id?: string): import("@firebase/firestore").DocumentReference<import("@firebase/firestore").DocumentData>;
     getDocument(path: string, id?: string): Promise<import("@firebase/firestore").DocumentSnapshot<import("@firebase/firestore").DocumentData>>;
     setDocument(path: string, data: any, id?: string, { merge, mergeFields }?: {
