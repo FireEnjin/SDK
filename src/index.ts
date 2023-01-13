@@ -1,3 +1,4 @@
+import { Window } from "happy-dom";
 import AuthService from "./services/auth";
 import DatabaseService from "./services/database";
 import FireEnjin from "./services/fireenjin";
@@ -24,6 +25,8 @@ import {
   FireEnjinSuccessCallback,
   FireEnjinUploadCallback,
 } from "./interfaces";
+
+const window = new Window();
 
 try {
   if (window && !(window as any).FireEnjin) {

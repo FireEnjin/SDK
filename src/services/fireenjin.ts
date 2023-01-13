@@ -1,10 +1,9 @@
 /* TODO Add typings to fetch and submit
  * @example (keyof ReturnType<typeof getSdk>)
  */
-
+import { Window } from "happy-dom";
 import * as localforage from "localforage";
 import { GraphQLClient } from "graphql-request";
-
 import {
   FireEnjinFetchEvent,
   FireEnjinFetchInput,
@@ -22,6 +21,9 @@ import tryOrFail from "../helpers/tryOrFail";
 import Client from "./client";
 import DatabaseService from "./database";
 import FirestoreClient from "./firestore";
+
+const window = new Window();
+const document = window.document;
 
 export default class FireEnjin {
   client: Client | GraphQLClient | FirestoreClient;
