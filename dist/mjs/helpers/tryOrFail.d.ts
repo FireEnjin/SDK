@@ -1,5 +1,5 @@
 import { FireEnjinErrorCallback, FireEnjinSuccessCallback } from "../interfaces";
-export default function tryOrFail(fn: () => Promise<any>, options?: {
+export default function tryOrFail<T = any>(fn: () => Promise<T>, options?: {
     endpoint?: string;
     name?: string;
     retries?: number;
@@ -11,4 +11,4 @@ export default function tryOrFail(fn: () => Promise<any>, options?: {
     composed?: boolean;
     onError?: FireEnjinErrorCallback;
     onSuccess?: FireEnjinSuccessCallback;
-}): Promise<any>;
+}): Promise<T | undefined>;

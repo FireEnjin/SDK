@@ -109,7 +109,7 @@ export default class FireEnjin {
             event.detail.disableSubmit)
             return false;
         const target = event?.detail?.target || event?.target;
-        return (typeof this.options?.onSubmit === "function" ? this.options.onSubmit : this.submit)(event.detail.endpoint, {
+        return this.submit(event.detail.endpoint, {
             id: event?.detail?.id,
             data: event?.detail?.data,
             params: event?.detail?.params,
@@ -122,7 +122,7 @@ export default class FireEnjin {
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
             method: event?.detail?.method || target?.method,
-            fn: this.submit.bind(this)
+            fn: this.submit.bind(this),
         });
     }
     async onFetch(event) {
@@ -134,7 +134,7 @@ export default class FireEnjin {
             event.detail.disableFetch)
             return false;
         const target = event?.detail?.target || event?.target;
-        return (typeof this.options?.onFetch === "function" ? this.options.onFetch : this.fetch)(event.detail.endpoint, event?.detail?.params || {}, {
+        return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
             event,
             target,
             dataPropsMap: event?.detail?.dataPropsMap,
@@ -145,7 +145,7 @@ export default class FireEnjin {
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
             method: event?.detail?.method || target?.method,
-            fn: this.fetch.bind(this)
+            fn: this.fetch.bind(this),
         });
     }
     hash(input) {
@@ -219,15 +219,17 @@ export default class FireEnjin {
                 onSuccess: this.options?.onSuccess,
             });
         }
-        data = await tryOrFail(async () => this.host?.type === "graphql"
-            ? input?.query
-                ? this.client.request(input?.query, input?.params, {
+        data = await tryOrFail(async () => (typeof this.options?.onFetch === "function" &&
+            this.options.onFetch(endpoint, input, options)) ||
+            (this.host?.type === "graphql"
+                ? input?.query
+                    ? this.client.request(input?.query, input?.params, {
+                        method,
+                    })
+                    : this.sdk[endpoint](input, options?.headers)
+                : this.client.request(endpoint, input, {
                     method,
-                })
-                : this.sdk[endpoint](input, options?.headers)
-            : this.client.request(endpoint, input, {
-                method,
-            }), {
+                })), {
             endpoint,
             event,
             target: options?.target || options?.event?.target,
@@ -245,29 +247,32 @@ export default class FireEnjin {
         const event = options?.event || null;
         const name = options?.name || null;
         const method = options?.method || "post";
-        return tryOrFail(async () => this.host?.type === "graphql"
-            ? input?.query
-                ? this.client.request(input.query, input.params, {
-                    method,
-                })
-                : this.sdk[endpoint](input?.params || {
-                    id: input?.id,
-                    data: input?.data,
-                })
-            : this.client.request(endpoint, input, {
-                method: input?.id ? "put" : "post",
-            }), {
-            endpoint,
-            event,
-            target: options?.target || event?.target,
-            name,
-            cached: false,
-            bubbles: options?.bubbles,
-            cancelable: options?.cancelable,
-            composed: options?.composed,
-            onError: this.options?.onError,
-            onSuccess: this.options?.onSuccess,
-        });
+        return tryOrFail(async () => (typeof this.options?.onSubmit === "function" &&
+            this.options.onSubmit(endpoint, input, options)) ||
+            (this.host?.type === "graphql"
+                ? input?.query
+                    ? this.client.request(input.query, input.params, {
+                        method,
+                    })
+                    : this.sdk[endpoint](input?.params || {
+                        id: input?.id,
+                        data: input?.data,
+                    })
+                : this.client.request(endpoint, input, {
+                    method: input?.id ? "put" : "post",
+                }),
+                {
+                    endpoint,
+                    event,
+                    target: options?.target || event?.target,
+                    name,
+                    cached: false,
+                    bubbles: options?.bubbles,
+                    cancelable: options?.cancelable,
+                    composed: options?.composed,
+                    onError: this.options?.onError,
+                    onSuccess: this.options?.onSuccess,
+                }));
     }
     setHeader(key, value) {
         if (!this.client)

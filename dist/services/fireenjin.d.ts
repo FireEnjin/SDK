@@ -13,9 +13,9 @@ export default class FireEnjin {
     private onSubmit;
     private onFetch;
     private hash;
-    upload(input: FireEnjinUploadInput, options?: FireEnjinMethodOptions): Promise<any>;
-    fetch(endpoint: string, input?: FireEnjinFetchInput, options?: FireEnjinFetchOptions): Promise<any>;
-    submit(endpoint: string, input?: FireEnjinSubmitInput, options?: FireEnjinSubmitOptions): Promise<any>;
+    upload<I = any, T = any>(input: FireEnjinUploadInput<I>, options?: FireEnjinMethodOptions): Promise<T>;
+    fetch<I = any, T = any>(endpoint: string, input?: FireEnjinFetchInput<I>, options?: FireEnjinFetchOptions): Promise<T>;
+    submit<I = any, T = any>(endpoint: string, input?: FireEnjinSubmitInput<I, T>, options?: FireEnjinSubmitOptions): Promise<T>;
     setHeader(key: string, value: string): false | Client | GraphQLClient | FirestoreClient;
     setHeaders(headers: any): false | Client | GraphQLClient | FirestoreClient;
     setConnection(nameUrlOrIndex: string | number): FireEnjinHost;

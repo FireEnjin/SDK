@@ -20,12 +20,8 @@ export declare type FireEnjinHost = {
 export declare type FireEnjinErrorCallback = (data: FireEnjinErrorEvent) => void;
 export declare type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
 export declare type FireEnjinUploadCallback = (data: FireEnjinUploadEvent) => void;
-export declare type FireEnjinFetchCallback = (endpoint: string, input?: FireEnjinFetchInput, options?: FireEnjinFetchOptions & {
-    fn: (endpoint: string, input?: FireEnjinFetchInput, options?: FireEnjinFetchOptions) => Promise<any>;
-}) => void;
-export declare type FireEnjinSubmitCallback = (endpoint: string, input?: FireEnjinSubmitInput, options?: FireEnjinSubmitOptions & {
-    fn: (endpoint: string, input?: FireEnjinSubmitInput, options?: FireEnjinSubmitOptions) => Promise<any>;
-}) => void;
+export declare type FireEnjinFetchCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinFetchInput<I>, options?: FireEnjinFetchOptions) => Promise<T>;
+export declare type FireEnjinSubmitCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinSubmitInput<I, T>, options?: FireEnjinSubmitOptions) => Promise<T>;
 export declare type FireEnjinOptions = {
     getSdk?: (client?: Client | GraphQLClient, withWrapper?: SdkFunctionWrapper) => FireEnjinEndpoints;
     host?: string;
@@ -51,28 +47,28 @@ export interface FireEnjinUploadData {
     type?: string;
     encodedContent?: any;
 }
-export interface FireEnjinUploadInput {
-    params?: any;
+export interface FireEnjinUploadInput<I = any> {
+    params?: I;
     id?: string | number;
     data?: FireEnjinUploadData;
     query?: string;
 }
-export interface FireEnjinFetchInput {
+export interface FireEnjinFetchInput<I = any> {
     id?: string | number;
-    params?: any;
+    params?: I;
     query?: any;
     [key: string]: any;
 }
-export interface FireEnjinSubmitInput {
+export interface FireEnjinSubmitInput<I = any, T = any> {
     id?: string | number;
-    params?: any;
+    params?: I;
     query?: any;
-    data?: any;
+    data?: T;
     [key: string]: any;
 }
-export interface FireEnjinTriggerInput {
+export interface FireEnjinTriggerInput<I> {
     name?: string;
-    payload?: any;
+    payload?: I;
     [key: string]: any;
 }
 export interface FireEnjinEvent {
@@ -95,8 +91,10 @@ export interface FireEnjinFetchOptions extends FireEnjinMethodOptions {
     disableCache?: boolean;
     dataPropsMap?: any;
     headers?: HeadersInit;
+    fn?: (endpoint: string, input?: FireEnjinFetchInput<any>, options?: FireEnjinFetchOptions) => Promise<any>;
 }
 export interface FireEnjinSubmitOptions extends FireEnjinMethodOptions {
+    fn?: (endpoint: string, input?: FireEnjinFetchInput<any>, options?: FireEnjinFetchOptions) => Promise<any>;
 }
 export interface FireEnjinSuccessEvent extends FireEnjinEvent {
     data?: any;

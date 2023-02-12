@@ -148,7 +148,7 @@ export default class FireEnjin {
 
     const target = event?.detail?.target || event?.target;
 
-    return (typeof this.options?.onSubmit === "function" ? this.options.onSubmit : this.submit)(
+    return this.submit(
       event.detail.endpoint,
       {
         id: event?.detail?.id,
@@ -164,7 +164,7 @@ export default class FireEnjin {
         cancelable: event?.detail?.cancelable,
         composed: event?.detail?.composed,
         method: event?.detail?.method || target?.method,
-        fn: this.submit.bind(this)
+        fn: this.submit.bind(this),
       }
     );
   }
@@ -181,7 +181,7 @@ export default class FireEnjin {
 
     const target = event?.detail?.target || event?.target;
 
-    return (typeof this.options?.onFetch === "function" ? this.options.onFetch : this.fetch)(event.detail.endpoint, event?.detail?.params || {}, {
+    return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
       event,
       target,
       dataPropsMap: event?.detail?.dataPropsMap,
@@ -192,7 +192,7 @@ export default class FireEnjin {
       cancelable: event?.detail?.cancelable,
       composed: event?.detail?.composed,
       method: event?.detail?.method || target?.method,
-      fn: this.fetch.bind(this)
+      fn: this.fetch.bind(this),
     });
   }
 
@@ -210,11 +210,11 @@ export default class FireEnjin {
     return hash;
   }
 
-  async upload(input: FireEnjinUploadInput, options?: FireEnjinMethodOptions) {
+  async upload<I = any, T = any>(input: FireEnjinUploadInput<I>, options?: FireEnjinMethodOptions) {
     const endpoint = options?.endpoint || "upload";
     const method = options?.method || "post";
 
-    return tryOrFail(
+    return tryOrFail<T>(
       async () =>
         this.host?.type === "graphql" && !this.options?.uploadUrl
           ? input?.query
@@ -242,12 +242,12 @@ export default class FireEnjin {
         onError: this.options?.onError,
         onSuccess: this.options?.onSuccess,
       }
-    );
+    ) as Promise<T>;
   }
 
-  async fetch(
+  async fetch<I = any, T = any>(
     endpoint: string,
-    input?: FireEnjinFetchInput,
+    input?: FireEnjinFetchInput<I>,
     options?: FireEnjinFetchOptions
   ) {
     let data: any = null;
@@ -285,9 +285,11 @@ export default class FireEnjin {
       });
     }
 
-    data = await tryOrFail(
+    data = await tryOrFail<T>(
       async () =>
-        this.host?.type === "graphql"
+        (typeof this.options?.onFetch === "function" &&
+          this.options.onFetch(endpoint, input, options)) ||
+        (this.host?.type === "graphql"
           ? input?.query
             ? this.client.request(input?.query, input?.params, {
                 method,
@@ -295,7 +297,7 @@ export default class FireEnjin {
             : this.sdk[endpoint](input, options?.headers)
           : this.client.request(endpoint, input, {
               method,
-            }),
+            })),
       {
         endpoint,
         event,
@@ -310,21 +312,23 @@ export default class FireEnjin {
       }
     );
 
-    return data;
+    return data as T;
   }
 
-  async submit(
+  async submit<I = any, T = any>(
     endpoint: string,
-    input?: FireEnjinSubmitInput,
+    input?: FireEnjinSubmitInput<I, T>,
     options?: FireEnjinSubmitOptions
   ) {
     const event: any = options?.event || null;
     const name: string = options?.name || (null as any);
     const method = options?.method || "post";
 
-    return tryOrFail(
+    return tryOrFail<T>(
       async () =>
-        this.host?.type === "graphql"
+        (typeof this.options?.onSubmit === "function" &&
+          this.options.onSubmit(endpoint, input, options)) ||
+        (this.host?.type === "graphql"
           ? input?.query
             ? this.client.request(input.query, input.params, {
                 method,
@@ -338,19 +342,19 @@ export default class FireEnjin {
           : this.client.request(endpoint, input, {
               method: input?.id ? "put" : "post",
             }),
-      {
-        endpoint,
-        event,
-        target: options?.target || event?.target,
-        name,
-        cached: false,
-        bubbles: options?.bubbles,
-        cancelable: options?.cancelable,
-        composed: options?.composed,
-        onError: this.options?.onError,
-        onSuccess: this.options?.onSuccess,
-      }
-    );
+        {
+          endpoint,
+          event,
+          target: options?.target || event?.target,
+          name,
+          cached: false,
+          bubbles: options?.bubbles,
+          cancelable: options?.cancelable,
+          composed: options?.composed,
+          onError: this.options?.onError,
+          onSuccess: this.options?.onSuccess,
+        })
+    ) as Promise<T>;
   }
 
   setHeader(key: string, value: string) {

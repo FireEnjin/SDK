@@ -5,8 +5,8 @@ import {
 import fireenjinError from "../events/error";
 import fireenjinSuccess from "../events/success";
 
-export default async function tryOrFail(
-  fn: () => Promise<any>,
+export default async function tryOrFail<T = any>(
+  fn: () => Promise<T>,
   options?: {
     endpoint?: string;
     name?: string;
