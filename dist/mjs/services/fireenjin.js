@@ -122,6 +122,7 @@ export default class FireEnjin {
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
             method: event?.detail?.method || target?.method,
+            fn: this.submit
         });
     }
     async onFetch(event) {
@@ -144,6 +145,7 @@ export default class FireEnjin {
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
             method: event?.detail?.method || target?.method,
+            fn: this.fetch
         });
     }
     hash(input) {
