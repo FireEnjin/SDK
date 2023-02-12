@@ -86,7 +86,7 @@ export interface FireEnjinSubmitInput<I = any, T = any> {
   [key: string]: any;
 }
 
-export interface FireEnjinTriggerInput<I> {
+export interface FireEnjinTriggerInput<I = any> {
   name?: string;
   payload?: I;
   [key: string]: any;
