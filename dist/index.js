@@ -1070,7 +1070,6 @@ class FireEnjin {
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
             method: event?.detail?.method || target?.method,
-            fn: this.submit.bind(this),
         });
     }
     async onFetch(event) {
@@ -1093,7 +1092,6 @@ class FireEnjin {
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
             method: event?.detail?.method || target?.method,
-            fn: this.fetch.bind(this),
         });
     }
     hash(input) {
@@ -1152,17 +1150,18 @@ class FireEnjin {
         catch {
             console.log("No Local data found");
         }
-        data = await tryOrFail(async () => (typeof this.options?.onFetch === "function" &&
-            this.options.onFetch(endpoint, input, options)) ||
-            (this.host?.type === "graphql"
-                ? input?.query
-                    ? this.client.request(input?.query, input?.params, {
-                        method,
-                    })
-                    : this.sdk[endpoint](input, options?.headers)
-                : this.client.request(endpoint, input, {
+        const fn = this.host?.type === "graphql"
+            ? input?.query
+                ? this.client.request(input?.query, input?.params, {
                     method,
-                })), {
+                })
+                : this.sdk[endpoint](input, options?.headers)
+            : this.client.request(endpoint, input, {
+                method,
+            });
+        data = await tryOrFail(async () => (typeof this.options?.onFetch === "function" &&
+            this.options.onFetch(endpoint, input, { ...options, fn })) ||
+            fn, {
             endpoint,
             event,
             target: options?.target || options?.event?.target,
@@ -1180,32 +1179,32 @@ class FireEnjin {
         const event = options?.event || null;
         const name = options?.name || null;
         const method = options?.method || "post";
+        const fn = this.host?.type === "graphql"
+            ? input?.query
+                ? this.client.request(input.query, input.params, {
+                    method,
+                })
+                : this.sdk[endpoint](input?.params || {
+                    id: input?.id,
+                    data: input?.data,
+                })
+            : this.client.request(endpoint, input, {
+                method: input?.id ? "put" : "post",
+            });
         return tryOrFail(async () => (typeof this.options?.onSubmit === "function" &&
-            this.options.onSubmit(endpoint, input, options)) ||
-            (this.host?.type === "graphql"
-                ? input?.query
-                    ? this.client.request(input.query, input.params, {
-                        method,
-                    })
-                    : this.sdk[endpoint](input?.params || {
-                        id: input?.id,
-                        data: input?.data,
-                    })
-                : this.client.request(endpoint, input, {
-                    method: input?.id ? "put" : "post",
-                }),
-                {
-                    endpoint,
-                    event,
-                    target: options?.target || event?.target,
-                    name,
-                    cached: false,
-                    bubbles: options?.bubbles,
-                    cancelable: options?.cancelable,
-                    composed: options?.composed,
-                    onError: this.options?.onError,
-                    onSuccess: this.options?.onSuccess,
-                }));
+            this.options.onSubmit(endpoint, input, { ...options, fn })) ||
+            fn, {
+            endpoint,
+            event,
+            target: options?.target || event?.target,
+            name,
+            cached: false,
+            bubbles: options?.bubbles,
+            cancelable: options?.cancelable,
+            composed: options?.composed,
+            onError: this.options?.onError,
+            onSuccess: this.options?.onSuccess,
+        });
     }
     setHeader(key, value) {
         if (!this.client)

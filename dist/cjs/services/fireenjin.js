@@ -160,7 +160,6 @@ class FireEnjin {
                 cancelable: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.cancelable,
                 composed: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.composed,
                 method: ((_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.method) || (target === null || target === void 0 ? void 0 : target.method),
-                fn: this.submit.bind(this),
             });
         });
     }
@@ -186,7 +185,6 @@ class FireEnjin {
                 cancelable: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.cancelable,
                 composed: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.composed,
                 method: ((_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.method) || (target === null || target === void 0 ? void 0 : target.method),
-                fn: this.fetch.bind(this),
             });
         });
     }
@@ -235,7 +233,7 @@ class FireEnjin {
         });
     }
     fetch(endpoint, input, options) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function* () {
             let data = null;
             const event = (options === null || options === void 0 ? void 0 : options.event) || null;
@@ -252,7 +250,7 @@ class FireEnjin {
             try {
                 data = yield localforage.getItem(localKey);
             }
-            catch (_f) {
+            catch (_g) {
                 console.log("No Local data found");
             }
             if (localData && !(options === null || options === void 0 ? void 0 : options.disableCache)) {
@@ -269,68 +267,70 @@ class FireEnjin {
                     onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
                 });
             }
+            const fn = ((_c = this.host) === null || _c === void 0 ? void 0 : _c.type) === "graphql"
+                ? (input === null || input === void 0 ? void 0 : input.query)
+                    ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
+                        method,
+                    })
+                    : this.sdk[endpoint](input, options === null || options === void 0 ? void 0 : options.headers)
+                : this.client.request(endpoint, input, {
+                    method,
+                });
             data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
-                var _g, _h;
-                return (typeof ((_g = this.options) === null || _g === void 0 ? void 0 : _g.onFetch) === "function" &&
-                    this.options.onFetch(endpoint, input, options)) ||
-                    (((_h = this.host) === null || _h === void 0 ? void 0 : _h.type) === "graphql"
-                        ? (input === null || input === void 0 ? void 0 : input.query)
-                            ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
-                                method,
-                            })
-                            : this.sdk[endpoint](input, options === null || options === void 0 ? void 0 : options.headers)
-                        : this.client.request(endpoint, input, {
-                            method,
-                        }));
+                var _h;
+                return (typeof ((_h = this.options) === null || _h === void 0 ? void 0 : _h.onFetch) === "function" &&
+                    this.options.onFetch(endpoint, input, Object.assign(Object.assign({}, options), { fn }))) ||
+                    fn;
             }), {
                 endpoint,
                 event,
-                target: (options === null || options === void 0 ? void 0 : options.target) || ((_c = options === null || options === void 0 ? void 0 : options.event) === null || _c === void 0 ? void 0 : _c.target),
+                target: (options === null || options === void 0 ? void 0 : options.target) || ((_d = options === null || options === void 0 ? void 0 : options.event) === null || _d === void 0 ? void 0 : _d.target),
                 name,
                 cached: false,
                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                 composed: options === null || options === void 0 ? void 0 : options.composed,
-                onError: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onError,
-                onSuccess: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onSuccess,
+                onError: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onError,
+                onSuccess: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onSuccess,
             });
             return data;
         });
     }
     submit(endpoint, input, options) {
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             const event = (options === null || options === void 0 ? void 0 : options.event) || null;
             const name = (options === null || options === void 0 ? void 0 : options.name) || null;
             const method = (options === null || options === void 0 ? void 0 : options.method) || "post";
+            const fn = ((_a = this.host) === null || _a === void 0 ? void 0 : _a.type) === "graphql"
+                ? (input === null || input === void 0 ? void 0 : input.query)
+                    ? this.client.request(input.query, input.params, {
+                        method,
+                    })
+                    : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
+                        id: input === null || input === void 0 ? void 0 : input.id,
+                        data: input === null || input === void 0 ? void 0 : input.data,
+                    })
+                : this.client.request(endpoint, input, {
+                    method: (input === null || input === void 0 ? void 0 : input.id) ? "put" : "post",
+                });
             return (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
-                var _a, _b, _c, _d;
-                return (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubmit) === "function" &&
-                    this.options.onSubmit(endpoint, input, options)) ||
-                    (((_b = this.host) === null || _b === void 0 ? void 0 : _b.type) === "graphql"
-                        ? (input === null || input === void 0 ? void 0 : input.query)
-                            ? this.client.request(input.query, input.params, {
-                                method,
-                            })
-                            : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
-                                id: input === null || input === void 0 ? void 0 : input.id,
-                                data: input === null || input === void 0 ? void 0 : input.data,
-                            })
-                        : this.client.request(endpoint, input, {
-                            method: (input === null || input === void 0 ? void 0 : input.id) ? "put" : "post",
-                        }),
-                        {
-                            endpoint,
-                            event,
-                            target: (options === null || options === void 0 ? void 0 : options.target) || (event === null || event === void 0 ? void 0 : event.target),
-                            name,
-                            cached: false,
-                            bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
-                            cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
-                            composed: options === null || options === void 0 ? void 0 : options.composed,
-                            onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
-                            onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess,
-                        });
-            }));
+                var _d;
+                return (typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onSubmit) === "function" &&
+                    this.options.onSubmit(endpoint, input, Object.assign(Object.assign({}, options), { fn }))) ||
+                    fn;
+            }), {
+                endpoint,
+                event,
+                target: (options === null || options === void 0 ? void 0 : options.target) || (event === null || event === void 0 ? void 0 : event.target),
+                name,
+                cached: false,
+                bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
+                cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
+                composed: options === null || options === void 0 ? void 0 : options.composed,
+                onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
+                onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess,
+            });
         });
     }
     setHeader(key, value) {
