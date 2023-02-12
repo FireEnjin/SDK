@@ -148,7 +148,7 @@ export default class FireEnjin {
 
     const target = event?.detail?.target || event?.target;
 
-    return this.submit(
+    return (typeof this.options?.onSubmit === "function" ? this.options.onSubmit : this.submit)(
       event.detail.endpoint,
       {
         id: event?.detail?.id,
@@ -180,7 +180,7 @@ export default class FireEnjin {
 
     const target = event?.detail?.target || event?.target;
 
-    return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
+    return (typeof this.options?.onFetch === "function" ? this.options.onFetch : this.fetch)(event.detail.endpoint, event?.detail?.params || {}, {
       event,
       target,
       dataPropsMap: event?.detail?.dataPropsMap,

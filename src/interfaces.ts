@@ -30,6 +30,10 @@ export type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
 
 export type FireEnjinUploadCallback = (data: FireEnjinUploadEvent) => void;
 
+export type FireEnjinFetchCallback = (data: FireEnjinFetchEvent) => void;
+
+export type FireEnjinSubmitCallback = (data: FireEnjinSubmitEvent) => void;
+
 export type FireEnjinOptions = {
   getSdk?: (
     client?: Client | GraphQLClient,
@@ -42,6 +46,8 @@ export type FireEnjinOptions = {
   onError?: FireEnjinErrorCallback;
   onSuccess?: FireEnjinSuccessCallback;
   onUpload?: FireEnjinUploadCallback;
+  onFetch?: FireEnjinFetchCallback;
+  onSubmit?: FireEnjinSubmitCallback;
   headers?: HeadersInit;
   uploadUrl?: string;
   debug?: boolean;

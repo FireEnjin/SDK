@@ -1057,7 +1057,7 @@ class FireEnjin {
             event.detail.disableSubmit)
             return false;
         const target = event?.detail?.target || event?.target;
-        return this.submit(event.detail.endpoint, {
+        return (typeof this.options?.onSubmit === "function" ? this.options.onSubmit : this.submit)(event.detail.endpoint, {
             id: event?.detail?.id,
             data: event?.detail?.data,
             params: event?.detail?.params,
@@ -1081,7 +1081,7 @@ class FireEnjin {
             event.detail.disableFetch)
             return false;
         const target = event?.detail?.target || event?.target;
-        return this.fetch(event.detail.endpoint, event?.detail?.params || {}, {
+        return (typeof this.options?.onFetch === "function" ? this.options.onFetch : this.fetch)(event.detail.endpoint, event?.detail?.params || {}, {
             event,
             target,
             dataPropsMap: event?.detail?.dataPropsMap,
