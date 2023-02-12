@@ -1070,7 +1070,7 @@ class FireEnjin {
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
             method: event?.detail?.method || target?.method,
-            fn: this.submit
+            fn: this.submit.bind(this)
         });
     }
     async onFetch(event) {
@@ -1093,7 +1093,7 @@ class FireEnjin {
             cancelable: event?.detail?.cancelable,
             composed: event?.detail?.composed,
             method: event?.detail?.method || target?.method,
-            fn: this.fetch
+            fn: this.fetch.bind(this)
         });
     }
     hash(input) {

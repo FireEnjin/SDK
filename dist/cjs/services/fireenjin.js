@@ -160,7 +160,7 @@ class FireEnjin {
                 cancelable: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.cancelable,
                 composed: (_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.composed,
                 method: ((_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.method) || (target === null || target === void 0 ? void 0 : target.method),
-                fn: this.submit
+                fn: this.submit.bind(this)
             });
         });
     }
@@ -186,7 +186,7 @@ class FireEnjin {
                 cancelable: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.cancelable,
                 composed: (_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.composed,
                 method: ((_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.method) || (target === null || target === void 0 ? void 0 : target.method),
-                fn: this.fetch
+                fn: this.fetch.bind(this)
             });
         });
     }
