@@ -30,9 +30,9 @@ export type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
 
 export type FireEnjinUploadCallback = (data: FireEnjinUploadEvent) => void;
 
-export type FireEnjinFetchCallback = (data: FireEnjinFetchEvent) => void;
+export type FireEnjinFetchCallback = (endpoint: string, input?: FireEnjinFetchInput, options?: FireEnjinFetchOptions) => void;
 
-export type FireEnjinSubmitCallback = (data: FireEnjinSubmitEvent) => void;
+export type FireEnjinSubmitCallback = (endpoint: string, input?: FireEnjinSubmitInput, options?: FireEnjinSubmitOptions) => void;
 
 export type FireEnjinOptions = {
   getSdk?: (

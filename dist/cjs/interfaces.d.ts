@@ -20,8 +20,8 @@ export declare type FireEnjinHost = {
 export declare type FireEnjinErrorCallback = (data: FireEnjinErrorEvent) => void;
 export declare type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
 export declare type FireEnjinUploadCallback = (data: FireEnjinUploadEvent) => void;
-export declare type FireEnjinFetchCallback = (data: FireEnjinFetchEvent) => void;
-export declare type FireEnjinSubmitCallback = (data: FireEnjinSubmitEvent) => void;
+export declare type FireEnjinFetchCallback = (endpoint: string, input?: FireEnjinFetchInput, options?: FireEnjinFetchOptions) => void;
+export declare type FireEnjinSubmitCallback = (endpoint: string, input?: FireEnjinSubmitInput, options?: FireEnjinSubmitOptions) => void;
 export declare type FireEnjinOptions = {
     getSdk?: (client?: Client | GraphQLClient, withWrapper?: SdkFunctionWrapper) => FireEnjinEndpoints;
     host?: string;
