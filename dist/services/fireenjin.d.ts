@@ -1,4 +1,5 @@
 import { GraphQLClient } from "graphql-request";
+import { FirebaseStorage } from "@firebase/storage";
 import { FireEnjinFetchInput, FireEnjinFetchOptions, FireEnjinHost, FireEnjinMethodOptions, FireEnjinOptions, FireEnjinSubmitInput, FireEnjinSubmitOptions, FireEnjinUploadInput } from "../interfaces";
 import Client from "./client";
 import FirestoreClient from "./firestore";
@@ -8,6 +9,7 @@ export default class FireEnjin {
     host: FireEnjinHost;
     currentConnection: number;
     options: FireEnjinOptions;
+    storage?: FirebaseStorage;
     constructor(options: FireEnjinOptions);
     private onUpload;
     private onSubmit;
@@ -19,4 +21,10 @@ export default class FireEnjin {
     setHeader(key: string, value: string): false | Client | GraphQLClient | FirestoreClient;
     setHeaders(headers: any): false | Client | GraphQLClient | FirestoreClient;
     setConnection(nameUrlOrIndex: string | number): FireEnjinHost;
+    uploadFile(file: File, { target, path, fileName, onProgress, }: {
+        target?: any;
+        path?: string;
+        fileName?: string;
+        onProgress?: (snapshot: any) => void;
+    }): import("@firebase/storage").UploadTask | undefined;
 }

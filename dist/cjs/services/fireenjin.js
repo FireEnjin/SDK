@@ -40,13 +40,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const localforage = __importStar(require("localforage"));
 const graphql_request_1 = require("graphql-request");
+const storage_1 = require("@firebase/storage");
 const tryOrFail_1 = __importDefault(require("../helpers/tryOrFail"));
 const client_1 = __importDefault(require("./client"));
 const database_1 = __importDefault(require("./database"));
 const firestore_1 = __importDefault(require("./firestore"));
 class FireEnjin {
     constructor(options) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         this.sdk = {};
         this.host = {
             url: "http://localhost:4000",
@@ -61,24 +62,27 @@ class FireEnjin {
                 type: "rest",
                 headers,
             };
+        this.storage =
+            ((_b = this.options) === null || _b === void 0 ? void 0 : _b.storage) ||
+                (((_d = (_c = this.host) === null || _c === void 0 ? void 0 : _c.db) === null || _d === void 0 ? void 0 : _d.app) && (0, storage_1.getStorage)((_f = (_e = this.host) === null || _e === void 0 ? void 0 : _e.db) === null || _f === void 0 ? void 0 : _f.app));
         this.client =
             this.host.type === "graphql"
-                ? new graphql_request_1.GraphQLClient(((_b = this.host) === null || _b === void 0 ? void 0 : _b.url) || "http://localhost:4000", {
-                    headers: ((_c = this.host) === null || _c === void 0 ? void 0 : _c.headers) || {},
+                ? new graphql_request_1.GraphQLClient(((_g = this.host) === null || _g === void 0 ? void 0 : _g.url) || "http://localhost:4000", {
+                    headers: ((_h = this.host) === null || _h === void 0 ? void 0 : _h.headers) || {},
                 })
-                : ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "firebase"
+                : ((_j = this.host) === null || _j === void 0 ? void 0 : _j.type) === "firebase"
                     ? new firestore_1.default(this.host.url, {
-                        db: ((_e = this.host) === null || _e === void 0 ? void 0 : _e.db)
+                        db: ((_k = this.host) === null || _k === void 0 ? void 0 : _k.db)
                             ? this.host.db
                             : new database_1.default({
                                 emulate: !!(options === null || options === void 0 ? void 0 : options.emulate),
-                                config: (_f = this.host) === null || _f === void 0 ? void 0 : _f.auth,
+                                config: (_l = this.host) === null || _l === void 0 ? void 0 : _l.auth,
                             }),
                     })
-                    : new client_1.default(this.host.url, { headers: ((_g = this.host) === null || _g === void 0 ? void 0 : _g.headers) || {} });
+                    : new client_1.default(this.host.url, { headers: ((_m = this.host) === null || _m === void 0 ? void 0 : _m.headers) || {} });
         this.sdk =
             typeof (options === null || options === void 0 ? void 0 : options.getSdk) === "function"
-                ? options.getSdk(this.client, (_h = this.options) === null || _h === void 0 ? void 0 : _h.onRequest)
+                ? options.getSdk(this.client, (_o = this.options) === null || _o === void 0 ? void 0 : _o.onRequest)
                 : null;
         if (document) {
             document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
@@ -204,9 +208,16 @@ class FireEnjin {
         return __awaiter(this, void 0, void 0, function* () {
             const endpoint = (options === null || options === void 0 ? void 0 : options.endpoint) || "upload";
             const method = (options === null || options === void 0 ? void 0 : options.method) || "post";
+            const target = (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target) || document;
             return (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
-                var _d, _e, _f;
-                return ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql" && !((_e = this.options) === null || _e === void 0 ? void 0 : _e.uploadUrl)
+                var _d, _e, _f, _g, _h, _j;
+                return (this.storage &&
+                    this.uploadFile((_d = input === null || input === void 0 ? void 0 : input.data) === null || _d === void 0 ? void 0 : _d.file, {
+                        fileName: (_e = input === null || input === void 0 ? void 0 : input.data) === null || _e === void 0 ? void 0 : _e.fileName,
+                        path: (_f = input === null || input === void 0 ? void 0 : input.data) === null || _f === void 0 ? void 0 : _f.path,
+                        target,
+                    })) ||
+                    (((_g = this.host) === null || _g === void 0 ? void 0 : _g.type) === "graphql" && !((_h = this.options) === null || _h === void 0 ? void 0 : _h.uploadUrl))
                     ? (input === null || input === void 0 ? void 0 : input.query)
                         ? this.client.request(input.query, input.params, {
                             method,
@@ -215,12 +226,12 @@ class FireEnjin {
                             id: input === null || input === void 0 ? void 0 : input.id,
                             data: input === null || input === void 0 ? void 0 : input.data,
                         })
-                    : this.client.request(((_f = this.options) === null || _f === void 0 ? void 0 : _f.uploadUrl) || endpoint, input, {
+                    : this.client.request(((_j = this.options) === null || _j === void 0 ? void 0 : _j.uploadUrl) || endpoint, input, {
                         method,
                     });
             }), {
                 event: (options === null || options === void 0 ? void 0 : options.event) || null,
-                target: (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target),
+                target,
                 name: (options === null || options === void 0 ? void 0 : options.name) || endpoint,
                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
@@ -380,6 +391,26 @@ class FireEnjin {
                     : new client_1.default(this.host.url, { headers: ((_q = this.host) === null || _q === void 0 ? void 0 : _q.headers) || {} });
         this.client.setEndpoint(((_r = this.host) === null || _r === void 0 ? void 0 : _r.url) || "http://localhost:4000");
         return this.host;
+    }
+    uploadFile(file, { target, path, fileName, onProgress, }) {
+        if (!this.storage)
+            return;
+        const storageRef = (0, storage_1.ref)(this.storage, (path || "/") + fileName);
+        const uploadTask = (0, storage_1.uploadBytesResumable)(storageRef, file);
+        uploadTask.on("state_changed", (snapshot) => {
+            if (typeof onProgress === "function")
+                onProgress(snapshot);
+            (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", {
+                bubbles: true,
+                cancelable: true,
+                detail: {
+                    progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
+                    target,
+                    snapshot,
+                },
+            }));
+        });
+        return uploadTask;
     }
 }
 exports.default = FireEnjin;

@@ -1,6 +1,7 @@
 import { GraphQLClient } from "graphql-request";
 import DatabaseService from "./services/database";
 import Client from "./services/client";
+import { FirebaseStorage } from "firebase/storage";
 declare type SdkFunctionWrapper = <T>(action: (requestHeaders?: Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
 export declare type FireEnjinEndpoints = {
     [endpoint: string]: (variables: any, requestHeaders: any) => Promise<any>;
@@ -25,6 +26,7 @@ export declare type FireEnjinSubmitCallback<I = any, T = any> = (endpoint: strin
 export declare type FireEnjinOptions = {
     getSdk?: (client?: Client | GraphQLClient, withWrapper?: SdkFunctionWrapper) => FireEnjinEndpoints;
     host?: string;
+    storage?: FirebaseStorage;
     connections?: FireEnjinHost[];
     token?: string;
     onRequest?: SdkFunctionWrapper;

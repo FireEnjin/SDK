@@ -3,6 +3,7 @@
  */
 import * as localforage from "localforage";
 import { GraphQLClient } from "graphql-request";
+import { ref, getStorage, uploadBytesResumable, } from "@firebase/storage";
 import tryOrFail from "../helpers/tryOrFail";
 import Client from "./client";
 import DatabaseService from "./database";
@@ -15,6 +16,7 @@ export default class FireEnjin {
     };
     currentConnection = 0;
     options;
+    storage;
     constructor(options) {
         this.options = options || {};
         const headers = {
@@ -28,6 +30,9 @@ export default class FireEnjin {
                 type: "rest",
                 headers,
             };
+        this.storage =
+            this.options?.storage ||
+                (this.host?.db?.app && getStorage(this.host?.db?.app));
         this.client =
             this.host.type === "graphql"
                 ? new GraphQLClient(this.host?.url || "http://localhost:4000", {
@@ -160,7 +165,14 @@ export default class FireEnjin {
     async upload(input, options) {
         const endpoint = options?.endpoint || "upload";
         const method = options?.method || "post";
-        return tryOrFail(async () => this.host?.type === "graphql" && !this.options?.uploadUrl
+        const target = options?.target || options?.event?.target || document;
+        return tryOrFail(async () => (this.storage &&
+            this.uploadFile(input?.data?.file, {
+                fileName: input?.data?.fileName,
+                path: input?.data?.path,
+                target,
+            })) ||
+            (this.host?.type === "graphql" && !this.options?.uploadUrl)
             ? input?.query
                 ? this.client.request(input.query, input.params, {
                     method,
@@ -173,7 +185,7 @@ export default class FireEnjin {
                 method,
             }), {
             event: options?.event || null,
-            target: options?.target || options?.event?.target,
+            target,
             name: options?.name || endpoint,
             bubbles: options?.bubbles,
             cancelable: options?.cancelable,
@@ -321,5 +333,25 @@ export default class FireEnjin {
                     : new Client(this.host.url, { headers: this.host?.headers || {} });
         this.client.setEndpoint(this.host?.url || "http://localhost:4000");
         return this.host;
+    }
+    uploadFile(file, { target, path, fileName, onProgress, }) {
+        if (!this.storage)
+            return;
+        const storageRef = ref(this.storage, (path || "/") + fileName);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+        uploadTask.on("state_changed", (snapshot) => {
+            if (typeof onProgress === "function")
+                onProgress(snapshot);
+            (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", {
+                bubbles: true,
+                cancelable: true,
+                detail: {
+                    progress: (snapshot?.bytesTransferred || 0) / (snapshot?.totalBytes || 0),
+                    target,
+                    snapshot,
+                },
+            }));
+        });
+        return uploadTask;
     }
 }

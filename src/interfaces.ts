@@ -1,6 +1,7 @@
 import { GraphQLClient } from "graphql-request";
 import DatabaseService from "./services/database";
 import Client from "./services/client";
+import { FirebaseStorage } from "firebase/storage";
 
 type SdkFunctionWrapper = <T>(
   action: (requestHeaders?: Record<string, string>) => Promise<T>,
@@ -30,9 +31,17 @@ export type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
 
 export type FireEnjinUploadCallback = (data: FireEnjinUploadEvent) => void;
 
-export type FireEnjinFetchCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinFetchInput<I>, options?: FireEnjinFetchOptions) => Promise<T>;
+export type FireEnjinFetchCallback<I = any, T = any> = (
+  endpoint: string,
+  input?: FireEnjinFetchInput<I>,
+  options?: FireEnjinFetchOptions
+) => Promise<T>;
 
-export type FireEnjinSubmitCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinSubmitInput<I, T>, options?: FireEnjinSubmitOptions) => Promise<T>;
+export type FireEnjinSubmitCallback<I = any, T = any> = (
+  endpoint: string,
+  input?: FireEnjinSubmitInput<I, T>,
+  options?: FireEnjinSubmitOptions
+) => Promise<T>;
 
 export type FireEnjinOptions = {
   getSdk?: (
@@ -40,6 +49,7 @@ export type FireEnjinOptions = {
     withWrapper?: SdkFunctionWrapper
   ) => FireEnjinEndpoints;
   host?: string;
+  storage?: FirebaseStorage;
   connections?: FireEnjinHost[];
   token?: string;
   onRequest?: SdkFunctionWrapper;
@@ -114,11 +124,19 @@ export interface FireEnjinFetchOptions extends FireEnjinMethodOptions {
   disableCache?: boolean;
   dataPropsMap?: any;
   headers?: HeadersInit;
-  fn?: (endpoint: string, input?: FireEnjinFetchInput<any>, options?: FireEnjinFetchOptions) => Promise<any>;
+  fn?: (
+    endpoint: string,
+    input?: FireEnjinFetchInput<any>,
+    options?: FireEnjinFetchOptions
+  ) => Promise<any>;
 }
 
 export interface FireEnjinSubmitOptions extends FireEnjinMethodOptions {
-  fn?: (endpoint: string, input?: FireEnjinFetchInput<any>, options?: FireEnjinFetchOptions) => Promise<any>;
+  fn?: (
+    endpoint: string,
+    input?: FireEnjinFetchInput<any>,
+    options?: FireEnjinFetchOptions
+  ) => Promise<any>;
 }
 
 export interface FireEnjinSuccessEvent extends FireEnjinEvent {

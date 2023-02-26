@@ -4,7 +4,12 @@
 
 import * as localforage from "localforage";
 import { GraphQLClient } from "graphql-request";
-
+import {
+  ref,
+  getStorage,
+  FirebaseStorage,
+  uploadBytesResumable,
+} from "@firebase/storage";
 import {
   FireEnjinFetchEvent,
   FireEnjinFetchInput,
@@ -31,6 +36,7 @@ export default class FireEnjin {
   };
   currentConnection = 0;
   options: FireEnjinOptions;
+  storage?: FirebaseStorage;
 
   constructor(options: FireEnjinOptions) {
     this.options = options || {};
@@ -46,7 +52,9 @@ export default class FireEnjin {
           type: "rest",
           headers,
         } as FireEnjinHost);
-
+    this.storage =
+      this.options?.storage ||
+      (this.host?.db?.app && getStorage(this.host?.db?.app));
     this.client =
       this.host.type === "graphql"
         ? new GraphQLClient(this.host?.url || "http://localhost:4000", {
@@ -214,10 +222,17 @@ export default class FireEnjin {
   ) {
     const endpoint = options?.endpoint || "upload";
     const method = options?.method || "post";
+    const target = options?.target || options?.event?.target || document;
 
     return tryOrFail<T>(
       async () =>
-        this.host?.type === "graphql" && !this.options?.uploadUrl
+        (this.storage &&
+          this.uploadFile(input?.data?.file, {
+            fileName: input?.data?.fileName,
+            path: input?.data?.path,
+            target,
+          })) ||
+        (this.host?.type === "graphql" && !this.options?.uploadUrl)
           ? input?.query
             ? this.client.request(input.query, input.params, {
                 method,
@@ -233,7 +248,7 @@ export default class FireEnjin {
             }),
       {
         event: options?.event || null,
-        target: options?.target || options?.event?.target,
+        target,
         name: options?.name || endpoint,
         bubbles: options?.bubbles,
         cancelable: options?.cancelable,
@@ -419,5 +434,40 @@ export default class FireEnjin {
     this.client.setEndpoint(this.host?.url || "http://localhost:4000");
 
     return this.host;
+  }
+
+  uploadFile(
+    file: File,
+    {
+      target,
+      path,
+      fileName,
+      onProgress,
+    }: {
+      target?: any;
+      path?: string;
+      fileName?: string;
+      onProgress?: (snapshot: any) => void;
+    }
+  ) {
+    if (!this.storage) return;
+    const storageRef = ref(this.storage, (path || "/") + fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on("state_changed", (snapshot) => {
+      if (typeof onProgress === "function") onProgress(snapshot);
+      (target || document).dispatchEvent(
+        new CustomEvent("fireenjinProgress", {
+          bubbles: true,
+          cancelable: true,
+          detail: {
+            progress:
+              (snapshot?.bytesTransferred || 0) / (snapshot?.totalBytes || 0),
+            target,
+            snapshot,
+          },
+        })
+      );
+    });
+    return uploadTask;
   }
 }
