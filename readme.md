@@ -71,6 +71,14 @@ document.addEventListener("fireenjinUpload", (event) => {
 });
 ```
 
+- fireenjinProgress - Gives back progress on the current upload event.
+
+```typescript
+document.addEventListener("fireenjinProgress", (event) => {
+  console.log(event.detail.error);
+});
+```
+
 - fireenjinTrigger - Trigger some kind of an event you want to listen to elsewhere.
 
 ```typescript
