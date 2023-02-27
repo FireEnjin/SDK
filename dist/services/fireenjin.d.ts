@@ -21,10 +21,11 @@ export default class FireEnjin {
     setHeader(key: string, value: string): false | Client | GraphQLClient | FirestoreClient;
     setHeaders(headers: any): false | Client | GraphQLClient | FirestoreClient;
     setConnection(nameUrlOrIndex: string | number): FireEnjinHost;
-    uploadFile(file: File, { target, path, fileName, onProgress, }: {
+    uploadFile(file: File, input?: {
+        event?: any;
         target?: any;
         path?: string;
         fileName?: string;
         onProgress?: (snapshot: any) => void;
-    }): Promise<import("@firebase/storage").UploadTaskSnapshot | undefined>;
+    }, options?: FireEnjinMethodOptions): Promise<import("@firebase/storage").UploadTaskSnapshot | undefined>;
 }

@@ -17,6 +17,7 @@ import {
   FireEnjinHost,
   FireEnjinMethodOptions,
   FireEnjinOptions,
+  FireEnjinProgressEvent,
   FireEnjinSubmitEvent,
   FireEnjinSubmitInput,
   FireEnjinSubmitOptions,
@@ -131,7 +132,9 @@ export default class FireEnjin {
           id: event.detail.data?.id,
           path: event.detail.data?.path,
           fileName: event.detail.data?.fileName,
-          file: event.detail.data?.encodedContent,
+          file: this.options?.uploadFileEncoding
+            ? event.detail.data?.encodedContent
+            : event.detail.data?.file,
           type: event.detail.data?.type,
         },
       },
@@ -235,11 +238,15 @@ export default class FireEnjin {
     return tryOrFail<T>(
       async () =>
         this.storage
-          ? this.uploadFile(input?.data?.file, {
-              fileName: input?.data?.fileName,
-              path: input?.data?.path,
-              target,
-            })
+          ? this.uploadFile(
+              input?.data?.file,
+              {
+                fileName: input?.data?.fileName,
+                path: input?.data?.path,
+                target,
+              },
+              options
+            )
           : this.host?.type === "graphql" && !this.options?.uploadUrl
           ? input?.query
             ? this.client.request(input.query, input.params, {
@@ -446,39 +453,44 @@ export default class FireEnjin {
 
   async uploadFile(
     file: File,
-    {
-      target,
-      path,
-      fileName,
-      onProgress,
-    }: {
+    input?: {
+      event?: any;
       target?: any;
       path?: string;
       fileName?: string;
       onProgress?: (snapshot: any) => void;
-    }
+    },
+    options?: FireEnjinMethodOptions
   ) {
     if (!this.storage) return;
-    const storageRef = ref(this.storage, (path || "/") + fileName);
+    const path = input?.path || "/";
+    const fileName = input?.fileName || file?.name;
+    const storageRef = ref(this.storage, path + fileName);
     const uploadTask = uploadBytesResumable(storageRef, file);
-    const progressFn = onProgress || this.options.onProgress;
+    const onProgress = input?.onProgress || this.options.onProgress;
+    const target = options?.target || input?.target || document;
     uploadTask.on("state_changed", (snapshot) => {
       const eventData = {
         bubbles: true,
         cancelable: true,
         detail: {
+          bubbles: true,
+          cancelable: true,
+          composed: false,
+          endpoint: options?.endpoint || "upload",
+          event: input?.event || options?.event,
+          method: options?.method || "post",
+          name: options?.name || "upload",
           fileName,
           path,
           progress:
             (snapshot?.bytesTransferred || 0) / (snapshot?.totalBytes || 0),
           target,
           snapshot,
-        },
+        } as FireEnjinProgressEvent,
       };
-      if (typeof progressFn === "function") progressFn(eventData);
-      (target || document).dispatchEvent(
-        new CustomEvent("fireenjinProgress", eventData)
-      );
+      if (typeof onProgress === "function") onProgress(eventData);
+      target.dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
     });
     return uploadTask;
   }

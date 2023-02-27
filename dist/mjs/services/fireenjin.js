@@ -181,7 +181,7 @@ export default class FireEnjin {
                 fileName: input?.data?.fileName,
                 path: input?.data?.path,
                 target,
-            })
+            }, options)
             : this.host?.type === "graphql" && !this.options?.uploadUrl
                 ? input?.query
                     ? this.client.request(input.query, input.params, {
@@ -344,17 +344,27 @@ export default class FireEnjin {
         this.client.setEndpoint(this.host?.url || "http://localhost:4000");
         return this.host;
     }
-    async uploadFile(file, { target, path, fileName, onProgress, }) {
+    async uploadFile(file, input, options) {
         if (!this.storage)
             return;
-        const storageRef = ref(this.storage, (path || "/") + fileName);
+        const path = input?.path || "/";
+        const fileName = input?.fileName || file?.name;
+        const storageRef = ref(this.storage, path + fileName);
         const uploadTask = uploadBytesResumable(storageRef, file);
-        const progressFn = onProgress || this.options.onProgress;
+        const onProgress = input?.onProgress || this.options.onProgress;
+        const target = options?.target || input?.target || document;
         uploadTask.on("state_changed", (snapshot) => {
             const eventData = {
                 bubbles: true,
                 cancelable: true,
                 detail: {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                    endpoint: options?.endpoint || "upload",
+                    event: input?.event || options?.event,
+                    method: options?.method || "post",
+                    name: options?.name || "upload",
                     fileName,
                     path,
                     progress: (snapshot?.bytesTransferred || 0) / (snapshot?.totalBytes || 0),
@@ -362,9 +372,9 @@ export default class FireEnjin {
                     snapshot,
                 },
             };
-            if (typeof progressFn === "function")
-                progressFn(eventData);
-            (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
+            if (typeof onProgress === "function")
+                onProgress(eventData);
+            target.dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
         });
         return uploadTask;
     }
