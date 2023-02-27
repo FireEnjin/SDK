@@ -85,7 +85,7 @@ class FireEnjin {
                 ? options.getSdk(this.client, (_o = this.options) === null || _o === void 0 ? void 0 : _o.onRequest)
                 : null;
         if ((_p = this.options) === null || _p === void 0 ? void 0 : _p.debug)
-            console.table({
+            console.log("fireenjinStart:", {
                 host: this.host,
                 headers,
                 storage: this.storage,
@@ -112,36 +112,38 @@ class FireEnjin {
                 document.addEventListener("fireenjinValidation", (event) => {
                     console.log("fireenjinValidation: ", event);
                 });
+                document.addEventListener("fireenjinProgress", (event) => {
+                    console.log("fireenjinProgress: ", event);
+                });
             }
         }
     }
     onUpload(event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
         return __awaiter(this, void 0, void 0, function* () {
             if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                 console.log("fireenjinUpload: ", event);
-            if (typeof ((_b = this.options) === null || _b === void 0 ? void 0 : _b.onUpload) === "function")
+            if (typeof ((_b = this.options) === null || _b === void 0 ? void 0 : _b.onUpload) === "function") {
                 this.options.onUpload(event);
-            if (!((_d = (_c = event.detail) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.encodedContent) ||
-                typeof ((_e = this.options) === null || _e === void 0 ? void 0 : _e.onUpload) === "function")
                 return false;
+            }
             const data = yield this.upload({
                 data: {
-                    id: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.id,
-                    path: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.path,
-                    fileName: (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.fileName,
-                    file: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.encodedContent,
-                    type: (_k = event.detail.data) === null || _k === void 0 ? void 0 : _k.type,
+                    id: (_c = event.detail.data) === null || _c === void 0 ? void 0 : _c.id,
+                    path: (_d = event.detail.data) === null || _d === void 0 ? void 0 : _d.path,
+                    fileName: (_e = event.detail.data) === null || _e === void 0 ? void 0 : _e.fileName,
+                    file: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.encodedContent,
+                    type: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.type,
                 },
             }, {
                 event,
-                target: ((_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.target) || (event === null || event === void 0 ? void 0 : event.target),
-                name: (_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.name,
-                endpoint: (_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.endpoint,
-                bubbles: (_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.bubbles,
-                cancelable: (_q = event === null || event === void 0 ? void 0 : event.detail) === null || _q === void 0 ? void 0 : _q.cancelable,
-                composed: (_r = event === null || event === void 0 ? void 0 : event.detail) === null || _r === void 0 ? void 0 : _r.composed,
-                method: (_s = event === null || event === void 0 ? void 0 : event.detail) === null || _s === void 0 ? void 0 : _s.method,
+                target: ((_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.target) || (event === null || event === void 0 ? void 0 : event.target),
+                name: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.name,
+                endpoint: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.endpoint,
+                bubbles: (_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.bubbles,
+                cancelable: (_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.cancelable,
+                composed: (_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.composed,
+                method: (_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.method,
             });
             if (event === null || event === void 0 ? void 0 : event.target)
                 event.target.value = (data === null || data === void 0 ? void 0 : data.url) || null;

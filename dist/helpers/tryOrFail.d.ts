@@ -11,4 +11,4 @@ export default function tryOrFail<T = any>(fn: () => Promise<T>, options?: {
     composed?: boolean;
     onError?: FireEnjinErrorCallback;
     onSuccess?: FireEnjinSuccessCallback;
-}): Promise<T>;
+}): Promise<T | undefined>;

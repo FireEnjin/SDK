@@ -16,7 +16,7 @@ export default class DatabaseService {
     delete(path: string, id?: string): Promise<{
         id: string;
     }>;
-    find(collectionName: string, id?: string): Promise<import("@firebase/firestore").DocumentData>;
+    find(collectionName: string, id?: string): Promise<import("@firebase/firestore").DocumentData | undefined>;
     collection(path: string): import("@firebase/firestore").CollectionReference<import("@firebase/firestore").DocumentData>;
     getCollection(path: any): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData>>;
     /**
@@ -32,7 +32,7 @@ export default class DatabaseService {
         merge?: boolean;
         mergeFields?: any;
     }): Promise<import("@firebase/firestore").DocumentReference<import("@firebase/firestore").DocumentData>>;
-    update(collectionName: string, id: string, data: any): Promise<import("@firebase/firestore").DocumentData>;
+    update(collectionName: string, id: string, data: any): Promise<import("@firebase/firestore").DocumentData | undefined>;
     clearWatchers(): Promise<boolean>;
     subscribe(query: {
         collectionName: string;
