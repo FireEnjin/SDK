@@ -75,7 +75,7 @@ export default class FireEnjin {
         ? options.getSdk(this.client, this.options?.onRequest)
         : null;
     if (this.options?.debug)
-      console.table({
+      console.log("fireenjinStart:", {
         host: this.host,
         headers,
         storage: this.storage,
@@ -111,19 +111,19 @@ export default class FireEnjin {
         document.addEventListener("fireenjinValidation", (event) => {
           console.log("fireenjinValidation: ", event);
         });
+        document.addEventListener("fireenjinProgress", (event) => {
+          console.log("fireenjinProgress: ", event);
+        });
       }
     }
   }
 
   private async onUpload(event: CustomEvent<FireEnjinUploadEvent>) {
     if (this.options?.debug) console.log("fireenjinUpload: ", event);
-    if (typeof this.options?.onUpload === "function")
+    if (typeof this.options?.onUpload === "function") {
       this.options.onUpload(event);
-    if (
-      !event.detail?.data?.encodedContent ||
-      typeof this.options?.onUpload === "function"
-    )
       return false;
+    }
 
     const data = await this.upload(
       {
