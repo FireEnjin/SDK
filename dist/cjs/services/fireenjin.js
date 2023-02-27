@@ -408,26 +408,22 @@ class FireEnjin {
                 return;
             const storageRef = (0, storage_1.ref)(this.storage, (path || "/") + fileName);
             const uploadTask = (0, storage_1.uploadBytesResumable)(storageRef, file);
+            const progressFn = onProgress || this.options.onProgress;
             uploadTask.on("state_changed", (snapshot) => {
-                var _a;
-                if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
-                    console.log("fireenjinProgress", {
-                        snapshot,
-                        target,
-                        path,
-                        fileName,
-                    });
-                if (typeof onProgress === "function")
-                    onProgress(snapshot);
-                (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", {
+                const eventData = {
                     bubbles: true,
                     cancelable: true,
                     detail: {
+                        fileName,
+                        path,
                         progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
                         target,
                         snapshot,
                     },
-                }));
+                };
+                if (typeof progressFn === "function")
+                    progressFn(eventData);
+                (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
             });
             return uploadTask;
         });

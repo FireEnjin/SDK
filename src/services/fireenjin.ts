@@ -461,26 +461,23 @@ export default class FireEnjin {
     if (!this.storage) return;
     const storageRef = ref(this.storage, (path || "/") + fileName);
     const uploadTask = uploadBytesResumable(storageRef, file);
+    const progressFn = onProgress || this.options.onProgress;
     uploadTask.on("state_changed", (snapshot) => {
-      if (this.options?.debug)
-        console.log("fireenjinProgress", {
-          snapshot,
-          target,
-          path,
+      const eventData = {
+        bubbles: true,
+        cancelable: true,
+        detail: {
           fileName,
-        });
-      if (typeof onProgress === "function") onProgress(snapshot);
+          path,
+          progress:
+            (snapshot?.bytesTransferred || 0) / (snapshot?.totalBytes || 0),
+          target,
+          snapshot,
+        },
+      };
+      if (typeof progressFn === "function") progressFn(eventData);
       (target || document).dispatchEvent(
-        new CustomEvent("fireenjinProgress", {
-          bubbles: true,
-          cancelable: true,
-          detail: {
-            progress:
-              (snapshot?.bytesTransferred || 0) / (snapshot?.totalBytes || 0),
-            target,
-            snapshot,
-          },
-        })
+        new CustomEvent("fireenjinProgress", eventData)
       );
     });
     return uploadTask;

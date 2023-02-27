@@ -466,33 +466,28 @@ var FireEnjin = /** @class */ (function () {
     FireEnjin.prototype.uploadFile = function (file, _a) {
         var target = _a.target, path = _a.path, fileName = _a.fileName, onProgress = _a.onProgress;
         return __awaiter(this, void 0, void 0, function () {
-            var storageRef, uploadTask;
-            var _this = this;
+            var storageRef, uploadTask, progressFn;
             return __generator(this, function (_b) {
                 if (!this.storage)
                     return [2 /*return*/];
                 storageRef = (0, storage_1.ref)(this.storage, (path || "/") + fileName);
                 uploadTask = (0, storage_1.uploadBytesResumable)(storageRef, file);
+                progressFn = onProgress || this.options.onProgress;
                 uploadTask.on("state_changed", function (snapshot) {
-                    var _a;
-                    if ((_a = _this.options) === null || _a === void 0 ? void 0 : _a.debug)
-                        console.log("fireenjinProgress", {
-                            snapshot: snapshot,
-                            target: target,
-                            path: path,
-                            fileName: fileName
-                        });
-                    if (typeof onProgress === "function")
-                        onProgress(snapshot);
-                    (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", {
+                    var eventData = {
                         bubbles: true,
                         cancelable: true,
                         detail: {
+                            fileName: fileName,
+                            path: path,
                             progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
                             target: target,
                             snapshot: snapshot
                         }
-                    }));
+                    };
+                    if (typeof progressFn === "function")
+                        progressFn(eventData);
+                    (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
                 });
                 return [2 /*return*/, uploadTask];
             });

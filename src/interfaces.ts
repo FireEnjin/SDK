@@ -31,6 +31,8 @@ export type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
 
 export type FireEnjinUploadCallback = (data: FireEnjinUploadEvent) => void;
 
+export type FireEnjinProgressCallback = (data: FireEnjinProgressEvent) => void;
+
 export type FireEnjinFetchCallback<I = any, T = any> = (
   endpoint: string,
   input?: FireEnjinFetchInput<I>,
@@ -58,6 +60,7 @@ export type FireEnjinOptions = {
   onUpload?: FireEnjinUploadCallback;
   onFetch?: FireEnjinFetchCallback;
   onSubmit?: FireEnjinSubmitCallback;
+  onProgress?: FireEnjinProgressCallback;
   headers?: HeadersInit;
   uploadUrl?: string;
   debug?: boolean;
@@ -168,4 +171,12 @@ export interface FireEnjinSubmitEvent extends FireEnjinEvent {
 
 export interface FireEnjinUploadEvent extends FireEnjinEvent {
   data?: FireEnjinUploadData;
+}
+
+export interface FireEnjinProgressEvent extends FireEnjinEvent {
+  path?: string;
+  fileName?: string;
+  progress?: number;
+  snapshot?: any;
+  target?: any;
 }

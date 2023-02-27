@@ -21,6 +21,7 @@ export declare type FireEnjinHost = {
 export declare type FireEnjinErrorCallback = (data: FireEnjinErrorEvent) => void;
 export declare type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
 export declare type FireEnjinUploadCallback = (data: FireEnjinUploadEvent) => void;
+export declare type FireEnjinProgressCallback = (data: FireEnjinProgressEvent) => void;
 export declare type FireEnjinFetchCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinFetchInput<I>, options?: FireEnjinFetchOptions) => Promise<T>;
 export declare type FireEnjinSubmitCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinSubmitInput<I, T>, options?: FireEnjinSubmitOptions) => Promise<T>;
 export declare type FireEnjinOptions = {
@@ -35,6 +36,7 @@ export declare type FireEnjinOptions = {
     onUpload?: FireEnjinUploadCallback;
     onFetch?: FireEnjinFetchCallback;
     onSubmit?: FireEnjinSubmitCallback;
+    onProgress?: FireEnjinProgressCallback;
     headers?: HeadersInit;
     uploadUrl?: string;
     debug?: boolean;
@@ -123,5 +125,12 @@ export interface FireEnjinSubmitEvent extends FireEnjinEvent {
 }
 export interface FireEnjinUploadEvent extends FireEnjinEvent {
     data?: FireEnjinUploadData;
+}
+export interface FireEnjinProgressEvent extends FireEnjinEvent {
+    path?: string;
+    fileName?: string;
+    progress?: number;
+    snapshot?: any;
+    target?: any;
 }
 export {};
