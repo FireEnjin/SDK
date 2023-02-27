@@ -1000,6 +1000,14 @@ class FireEnjin {
             typeof options?.getSdk === "function"
                 ? options.getSdk(this.client, this.options?.onRequest)
                 : null;
+        if (this.options?.debug)
+            console.table({
+                host: this.host,
+                headers,
+                storage: this.storage,
+                client: this.client,
+                sdk: this.sdk,
+            });
         if (document) {
             document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
             document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
@@ -1273,6 +1281,13 @@ class FireEnjin {
         const storageRef = storage.ref(this.storage, (path || "/") + fileName);
         const uploadTask = storage.uploadBytesResumable(storageRef, file);
         uploadTask.on("state_changed", (snapshot) => {
+            if (this.options?.debug)
+                console.log("fireenjinProgress", {
+                    snapshot,
+                    target,
+                    path,
+                    fileName,
+                });
             if (typeof onProgress === "function")
                 onProgress(snapshot);
             (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", {

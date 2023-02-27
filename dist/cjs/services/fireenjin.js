@@ -47,7 +47,7 @@ const database_1 = __importDefault(require("./database"));
 const firestore_1 = __importDefault(require("./firestore"));
 class FireEnjin {
     constructor(options) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
         this.sdk = {};
         this.host = {
             url: "http://localhost:4000",
@@ -84,6 +84,14 @@ class FireEnjin {
             typeof (options === null || options === void 0 ? void 0 : options.getSdk) === "function"
                 ? options.getSdk(this.client, (_o = this.options) === null || _o === void 0 ? void 0 : _o.onRequest)
                 : null;
+        if ((_p = this.options) === null || _p === void 0 ? void 0 : _p.debug)
+            console.table({
+                host: this.host,
+                headers,
+                storage: this.storage,
+                client: this.client,
+                sdk: this.sdk,
+            });
         if (document) {
             document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
             document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
@@ -398,6 +406,14 @@ class FireEnjin {
         const storageRef = (0, storage_1.ref)(this.storage, (path || "/") + fileName);
         const uploadTask = (0, storage_1.uploadBytesResumable)(storageRef, file);
         uploadTask.on("state_changed", (snapshot) => {
+            var _a;
+            if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                console.log("fireenjinProgress", {
+                    snapshot,
+                    target,
+                    path,
+                    fileName,
+                });
             if (typeof onProgress === "function")
                 onProgress(snapshot);
             (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", {
