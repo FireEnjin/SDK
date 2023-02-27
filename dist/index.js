@@ -1122,24 +1122,24 @@ class FireEnjin {
         const endpoint = options?.endpoint || "upload";
         const method = options?.method || "post";
         const target = options?.target || options?.event?.target || document;
-        return tryOrFail(async () => (this.storage &&
-            this.uploadFile(input?.data?.file, {
+        return tryOrFail(async () => this.storage
+            ? this.uploadFile(input?.data?.file, {
                 fileName: input?.data?.fileName,
                 path: input?.data?.path,
                 target,
-            })) ||
-            (this.host?.type === "graphql" && !this.options?.uploadUrl)
-            ? input?.query
-                ? this.client.request(input.query, input.params, {
+            })
+            : this.host?.type === "graphql" && !this.options?.uploadUrl
+                ? input?.query
+                    ? this.client.request(input.query, input.params, {
+                        method,
+                    })
+                    : this.sdk[endpoint](input?.params || {
+                        id: input?.id,
+                        data: input?.data,
+                    })
+                : this.client.request(this.options?.uploadUrl || endpoint, input, {
                     method,
-                })
-                : this.sdk[endpoint](input?.params || {
-                    id: input?.id,
-                    data: input?.data,
-                })
-            : this.client.request(this.options?.uploadUrl || endpoint, input, {
-                method,
-            }), {
+                }), {
             event: options?.event || null,
             target,
             name: options?.name || endpoint,
@@ -1275,7 +1275,7 @@ class FireEnjin {
         this.client.setEndpoint(this.host?.url || "http://localhost:4000");
         return this.host;
     }
-    uploadFile(file, { target, path, fileName, onProgress, }) {
+    async uploadFile(file, { target, path, fileName, onProgress, }) {
         if (!this.storage)
             return;
         const storageRef = storage.ref(this.storage, (path || "/") + fileName);

@@ -249,24 +249,24 @@ var FireEnjin = /** @class */ (function () {
                 return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
                         var _a, _b, _c, _d, _e, _f;
                         return __generator(this, function (_g) {
-                            return [2 /*return*/, (this.storage &&
-                                    this.uploadFile((_a = input === null || input === void 0 ? void 0 : input.data) === null || _a === void 0 ? void 0 : _a.file, {
+                            return [2 /*return*/, this.storage
+                                    ? this.uploadFile((_a = input === null || input === void 0 ? void 0 : input.data) === null || _a === void 0 ? void 0 : _a.file, {
                                         fileName: (_b = input === null || input === void 0 ? void 0 : input.data) === null || _b === void 0 ? void 0 : _b.fileName,
                                         path: (_c = input === null || input === void 0 ? void 0 : input.data) === null || _c === void 0 ? void 0 : _c.path,
                                         target: target
-                                    })) ||
-                                    (((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql" && !((_e = this.options) === null || _e === void 0 ? void 0 : _e.uploadUrl))
-                                    ? (input === null || input === void 0 ? void 0 : input.query)
-                                        ? this.client.request(input.query, input.params, {
+                                    })
+                                    : ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql" && !((_e = this.options) === null || _e === void 0 ? void 0 : _e.uploadUrl)
+                                        ? (input === null || input === void 0 ? void 0 : input.query)
+                                            ? this.client.request(input.query, input.params, {
+                                                method: method
+                                            })
+                                            : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
+                                                id: input === null || input === void 0 ? void 0 : input.id,
+                                                data: input === null || input === void 0 ? void 0 : input.data
+                                            })
+                                        : this.client.request(((_f = this.options) === null || _f === void 0 ? void 0 : _f.uploadUrl) || endpoint, input, {
                                             method: method
-                                        })
-                                        : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
-                                            id: input === null || input === void 0 ? void 0 : input.id,
-                                            data: input === null || input === void 0 ? void 0 : input.data
-                                        })
-                                    : this.client.request(((_f = this.options) === null || _f === void 0 ? void 0 : _f.uploadUrl) || endpoint, input, {
-                                        method: method
-                                    })];
+                                        })];
                         });
                     }); }, {
                         event: (options === null || options === void 0 ? void 0 : options.event) || null,
@@ -462,34 +462,39 @@ var FireEnjin = /** @class */ (function () {
         return this.host;
     };
     FireEnjin.prototype.uploadFile = function (file, _a) {
-        var _this = this;
         var target = _a.target, path = _a.path, fileName = _a.fileName, onProgress = _a.onProgress;
-        if (!this.storage)
-            return;
-        var storageRef = (0, storage_1.ref)(this.storage, (path || "/") + fileName);
-        var uploadTask = (0, storage_1.uploadBytesResumable)(storageRef, file);
-        uploadTask.on("state_changed", function (snapshot) {
-            var _a;
-            if ((_a = _this.options) === null || _a === void 0 ? void 0 : _a.debug)
-                console.log("fireenjinProgress", {
-                    snapshot: snapshot,
-                    target: target,
-                    path: path,
-                    fileName: fileName
+        return __awaiter(this, void 0, void 0, function () {
+            var storageRef, uploadTask;
+            var _this = this;
+            return __generator(this, function (_b) {
+                if (!this.storage)
+                    return [2 /*return*/];
+                storageRef = (0, storage_1.ref)(this.storage, (path || "/") + fileName);
+                uploadTask = (0, storage_1.uploadBytesResumable)(storageRef, file);
+                uploadTask.on("state_changed", function (snapshot) {
+                    var _a;
+                    if ((_a = _this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                        console.log("fireenjinProgress", {
+                            snapshot: snapshot,
+                            target: target,
+                            path: path,
+                            fileName: fileName
+                        });
+                    if (typeof onProgress === "function")
+                        onProgress(snapshot);
+                    (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", {
+                        bubbles: true,
+                        cancelable: true,
+                        detail: {
+                            progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
+                            target: target,
+                            snapshot: snapshot
+                        }
+                    }));
                 });
-            if (typeof onProgress === "function")
-                onProgress(snapshot);
-            (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", {
-                bubbles: true,
-                cancelable: true,
-                detail: {
-                    progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
-                    target: target,
-                    snapshot: snapshot
-                }
-            }));
+                return [2 /*return*/, uploadTask];
+            });
         });
-        return uploadTask;
     };
     return FireEnjin;
 }());

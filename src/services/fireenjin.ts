@@ -234,13 +234,13 @@ export default class FireEnjin {
 
     return tryOrFail<T>(
       async () =>
-        (this.storage &&
-          this.uploadFile(input?.data?.file, {
-            fileName: input?.data?.fileName,
-            path: input?.data?.path,
-            target,
-          })) ||
-        (this.host?.type === "graphql" && !this.options?.uploadUrl)
+        this.storage
+          ? this.uploadFile(input?.data?.file, {
+              fileName: input?.data?.fileName,
+              path: input?.data?.path,
+              target,
+            })
+          : this.host?.type === "graphql" && !this.options?.uploadUrl
           ? input?.query
             ? this.client.request(input.query, input.params, {
                 method,
@@ -444,7 +444,7 @@ export default class FireEnjin {
     return this.host;
   }
 
-  uploadFile(
+  async uploadFile(
     file: File,
     {
       target,

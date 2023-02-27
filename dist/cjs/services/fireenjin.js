@@ -219,24 +219,24 @@ class FireEnjin {
             const target = (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target) || document;
             return (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
                 var _d, _e, _f, _g, _h, _j;
-                return (this.storage &&
-                    this.uploadFile((_d = input === null || input === void 0 ? void 0 : input.data) === null || _d === void 0 ? void 0 : _d.file, {
+                return this.storage
+                    ? this.uploadFile((_d = input === null || input === void 0 ? void 0 : input.data) === null || _d === void 0 ? void 0 : _d.file, {
                         fileName: (_e = input === null || input === void 0 ? void 0 : input.data) === null || _e === void 0 ? void 0 : _e.fileName,
                         path: (_f = input === null || input === void 0 ? void 0 : input.data) === null || _f === void 0 ? void 0 : _f.path,
                         target,
-                    })) ||
-                    (((_g = this.host) === null || _g === void 0 ? void 0 : _g.type) === "graphql" && !((_h = this.options) === null || _h === void 0 ? void 0 : _h.uploadUrl))
-                    ? (input === null || input === void 0 ? void 0 : input.query)
-                        ? this.client.request(input.query, input.params, {
+                    })
+                    : ((_g = this.host) === null || _g === void 0 ? void 0 : _g.type) === "graphql" && !((_h = this.options) === null || _h === void 0 ? void 0 : _h.uploadUrl)
+                        ? (input === null || input === void 0 ? void 0 : input.query)
+                            ? this.client.request(input.query, input.params, {
+                                method,
+                            })
+                            : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
+                                id: input === null || input === void 0 ? void 0 : input.id,
+                                data: input === null || input === void 0 ? void 0 : input.data,
+                            })
+                        : this.client.request(((_j = this.options) === null || _j === void 0 ? void 0 : _j.uploadUrl) || endpoint, input, {
                             method,
-                        })
-                        : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
-                            id: input === null || input === void 0 ? void 0 : input.id,
-                            data: input === null || input === void 0 ? void 0 : input.data,
-                        })
-                    : this.client.request(((_j = this.options) === null || _j === void 0 ? void 0 : _j.uploadUrl) || endpoint, input, {
-                        method,
-                    });
+                        });
             }), {
                 event: (options === null || options === void 0 ? void 0 : options.event) || null,
                 target,
@@ -401,32 +401,34 @@ class FireEnjin {
         return this.host;
     }
     uploadFile(file, { target, path, fileName, onProgress, }) {
-        if (!this.storage)
-            return;
-        const storageRef = (0, storage_1.ref)(this.storage, (path || "/") + fileName);
-        const uploadTask = (0, storage_1.uploadBytesResumable)(storageRef, file);
-        uploadTask.on("state_changed", (snapshot) => {
-            var _a;
-            if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
-                console.log("fireenjinProgress", {
-                    snapshot,
-                    target,
-                    path,
-                    fileName,
-                });
-            if (typeof onProgress === "function")
-                onProgress(snapshot);
-            (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", {
-                bubbles: true,
-                cancelable: true,
-                detail: {
-                    progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
-                    target,
-                    snapshot,
-                },
-            }));
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.storage)
+                return;
+            const storageRef = (0, storage_1.ref)(this.storage, (path || "/") + fileName);
+            const uploadTask = (0, storage_1.uploadBytesResumable)(storageRef, file);
+            uploadTask.on("state_changed", (snapshot) => {
+                var _a;
+                if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                    console.log("fireenjinProgress", {
+                        snapshot,
+                        target,
+                        path,
+                        fileName,
+                    });
+                if (typeof onProgress === "function")
+                    onProgress(snapshot);
+                (target || document).dispatchEvent(new CustomEvent("fireenjinProgress", {
+                    bubbles: true,
+                    cancelable: true,
+                    detail: {
+                        progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
+                        target,
+                        snapshot,
+                    },
+                }));
+            });
+            return uploadTask;
         });
-        return uploadTask;
     }
 }
 exports.default = FireEnjin;
