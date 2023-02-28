@@ -98,7 +98,9 @@ export default class FireEnjin {
                 id: event.detail.data?.id,
                 path: event.detail.data?.path,
                 fileName: event.detail.data?.fileName,
-                file: event.detail.data?.encodedContent,
+                file: this.options?.uploadFileEncoding
+                    ? event.detail.data?.encodedContent
+                    : event.detail.data?.file,
                 type: event.detail.data?.type,
             },
         }, {
@@ -176,6 +178,7 @@ export default class FireEnjin {
         const endpoint = options?.endpoint || "upload";
         const method = options?.method || "post";
         const target = options?.target || options?.event?.target || document;
+        console.log("test", input);
         return tryOrFail(async () => this.storage
             ? this.uploadFile(input?.data?.file, {
                 fileName: input?.data?.fileName,

@@ -119,7 +119,7 @@ class FireEnjin {
         }
     }
     onUpload(event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
         return __awaiter(this, void 0, void 0, function* () {
             if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                 console.log("fireenjinUpload: ", event);
@@ -132,18 +132,20 @@ class FireEnjin {
                     id: (_c = event.detail.data) === null || _c === void 0 ? void 0 : _c.id,
                     path: (_d = event.detail.data) === null || _d === void 0 ? void 0 : _d.path,
                     fileName: (_e = event.detail.data) === null || _e === void 0 ? void 0 : _e.fileName,
-                    file: (_f = event.detail.data) === null || _f === void 0 ? void 0 : _f.encodedContent,
-                    type: (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.type,
+                    file: ((_f = this.options) === null || _f === void 0 ? void 0 : _f.uploadFileEncoding)
+                        ? (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.encodedContent
+                        : (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.file,
+                    type: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.type,
                 },
             }, {
                 event,
-                target: ((_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.target) || (event === null || event === void 0 ? void 0 : event.target),
-                name: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.name,
-                endpoint: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.endpoint,
-                bubbles: (_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.bubbles,
-                cancelable: (_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.cancelable,
-                composed: (_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.composed,
-                method: (_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.method,
+                target: ((_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.target) || (event === null || event === void 0 ? void 0 : event.target),
+                name: (_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.name,
+                endpoint: (_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.endpoint,
+                bubbles: (_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.bubbles,
+                cancelable: (_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.cancelable,
+                composed: (_q = event === null || event === void 0 ? void 0 : event.detail) === null || _q === void 0 ? void 0 : _q.composed,
+                method: (_r = event === null || event === void 0 ? void 0 : event.detail) === null || _r === void 0 ? void 0 : _r.method,
             });
             if (event === null || event === void 0 ? void 0 : event.target)
                 event.target.value = (data === null || data === void 0 ? void 0 : data.url) || null;
@@ -219,6 +221,7 @@ class FireEnjin {
             const endpoint = (options === null || options === void 0 ? void 0 : options.endpoint) || "upload";
             const method = (options === null || options === void 0 ? void 0 : options.method) || "post";
             const target = (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target) || document;
+            console.log("test", input);
             return (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
                 var _d, _e, _f, _g, _h, _j;
                 return this.storage

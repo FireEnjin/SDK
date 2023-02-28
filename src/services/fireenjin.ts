@@ -234,7 +234,7 @@ export default class FireEnjin {
     const endpoint = options?.endpoint || "upload";
     const method = options?.method || "post";
     const target = options?.target || options?.event?.target || document;
-
+    console.log("test", input);
     return tryOrFail<T>(
       async () =>
         this.storage

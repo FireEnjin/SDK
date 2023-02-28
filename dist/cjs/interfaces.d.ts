@@ -37,6 +37,7 @@ export declare type FireEnjinOptions = {
     onFetch?: FireEnjinFetchCallback;
     onSubmit?: FireEnjinSubmitCallback;
     onProgress?: FireEnjinProgressCallback;
+    uploadFileEncoding?: boolean;
     headers?: HeadersInit;
     uploadUrl?: string;
     debug?: boolean;
