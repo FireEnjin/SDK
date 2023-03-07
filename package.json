@@ -29,8 +29,8 @@
   "homepage": "https://github.com/fireenjin/sdk#readme",
   "dependencies": {
     "firebase": "^9.17.2",
-    "graphql": "^16.6.0",
-    "graphql-request": "^5.2.0",
+    "graphql": "^15.8.0",
+    "graphql-request": "^4.2.0",
     "graphql-tag": "^2.12.6",
     "localforage": "^1.10.0"
   },
