@@ -6,7 +6,6 @@ on:
 jobs:
   release-npm:
     name: Release
-    runs-on: ubuntu-18.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
