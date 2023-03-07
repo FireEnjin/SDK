@@ -16,7 +16,6 @@ import {
   startAfter as firestoreStartAfter,
   startAt as firestoreStartAt,
   endAt as firestoreEndAt,
-  WhereFilterOp,
   setDoc,
   updateDoc,
   onSnapshot,
@@ -31,6 +30,7 @@ import {
   getFunctions,
   httpsCallable,
 } from "@firebase/functions";
+import { FireEnjinWhereStatement } from "../interfaces";
 
 export default class DatabaseService {
   app: FirebaseApp;
@@ -93,7 +93,7 @@ export default class DatabaseService {
     return collection(this.service, path);
   }
 
-  getCollection(path) {
+  getCollection(path: string) {
     return getDocs(this.collection(path));
   }
 
@@ -155,7 +155,7 @@ export default class DatabaseService {
   subscribe(
     query: {
       collectionName: string;
-      where?: { key?: string; conditional?: WhereFilterOp; value?: any }[];
+      where?: FireEnjinWhereStatement[];
       orderBy?: string;
       limit?: number;
       advanced?: {
@@ -201,13 +201,13 @@ export default class DatabaseService {
     }
   }
 
-  watchDocument(collectionName: string, id: string, callback) {
+  watchDocument(collectionName: string, id: string, callback: (snapshot: {data: any}) => any) {
     const watcherName = `${collectionName}:${id}`;
     this.watchers[watcherName] = onSnapshot(
       this.document(collectionName, id),
       async (doc) => {
         if (callback && typeof callback === "function") {
-          callback({ data: doc.data() });
+          await callback({ data: doc.data() });
         }
       }
     );
@@ -231,7 +231,7 @@ export default class DatabaseService {
 
   rawQuery(
     collectionName: string,
-    where?: { key?: string; conditional?: WhereFilterOp; value?: any }[],
+    where?: FireEnjinWhereStatement[],
     orderBy?: string,
     limit?: number,
     {
@@ -285,7 +285,7 @@ export default class DatabaseService {
 
   async query(
     collectionName: string,
-    where: { key?: string; conditional?: WhereFilterOp; value?: any }[],
+    where: FireEnjinWhereStatement[],
     orderBy?: string,
     limit?: number,
     advanced?: {
@@ -301,7 +301,7 @@ export default class DatabaseService {
 
   async list(
     collectionName: string,
-    where: { key?: string; conditional?: WhereFilterOp; value?: any }[],
+    where: FireEnjinWhereStatement[],
     orderBy?: string,
     limit?: number,
     advanced?: {

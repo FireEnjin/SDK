@@ -1,6 +1,9 @@
 import { GraphQLClient } from "graphql-request";
 import DatabaseService from "./services/database";
 import Client from "./services/client";
+import {
+  WhereFilterOp,
+} from "@firebase/firestore";
 import { FirebaseStorage } from "firebase/storage";
 
 type SdkFunctionWrapper = <T>(
@@ -47,7 +50,7 @@ export type FireEnjinSubmitCallback<I = any, T = any> = (
 
 export type FireEnjinOptions = {
   getSdk?: (
-    client?: Client | GraphQLClient,
+    client: Client | GraphQLClient,
     withWrapper?: SdkFunctionWrapper
   ) => FireEnjinEndpoints;
   host?: string;
@@ -180,4 +183,8 @@ export interface FireEnjinProgressEvent extends FireEnjinEvent {
   progress?: number;
   snapshot?: any;
   target?: any;
+}
+
+export interface FireEnjinWhereStatement {
+   key?: string; conditional?: WhereFilterOp; value?: any;
 }

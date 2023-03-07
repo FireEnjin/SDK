@@ -15,7 +15,7 @@ export default class SessionManager {
     this.auth = auth;
     this.user = auth?.currentUser;
     this.ref = ref(rdb, "_firebase_extensions/presence");
-    onValue(ref(rdb, ".info/connected"), (snapshot) => {
+    onValue(ref(rdb, ".info/connected"), (snapshot: any) => {
       this.databaseConnected = snapshot.val();
       if (this.session && !this.databaseConnected) {
         this.session.end();

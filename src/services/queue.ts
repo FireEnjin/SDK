@@ -17,7 +17,7 @@ export default class Queue {
     this.historyLimit = options?.historyLimit || 0;
     this.history = options?.history || [];
     if (!this.history) {
-      localforage?.getItem?.(`${this.localKey}:history`)?.then?.((data) => {
+      localforage?.getItem?.(`${this.localKey}:history`)?.then?.((data: any) => {
         console.log(data);
       });
     }

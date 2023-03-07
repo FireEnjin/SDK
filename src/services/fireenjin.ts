@@ -73,7 +73,7 @@ export default class FireEnjin {
         : new Client(this.host.url, { headers: this.host?.headers || {} });
     this.sdk =
       typeof options?.getSdk === "function"
-        ? options.getSdk(this.client, this.options?.onRequest)
+        ? options.getSdk(this.client as any, this.options?.onRequest)
         : null;
     if (this.options?.debug)
       console.log("fireenjinStart:", {
@@ -234,7 +234,6 @@ export default class FireEnjin {
     const endpoint = options?.endpoint || "upload";
     const method = options?.method || "post";
     const target = options?.target || options?.event?.target || document;
-    console.log("test", input);
     return tryOrFail<T>(
       async () =>
         this.storage
@@ -294,7 +293,7 @@ export default class FireEnjin {
             ? this.hash(JSON.stringify(Object.values(input.params)))
             : ""
         }${this.hash(JSON.stringify(input || {}))}`;
-    let localData = null;
+    let localData: any = null;
     try {
       data = await localforage.getItem(localKey);
     } catch {
@@ -417,6 +416,8 @@ export default class FireEnjin {
               this.currentConnection = index;
 
               return connection;
+            } else {
+              return;
             }
           })
         : this.options?.connections?.[nameUrlOrIndex]

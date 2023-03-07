@@ -165,30 +165,30 @@ export default class AuthService {
     return currentToken;
   }
 
-  async setToken(token) {
+  async setToken(token: any) {
     localStorage.setItem(this.config.tokenLocalStorageKey || "", token);
 
     return token;
   }
 
-  async onEmailLink(link) {
-    if (isSignInWithEmailLink(this.service, link)) {
-      let email = window.localStorage.getItem("emailForSignIn");
-      if (!email) {
-        email = window.prompt("Please provide your email for confirmation");
-      }
-
-      const authUser = await signInWithEmailLink(
-        this.service,
-        email || "",
-        link
-      );
-      window.localStorage.removeItem("emailForSignIn");
-
-      this.emitLoggedInEvent(authUser);
-
-      return authUser;
+  async onEmailLink(link: string) {
+    if (!isSignInWithEmailLink(this.service, link)) return;
+    let email = window.localStorage.getItem("emailForSignIn");
+    if (!email) {
+      email = window.prompt("Please provide your email for confirmation");
+      
     }
+
+    const authUser = await signInWithEmailLink(
+      this.service,
+      email || "",
+      link
+    );
+    window.localStorage.removeItem("emailForSignIn");
+
+    this.emitLoggedInEvent(authUser);
+
+    return authUser;
   }
 
   // createCaptcha(buttonEl: HTMLButtonElement) {
@@ -213,11 +213,11 @@ export default class AuthService {
   //   (window as any).recaptchaVerifier = new RecaptchaVerifier(id);
   // }
 
-  withGoogleCredential(token) {
+  withGoogleCredential(token: any) {
     return GoogleAuthProvider.credential(token);
   }
 
-  withCredential(credential) {
+  withCredential(credential: any) {
     return signInWithCredential(this.service, credential);
   }
 
@@ -242,8 +242,8 @@ export default class AuthService {
     return signInAnonymously(this.service);
   }
 
-  onAuthChanged(callback) {
-    onAuthStateChanged(this.service, async (session) => {
+  onAuthChanged(callback: any) {
+    onAuthStateChanged(this.service, async (session: any) => {
       if (
         !session ||
         (!session.emailVerified &&
@@ -265,6 +265,7 @@ export default class AuthService {
       if (callback && typeof callback === "function") {
         callback(session);
       }
+      return;
     });
 
     if (!localStorage.getItem(this.config?.authLocalStorageKey || "")) {
@@ -285,7 +286,7 @@ export default class AuthService {
     return session ? session : this.getFromStorage();
   }
 
-  emitLoggedInEvent(data) {
+  emitLoggedInEvent(data: any) {
     document.body.dispatchEvent(
       new CustomEvent("authLoggedIn", { detail: { data } })
     );
@@ -301,14 +302,14 @@ export default class AuthService {
     return createUserWithEmailAndPassword(this.service, email, password);
   }
 
-  sendEmailVerification(options?) {
+  sendEmailVerification(options?: any) {
     return sendEmailVerification(
       this.service.currentUser as any,
       options ? options : null
     );
   }
 
-  sendPasswordReset(emailAddress: string, options?) {
+  sendPasswordReset(emailAddress: string, options?: any) {
     return sendPasswordResetEmail(
       this.service,
       emailAddress,
@@ -351,8 +352,9 @@ export default class AuthService {
   }
 
   async withSocial(network: string, redirect = false): Promise<any> {
-    let provider;
+    let provider: any;
     let shouldRedirect = redirect;
+    let response = null;
     if (window.matchMedia("(display-mode: standalone)").matches) {
       console.log("Running in PWA mode...");
       shouldRedirect = true;
@@ -373,11 +375,12 @@ export default class AuthService {
       }
       try {
         if (shouldRedirect) {
-          await signInWithRedirect(this.service, provider);
+          response = await signInWithRedirect(this.service, provider);
         } else {
-          await signInWithPopup(this.service, provider);
+          response = await signInWithPopup(this.service, provider);
         }
         this.emitLoggedInEvent({ currentUser: this.service.currentUser });
+        resolve(response);
       } catch (error) {
         console.log(error);
       }
@@ -390,7 +393,7 @@ export default class AuthService {
     return signOut(this.service);
   }
 
-  async updatePassword(newPassword: string, credential) {
+  async updatePassword(newPassword: string, credential: any) {
     if (credential) {
       await reauthenticateWithCredential(
         this.service?.currentUser as any,

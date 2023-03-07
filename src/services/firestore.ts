@@ -1,4 +1,5 @@
 import cleanFirestoreData from "../helpers/cleanFirestoreData";
+import { FireEnjinWhereStatement } from "../interfaces";
 import DatabaseService from "./database";
 
 declare type RequestDocument = string | any;
@@ -35,9 +36,9 @@ export default class FirestoreClient {
     this.db = options?.db;
   }
 
-  async rawRequest<T = any, V = any>(
+  async rawRequest<T = any, V = Variables>(
     query: string,
-    variables?: any,
+    variables: Partial<V> & {id?: string; data?: any; where?: FireEnjinWhereStatement[]; orderBy?: string; limit?: any} = { },
     requestOptions?: RequestInit
   ): Promise<{
     data: T;
@@ -58,7 +59,7 @@ export default class FirestoreClient {
       : method.toLowerCase() === "put"
       ? this.db.update(
           endpoint,
-          variables?.id,
+          variables.id as string,
           cleanFirestoreData(variables?.data || {})
         )
       : method.toLowerCase() === "delete"
@@ -68,8 +69,8 @@ export default class FirestoreClient {
       : this.db.list(
           endpoint,
           variables?.where || [],
-          variables?.orderBy || null,
-          variables?.limit || null
+          variables?.orderBy,
+          variables?.limit
         ));
 
     return {
@@ -86,7 +87,7 @@ export default class FirestoreClient {
 
   async request<T = any, V = Variables>(
     endpoint: string,
-    variables?: any,
+    variables?: Partial<V>,
     requestOptions?: RequestInit
   ): Promise<T> {
     const response = await this.rawRequest(endpoint, variables, requestOptions);
@@ -95,7 +96,7 @@ export default class FirestoreClient {
   }
 
   async batchRequests<T extends any = any, V = Variables>(
-    documents: BatchRequestDocument<V>[],
+    documents: BatchRequestDocument<Partial<V>>[],
     requestOptions?: RequestInit
   ): Promise<T> {
     const response: {
@@ -123,7 +124,7 @@ export default class FirestoreClient {
   }
 
   setHeader(key: string, value: string): FirestoreClient {
-    const headers: HeadersInit = this.options?.headers || {};
+    const headers: any = this.options?.headers || {};
     headers[key] = value;
     //@ts-ignore
     this.options.headers = headers;

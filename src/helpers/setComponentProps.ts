@@ -1,4 +1,4 @@
-export default async function setComponentProps(dataPropsMap, data) {
+export default async function setComponentProps(dataPropsMap: any, data: any) {
   let newData = data ? data : {};
   if (dataPropsMap) {
     const dataKeys = Object.keys(dataPropsMap);

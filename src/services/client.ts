@@ -13,7 +13,7 @@ declare type BatchRequestDocument<V = Variables> = {
 
 export default class Client {
   url: string;
-  options?: RequestInit;
+  options?: any;
 
   constructor(url: string, options?: RequestInit) {
     this.url = url || "http://localhost:4000";
@@ -104,7 +104,7 @@ export default class Client {
     return true;
   }
 
-  setHeader(key: string, value: string): Client {
+  setHeader(key: string, value: any): Client {
     if (!this.options) this.options = {};
     if (!this.options?.headers) this.options.headers = {};
     this.options.headers[key] = value;

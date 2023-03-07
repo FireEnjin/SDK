@@ -1,4 +1,4 @@
-export default function getParameter(paramName) {
+export default function getParameter(paramName: string) {
   var searchString = window.location.search.substring(1),
     i,
     val,
