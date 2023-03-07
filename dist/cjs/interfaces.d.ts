@@ -2,11 +2,11 @@ import { GraphQLClient } from "graphql-request";
 import DatabaseService from "./services/database";
 import Client from "./services/client";
 import { FirebaseStorage } from "firebase/storage";
-declare type SdkFunctionWrapper = <T>(action: (requestHeaders?: Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
-export declare type FireEnjinEndpoints = {
+type SdkFunctionWrapper = <T>(action: (requestHeaders?: Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
+export type FireEnjinEndpoints = {
     [endpoint: string]: (variables: any, requestHeaders: any) => Promise<any>;
 };
-export declare type FireEnjinHost = {
+export type FireEnjinHost = {
     url: string;
     db?: DatabaseService;
     name?: string;
@@ -18,13 +18,13 @@ export declare type FireEnjinHost = {
     auth?: any;
     endpoints?: FireEnjinEndpoints;
 };
-export declare type FireEnjinErrorCallback = (data: FireEnjinErrorEvent) => void;
-export declare type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
-export declare type FireEnjinUploadCallback = (data: FireEnjinUploadEvent) => void;
-export declare type FireEnjinProgressCallback = (data: FireEnjinProgressEvent) => void;
-export declare type FireEnjinFetchCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinFetchInput<I>, options?: FireEnjinFetchOptions) => Promise<T>;
-export declare type FireEnjinSubmitCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinSubmitInput<I, T>, options?: FireEnjinSubmitOptions) => Promise<T>;
-export declare type FireEnjinOptions = {
+export type FireEnjinErrorCallback = (data: FireEnjinErrorEvent) => void;
+export type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
+export type FireEnjinUploadCallback = (data: FireEnjinUploadEvent) => void;
+export type FireEnjinProgressCallback = (data: FireEnjinProgressEvent) => void;
+export type FireEnjinFetchCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinFetchInput<I>, options?: FireEnjinFetchOptions) => Promise<T>;
+export type FireEnjinSubmitCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinSubmitInput<I, T>, options?: FireEnjinSubmitOptions) => Promise<T>;
+export type FireEnjinOptions = {
     getSdk?: (client?: Client | GraphQLClient, withWrapper?: SdkFunctionWrapper) => FireEnjinEndpoints;
     host?: string;
     storage?: FirebaseStorage;

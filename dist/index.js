@@ -1,7 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 var app = require('@firebase/app');
 var auth = require('@firebase/auth');
 var database = require('@firebase/database');
@@ -11,8 +9,7 @@ var localforage = require('localforage');
 var graphqlRequest = require('graphql-request');
 var storage = require('@firebase/storage');
 
-function _interopNamespace(e) {
-    if (e && e.__esModule) return e;
+function _interopNamespaceDefault(e) {
     var n = Object.create(null);
     if (e) {
         Object.keys(e).forEach(function (k) {
@@ -25,11 +22,11 @@ function _interopNamespace(e) {
             }
         });
     }
-    n["default"] = e;
+    n.default = e;
     return Object.freeze(n);
 }
 
-var localforage__namespace = /*#__PURE__*/_interopNamespace(localforage);
+var localforage__namespace = /*#__PURE__*/_interopNamespaceDefault(localforage);
 
 class SessionService {
     ref;
