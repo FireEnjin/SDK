@@ -46,7 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var error_1 = require("../events/error");
 var success_1 = require("../events/success");
 function tryOrFail(fn, options) {
@@ -64,7 +64,7 @@ function tryOrFail(fn, options) {
                         bubbles: (_a = options === null || options === void 0 ? void 0 : options.bubbles) !== null && _a !== void 0 ? _a : true,
                         cancelable: (_b = options === null || options === void 0 ? void 0 : options.cancelable) !== null && _b !== void 0 ? _b : true,
                         composed: !!(options === null || options === void 0 ? void 0 : options.composed),
-                        target: (options === null || options === void 0 ? void 0 : options.target) || ((_c = options === null || options === void 0 ? void 0 : options.event) === null || _c === void 0 ? void 0 : _c.target)
+                        target: (options === null || options === void 0 ? void 0 : options.target) || ((_c = options === null || options === void 0 ? void 0 : options.event) === null || _c === void 0 ? void 0 : _c.target),
                     };
                     _d.label = 1;
                 case 1:
@@ -72,17 +72,17 @@ function tryOrFail(fn, options) {
                     return [4 /*yield*/, fn()];
                 case 2:
                     data = _d.sent();
-                    return [4 /*yield*/, (0, success_1["default"])(__assign(__assign({}, baseData), { data: data }), {
+                    return [4 /*yield*/, (0, success_1.default)(__assign(__assign({}, baseData), { data: data }), {
                             onSuccess: options === null || options === void 0 ? void 0 : options.onSuccess,
-                            onError: options === null || options === void 0 ? void 0 : options.onError
+                            onError: options === null || options === void 0 ? void 0 : options.onError,
                         })];
                 case 3:
                     _d.sent();
                     return [2 /*return*/, data];
                 case 4:
                     error_2 = _d.sent();
-                    return [4 /*yield*/, (0, error_1["default"])(__assign(__assign({}, baseData), { error: error_2 }), {
-                            onError: options === null || options === void 0 ? void 0 : options.onError
+                    return [4 /*yield*/, (0, error_1.default)(__assign(__assign({}, baseData), { error: error_2 }), {
+                            onError: options === null || options === void 0 ? void 0 : options.onError,
                         })];
                 case 5:
                     _d.sent();
@@ -92,4 +92,4 @@ function tryOrFail(fn, options) {
         });
     });
 }
-exports["default"] = tryOrFail;
+exports.default = tryOrFail;

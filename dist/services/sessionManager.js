@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var database_1 = require("@firebase/database");
 var session_1 = require("./session");
 var SessionManager = /** @class */ (function () {
@@ -75,7 +75,7 @@ var SessionManager = /** @class */ (function () {
             this.user) {
             var sessionId = this.randomId();
             var sessionRef = (0, database_1.child)(this.ref, "".concat(this.user.uid, "/sessions/").concat(sessionId));
-            this.session = new session_1["default"](sessionRef, this.metadata, this.onSessionError);
+            this.session = new session_1.default(sessionRef, this.metadata, this.onSessionError);
         }
     };
     SessionManager.prototype.onSessionError = function (err) {
@@ -88,4 +88,4 @@ var SessionManager = /** @class */ (function () {
     };
     return SessionManager;
 }());
-exports["default"] = SessionManager;
+exports.default = SessionManager;

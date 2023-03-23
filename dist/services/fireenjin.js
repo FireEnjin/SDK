@@ -49,7 +49,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var localforage = require("localforage");
 var graphql_request_1 = require("graphql-request");
 var storage_1 = require("@firebase/storage");
@@ -62,7 +62,7 @@ var FireEnjin = /** @class */ (function () {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
         this.sdk = {};
         this.host = {
-            url: "http://localhost:4000"
+            url: "http://localhost:4000",
         };
         this.currentConnection = 0;
         this.options = options || {};
@@ -72,7 +72,7 @@ var FireEnjin = /** @class */ (function () {
             : {
                 url: options.host,
                 type: "rest",
-                headers: headers
+                headers: headers,
             };
         this.storage =
             ((_b = this.options) === null || _b === void 0 ? void 0 : _b.storage) ||
@@ -80,18 +80,18 @@ var FireEnjin = /** @class */ (function () {
         this.client =
             this.host.type === "graphql"
                 ? new graphql_request_1.GraphQLClient(((_g = this.host) === null || _g === void 0 ? void 0 : _g.url) || "http://localhost:4000", {
-                    headers: ((_h = this.host) === null || _h === void 0 ? void 0 : _h.headers) || {}
+                    headers: ((_h = this.host) === null || _h === void 0 ? void 0 : _h.headers) || {},
                 })
                 : ((_j = this.host) === null || _j === void 0 ? void 0 : _j.type) === "firebase"
-                    ? new firestore_1["default"](this.host.url, {
+                    ? new firestore_1.default(this.host.url, {
                         db: ((_k = this.host) === null || _k === void 0 ? void 0 : _k.db)
                             ? this.host.db
-                            : new database_1["default"]({
+                            : new database_1.default({
                                 emulate: !!(options === null || options === void 0 ? void 0 : options.emulate),
-                                config: (_l = this.host) === null || _l === void 0 ? void 0 : _l.auth
-                            })
+                                config: (_l = this.host) === null || _l === void 0 ? void 0 : _l.auth,
+                            }),
                     })
-                    : new client_1["default"](this.host.url, { headers: ((_m = this.host) === null || _m === void 0 ? void 0 : _m.headers) || {} });
+                    : new client_1.default(this.host.url, { headers: ((_m = this.host) === null || _m === void 0 ? void 0 : _m.headers) || {} });
         this.sdk =
             typeof (options === null || options === void 0 ? void 0 : options.getSdk) === "function"
                 ? options.getSdk(this.client, (_o = this.options) === null || _o === void 0 ? void 0 : _o.onRequest)
@@ -102,7 +102,7 @@ var FireEnjin = /** @class */ (function () {
                 headers: headers,
                 storage: this.storage,
                 client: this.client,
-                sdk: this.sdk
+                sdk: this.sdk,
             });
         if (document) {
             document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
@@ -151,8 +151,8 @@ var FireEnjin = /** @class */ (function () {
                                     file: ((_f = this.options) === null || _f === void 0 ? void 0 : _f.uploadFileEncoding)
                                         ? (_g = event.detail.data) === null || _g === void 0 ? void 0 : _g.encodedContent
                                         : (_h = event.detail.data) === null || _h === void 0 ? void 0 : _h.file,
-                                    type: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.type
-                                }
+                                    type: (_j = event.detail.data) === null || _j === void 0 ? void 0 : _j.type,
+                                },
                             }, {
                                 event: event,
                                 target: ((_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.target) || (event === null || event === void 0 ? void 0 : event.target),
@@ -161,7 +161,7 @@ var FireEnjin = /** @class */ (function () {
                                 bubbles: (_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.bubbles,
                                 cancelable: (_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.cancelable,
                                 composed: (_q = event === null || event === void 0 ? void 0 : event.detail) === null || _q === void 0 ? void 0 : _q.composed,
-                                method: (_r = event === null || event === void 0 ? void 0 : event.detail) === null || _r === void 0 ? void 0 : _r.method
+                                method: (_r = event === null || event === void 0 ? void 0 : event.detail) === null || _r === void 0 ? void 0 : _r.method,
                             })];
                     case 1:
                         data = _s.sent();
@@ -189,7 +189,7 @@ var FireEnjin = /** @class */ (function () {
                         id: (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.id,
                         data: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.data,
                         params: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.params,
-                        query: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.query
+                        query: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.query,
                     }, {
                         event: event,
                         target: target,
@@ -197,7 +197,7 @@ var FireEnjin = /** @class */ (function () {
                         bubbles: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.bubbles,
                         cancelable: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.cancelable,
                         composed: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.composed,
-                        method: ((_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.method) || (target === null || target === void 0 ? void 0 : target.method)
+                        method: ((_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.method) || (target === null || target === void 0 ? void 0 : target.method),
                     })];
             });
         });
@@ -225,7 +225,7 @@ var FireEnjin = /** @class */ (function () {
                         bubbles: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.bubbles,
                         cancelable: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.cancelable,
                         composed: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.composed,
-                        method: ((_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.method) || (target === null || target === void 0 ? void 0 : target.method)
+                        method: ((_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.method) || (target === null || target === void 0 ? void 0 : target.method),
                     })];
             });
         });
@@ -251,26 +251,26 @@ var FireEnjin = /** @class */ (function () {
                 method = (options === null || options === void 0 ? void 0 : options.method) || "post";
                 target = (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target) || document;
                 console.log("test", input);
-                return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
+                return [2 /*return*/, (0, tryOrFail_1.default)(function () { return __awaiter(_this, void 0, void 0, function () {
                         var _a, _b, _c, _d, _e, _f;
                         return __generator(this, function (_g) {
                             return [2 /*return*/, this.storage
                                     ? this.uploadFile((_a = input === null || input === void 0 ? void 0 : input.data) === null || _a === void 0 ? void 0 : _a.file, {
                                         fileName: (_b = input === null || input === void 0 ? void 0 : input.data) === null || _b === void 0 ? void 0 : _b.fileName,
                                         path: (_c = input === null || input === void 0 ? void 0 : input.data) === null || _c === void 0 ? void 0 : _c.path,
-                                        target: target
+                                        target: target,
                                     }, options)
                                     : ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql" && !((_e = this.options) === null || _e === void 0 ? void 0 : _e.uploadUrl)
                                         ? (input === null || input === void 0 ? void 0 : input.query)
                                             ? this.client.request(input.query, input.params, {
-                                                method: method
+                                                method: method,
                                             })
                                             : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
                                                 id: input === null || input === void 0 ? void 0 : input.id,
-                                                data: input === null || input === void 0 ? void 0 : input.data
+                                                data: input === null || input === void 0 ? void 0 : input.data,
                                             })
                                         : this.client.request(((_f = this.options) === null || _f === void 0 ? void 0 : _f.uploadUrl) || endpoint, input, {
-                                            method: method
+                                            method: method,
                                         })];
                         });
                     }); }, {
@@ -283,7 +283,7 @@ var FireEnjin = /** @class */ (function () {
                         endpoint: endpoint,
                         cached: true,
                         onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
-                        onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess
+                        onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess,
                     })];
             });
         });
@@ -321,7 +321,7 @@ var FireEnjin = /** @class */ (function () {
                         return [3 /*break*/, 4];
                     case 4:
                         if (!(localData && !(options === null || options === void 0 ? void 0 : options.disableCache))) return [3 /*break*/, 6];
-                        return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                        return [4 /*yield*/, (0, tryOrFail_1.default)(function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                 return [2 /*return*/, localData];
                             }); }); }, {
                                 endpoint: endpoint,
@@ -333,7 +333,7 @@ var FireEnjin = /** @class */ (function () {
                                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                                 composed: options === null || options === void 0 ? void 0 : options.composed,
                                 onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
-                                onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess
+                                onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
                             })];
                     case 5:
                         data = _h.sent();
@@ -342,13 +342,13 @@ var FireEnjin = /** @class */ (function () {
                         fn = ((_c = this.host) === null || _c === void 0 ? void 0 : _c.type) === "graphql"
                             ? (input === null || input === void 0 ? void 0 : input.query)
                                 ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
-                                    method: method
+                                    method: method,
                                 })
                                 : this.sdk[endpoint](input, options === null || options === void 0 ? void 0 : options.headers)
                             : this.client.request(endpoint, input, {
-                                method: method
+                                method: method,
                             });
-                        return [4 /*yield*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
+                        return [4 /*yield*/, (0, tryOrFail_1.default)(function () { return __awaiter(_this, void 0, void 0, function () {
                                 var _a;
                                 return __generator(this, function (_b) {
                                     return [2 /*return*/, (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onFetch) === "function" &&
@@ -365,7 +365,7 @@ var FireEnjin = /** @class */ (function () {
                                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                                 composed: options === null || options === void 0 ? void 0 : options.composed,
                                 onError: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onError,
-                                onSuccess: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onSuccess
+                                onSuccess: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onSuccess,
                             })];
                     case 7:
                         data = _h.sent();
@@ -386,16 +386,16 @@ var FireEnjin = /** @class */ (function () {
                 fn = ((_a = this.host) === null || _a === void 0 ? void 0 : _a.type) === "graphql"
                     ? (input === null || input === void 0 ? void 0 : input.query)
                         ? this.client.request(input.query, input.params, {
-                            method: method
+                            method: method,
                         })
                         : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
                             id: input === null || input === void 0 ? void 0 : input.id,
-                            data: input === null || input === void 0 ? void 0 : input.data
+                            data: input === null || input === void 0 ? void 0 : input.data,
                         })
                     : this.client.request(endpoint, input, {
-                        method: (input === null || input === void 0 ? void 0 : input.id) ? "put" : "post"
+                        method: (input === null || input === void 0 ? void 0 : input.id) ? "put" : "post",
                     });
-                return [2 /*return*/, (0, tryOrFail_1["default"])(function () { return __awaiter(_this, void 0, void 0, function () {
+                return [2 /*return*/, (0, tryOrFail_1.default)(function () { return __awaiter(_this, void 0, void 0, function () {
                         var _a;
                         return __generator(this, function (_b) {
                             return [2 /*return*/, (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubmit) === "function" &&
@@ -412,7 +412,7 @@ var FireEnjin = /** @class */ (function () {
                         cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                         composed: options === null || options === void 0 ? void 0 : options.composed,
                         onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
-                        onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess
+                        onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess,
                     })];
             });
         });
@@ -456,13 +456,13 @@ var FireEnjin = /** @class */ (function () {
         this.client =
             this.host.type === "graphql"
                 ? new graphql_request_1.GraphQLClient(((_m = this.host) === null || _m === void 0 ? void 0 : _m.url) || "http://localhost:4000", {
-                    headers: ((_o = this.host) === null || _o === void 0 ? void 0 : _o.headers) || {}
+                    headers: ((_o = this.host) === null || _o === void 0 ? void 0 : _o.headers) || {},
                 })
                 : ((_p = this.host) === null || _p === void 0 ? void 0 : _p.type) === "firebase"
-                    ? new firestore_1["default"](this.host.url, {
-                        db: this.host.db
+                    ? new firestore_1.default(this.host.url, {
+                        db: this.host.db,
                     })
-                    : new client_1["default"](this.host.url, { headers: ((_q = this.host) === null || _q === void 0 ? void 0 : _q.headers) || {} });
+                    : new client_1.default(this.host.url, { headers: ((_q = this.host) === null || _q === void 0 ? void 0 : _q.headers) || {} });
         this.client.setEndpoint(((_r = this.host) === null || _r === void 0 ? void 0 : _r.url) || "http://localhost:4000");
         return this.host;
     };
@@ -494,8 +494,8 @@ var FireEnjin = /** @class */ (function () {
                             path: path,
                             progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
                             target: target,
-                            snapshot: snapshot
-                        }
+                            snapshot: snapshot,
+                        },
                     };
                     if (typeof onProgress === "function")
                         onProgress(eventData);
@@ -507,4 +507,4 @@ var FireEnjin = /** @class */ (function () {
     };
     return FireEnjin;
 }());
-exports["default"] = FireEnjin;
+exports.default = FireEnjin;

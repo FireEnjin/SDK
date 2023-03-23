@@ -46,7 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var cleanFirestoreData_1 = require("../helpers/cleanFirestoreData");
 var FirestoreClient = /** @class */ (function () {
     function FirestoreClient(url, options) {
@@ -65,11 +65,11 @@ var FirestoreClient = /** @class */ (function () {
                         headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.headers) || {};
                         endpoint = query;
                         return [4 /*yield*/, (method.toLowerCase() === "post"
-                                ? this.db.add(endpoint, (0, cleanFirestoreData_1["default"])((variables === null || variables === void 0 ? void 0 : variables.data) || {}), variables === null || variables === void 0 ? void 0 : variables.id)
+                                ? this.db.add(endpoint, (0, cleanFirestoreData_1.default)((variables === null || variables === void 0 ? void 0 : variables.data) || {}), variables === null || variables === void 0 ? void 0 : variables.id)
                                 : method.toLowerCase() === "put"
-                                    ? this.db.update(endpoint, variables === null || variables === void 0 ? void 0 : variables.id, (0, cleanFirestoreData_1["default"])((variables === null || variables === void 0 ? void 0 : variables.data) || {}))
+                                    ? this.db.update(endpoint, variables === null || variables === void 0 ? void 0 : variables.id, (0, cleanFirestoreData_1.default)((variables === null || variables === void 0 ? void 0 : variables.data) || {}))
                                     : method.toLowerCase() === "delete"
-                                        ? this.db["delete"](endpoint, variables === null || variables === void 0 ? void 0 : variables.id)
+                                        ? this.db.delete(endpoint, variables === null || variables === void 0 ? void 0 : variables.id)
                                         : (variables === null || variables === void 0 ? void 0 : variables.id)
                                             ? this.db.find(endpoint, variables.id)
                                             : this.db.list(endpoint, (variables === null || variables === void 0 ? void 0 : variables.where) || [], (variables === null || variables === void 0 ? void 0 : variables.orderBy) || null, (variables === null || variables === void 0 ? void 0 : variables.limit) || null))];
@@ -81,9 +81,9 @@ var FirestoreClient = /** @class */ (function () {
                                 extensions: {
                                     query: response === null || response === void 0 ? void 0 : response.query,
                                     metadata: response === null || response === void 0 ? void 0 : response.metadata,
-                                    size: response === null || response === void 0 ? void 0 : response.size
+                                    size: response === null || response === void 0 ? void 0 : response.size,
                                 },
-                                status: 200
+                                status: 200,
                             }];
                 }
             });
@@ -156,4 +156,4 @@ var FirestoreClient = /** @class */ (function () {
     };
     return FirestoreClient;
 }());
-exports["default"] = FirestoreClient;
+exports.default = FirestoreClient;

@@ -1,6 +1,6 @@
 "use strict";
-exports.__esModule = true;
-exports["default"] = (function (params, encode) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = (function (params, encode) {
     return typeof params === "object"
         ? Object.keys(params)
             .map(function (key) {

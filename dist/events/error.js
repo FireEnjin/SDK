@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 function fireenjinError(input, options) {
     var _a;
     return __awaiter(this, void 0, void 0, function () {
@@ -50,7 +50,7 @@ function fireenjinError(input, options) {
                 bubbles: !!(input === null || input === void 0 ? void 0 : input.bubbles),
                 cancelable: !!(input === null || input === void 0 ? void 0 : input.cancelable),
                 composed: !!(input === null || input === void 0 ? void 0 : input.composed),
-                cached: !!(input === null || input === void 0 ? void 0 : input.cached)
+                cached: !!(input === null || input === void 0 ? void 0 : input.cached),
             };
             if (typeof (options === null || options === void 0 ? void 0 : options.onError) === "function")
                 options.onError(detail);
@@ -59,10 +59,10 @@ function fireenjinError(input, options) {
                 detail: detail,
                 bubbles: !!(input === null || input === void 0 ? void 0 : input.bubbles),
                 cancelable: !!(input === null || input === void 0 ? void 0 : input.cancelable),
-                composed: !!(input === null || input === void 0 ? void 0 : input.composed)
+                composed: !!(input === null || input === void 0 ? void 0 : input.composed),
             }));
             return [2 /*return*/];
         });
     });
 }
-exports["default"] = fireenjinError;
+exports.default = fireenjinError;

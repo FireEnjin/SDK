@@ -46,7 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var objectToUrlParams_1 = require("../helpers/objectToUrlParams");
 var Client = /** @class */ (function () {
     function Client(url, options) {
@@ -63,7 +63,7 @@ var Client = /** @class */ (function () {
                     case 0:
                         method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "GET";
                         headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_b = this.options) === null || _b === void 0 ? void 0 : _b.headers) || {};
-                        endpoint = "".concat(this.url, "/").concat(query).concat(method === "get" ? (0, objectToUrlParams_1["default"])(variables) : "");
+                        endpoint = "".concat(this.url, "/").concat(query).concat(method === "get" ? (0, objectToUrlParams_1.default)(variables) : "");
                         return [4 /*yield*/, fetch("".concat(this.url, "/").concat(endpoint), __assign(__assign(__assign({ method: method }, (this.options || {})), (requestOptions || {})), { headers: headers, body: method === "get" ? null : JSON.stringify(variables || {}) }))];
                     case 1:
                         response = _e.sent();
@@ -152,4 +152,4 @@ var Client = /** @class */ (function () {
     };
     return Client;
 }());
-exports["default"] = Client;
+exports.default = Client;

@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var database_1 = require("@firebase/database");
 var SessionService = /** @class */ (function () {
     function SessionService(ref, metadata, onError) {
@@ -12,7 +12,7 @@ var SessionService = /** @class */ (function () {
             .then(function () {
             // onDisconnect registered!
             _this.setMetadataPromise = (0, database_1.set)(_this.ref, metadata);
-            _this.setMetadataPromise["catch"](onError);
+            _this.setMetadataPromise.catch(onError);
         }, onError);
     }
     SessionService.prototype.updateMetadata = function (newMetadata) {
@@ -21,7 +21,7 @@ var SessionService = /** @class */ (function () {
         if (this.setMetadataPromise) {
             this.setMetadataPromise = this.setMetadataPromise.then(function () {
                 var promise = (0, database_1.set)(_this.ref, _this.metadata);
-                promise["catch"](_this.onError);
+                promise.catch(_this.onError);
                 return promise;
             });
         }
@@ -37,9 +37,9 @@ var SessionService = /** @class */ (function () {
             }, function () { });
         }
         else {
-            return (0, database_1.onDisconnect)(this.ref).cancel()["catch"](this.onError);
+            return (0, database_1.onDisconnect)(this.ref).cancel().catch(this.onError);
         }
     };
     return SessionService;
 }());
-exports["default"] = SessionService;
+exports.default = SessionService;

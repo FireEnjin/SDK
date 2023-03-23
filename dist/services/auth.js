@@ -46,7 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var app_1 = require("@firebase/app");
 var auth_1 = require("@firebase/auth");
 // import { getMessaging, getToken, onMessage } from "@firebase/messaging";
@@ -59,8 +59,8 @@ var AuthService = /** @class */ (function () {
             authLocalStorageKey: "enjin:session",
             tokenLocalStorageKey: "enjin:token",
             facebook: {
-                permissions: ["email", "public_profile", "user_friends"]
-            }
+                permissions: ["email", "public_profile", "user_friends"],
+            },
         };
         this.isOnline = false;
         this.config = __assign(__assign({}, this.config), ((options === null || options === void 0 ? void 0 : options.config) || {}));
@@ -325,7 +325,8 @@ var AuthService = /** @class */ (function () {
                     .then(function (user) {
                     _this.emitLoggedInEvent({ user: user });
                     resolve({ data: { user: user } });
-                })["catch"](function (error) {
+                })
+                    .catch(function (error) {
                     reject(error);
                 });
             }
@@ -343,7 +344,8 @@ var AuthService = /** @class */ (function () {
                     .then(function (user) {
                     resolve({ data: { user: user } });
                     _this.sendEmailVerification(actionOptions);
-                })["catch"](function (error) {
+                })
+                    .catch(function (error) {
                     reject(error);
                 });
             }
@@ -379,7 +381,7 @@ var AuthService = /** @class */ (function () {
                                     }
                                     else {
                                         reject({
-                                            message: "A social network is required or the one provided is not yet supported."
+                                            message: "A social network is required or the one provided is not yet supported.",
                                         });
                                     }
                                     _a.label = 1;
@@ -474,11 +476,11 @@ var AuthService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 if (!this.sessionManager) {
                     rdb = (0, database_1.getDatabase)(this.app);
-                    this.sessionManager = new sessionManager_1["default"](rdb, this.service);
+                    this.sessionManager = new sessionManager_1.default(rdb, this.service);
                 }
                 this.isOnline = true;
                 document.body.dispatchEvent(new CustomEvent("fireenjin:online", {
-                    detail: { sessionManager: this.sessionManager }
+                    detail: { sessionManager: this.sessionManager },
                 }));
                 return [2 /*return*/, this.sessionManager.goOnline()];
             });
@@ -491,7 +493,7 @@ var AuthService = /** @class */ (function () {
                     return [2 /*return*/, null];
                 this.isOnline = false;
                 document.body.dispatchEvent(new CustomEvent("fireenjin:offline", {
-                    detail: { sessionManager: this.sessionManager }
+                    detail: { sessionManager: this.sessionManager },
                 }));
                 return [2 /*return*/, this.sessionManager.goOffline()];
             });
@@ -520,4 +522,4 @@ var AuthService = /** @class */ (function () {
     };
     return AuthService;
 }());
-exports["default"] = AuthService;
+exports.default = AuthService;

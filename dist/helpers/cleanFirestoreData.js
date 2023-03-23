@@ -10,7 +10,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 function cleanFirestoreData(input) {
     var toPlainFirestoreObject = function (o) {
         if (o &&
@@ -31,4 +31,4 @@ function cleanFirestoreData(input) {
     }
     return toPlainFirestoreObject(input);
 }
-exports["default"] = cleanFirestoreData;
+exports.default = cleanFirestoreData;

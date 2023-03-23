@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var setComponentProps_1 = require("../helpers/setComponentProps");
 function fireenjinSuccess(input, options) {
     var _a;
@@ -53,14 +53,14 @@ function fireenjinSuccess(input, options) {
                         bubbles: !!(input === null || input === void 0 ? void 0 : input.bubbles),
                         cancelable: !!(input === null || input === void 0 ? void 0 : input.cancelable),
                         composed: !!(input === null || input === void 0 ? void 0 : input.composed),
-                        cached: !!(input === null || input === void 0 ? void 0 : input.cached)
+                        cached: !!(input === null || input === void 0 ? void 0 : input.cached),
                     };
                     if (!(input === null || input === void 0 ? void 0 : input.dataPropsMap)) return [3 /*break*/, 4];
                     _d.label = 1;
                 case 1:
                     _d.trys.push([1, 3, , 4]);
                     _b = detail;
-                    return [4 /*yield*/, (0, setComponentProps_1["default"])(input === null || input === void 0 ? void 0 : input.dataPropsMap, input === null || input === void 0 ? void 0 : input.data)];
+                    return [4 /*yield*/, (0, setComponentProps_1.default)(input === null || input === void 0 ? void 0 : input.dataPropsMap, input === null || input === void 0 ? void 0 : input.data)];
                 case 2:
                     _b.data = _d.sent();
                     return [3 /*break*/, 4];
@@ -78,11 +78,11 @@ function fireenjinSuccess(input, options) {
                         detail: detail,
                         bubbles: !!(input === null || input === void 0 ? void 0 : input.bubbles),
                         cancelable: !!(input === null || input === void 0 ? void 0 : input.cancelable),
-                        composed: !!(input === null || input === void 0 ? void 0 : input.composed)
+                        composed: !!(input === null || input === void 0 ? void 0 : input.composed),
                     }));
                     return [2 /*return*/];
             }
         });
     });
 }
-exports["default"] = fireenjinSuccess;
+exports.default = fireenjinSuccess;

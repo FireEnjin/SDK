@@ -55,7 +55,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var app_1 = require("@firebase/app");
 var firestore_1 = require("@firebase/firestore");
 var functions_1 = require("@firebase/functions");
@@ -73,7 +73,7 @@ var DatabaseService = /** @class */ (function () {
             }
         }
         (0, firestore_1.initializeFirestore)(this.app, {
-            ignoreUndefinedProperties: true
+            ignoreUndefinedProperties: true,
         });
         this.service = (0, firestore_1.getFirestore)(this.app);
         this.functions = (0, functions_1.getFunctions)(this.app);
@@ -109,7 +109,7 @@ var DatabaseService = /** @class */ (function () {
             });
         });
     };
-    DatabaseService.prototype["delete"] = function (path, id) {
+    DatabaseService.prototype.delete = function (path, id) {
         return __awaiter(this, void 0, void 0, function () {
             var doc;
             return __generator(this, function (_a) {
@@ -175,7 +175,7 @@ var DatabaseService = /** @class */ (function () {
                         doc = this.document(path, id);
                         return [4 /*yield*/, (0, firestore_1.setDoc)(doc, data, {
                                 merge: merge,
-                                mergeFields: mergeFields
+                                mergeFields: mergeFields,
                             })];
                     case 1:
                         _c.sent();
@@ -330,4 +330,4 @@ var DatabaseService = /** @class */ (function () {
     };
     return DatabaseService;
 }());
-exports["default"] = DatabaseService;
+exports.default = DatabaseService;
