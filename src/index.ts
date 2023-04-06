@@ -1,6 +1,7 @@
 import AuthService from "./services/auth";
 import DatabaseService from "./services/database";
 import FireEnjin from "./services/fireenjin";
+import Model from "./services/model";
 import SessionService from "./services/session";
 import {
   FireEnjinEvent,
@@ -38,6 +39,7 @@ export {
   DatabaseService,
   SessionService,
   FireEnjin,
+  Model,
   type FireEnjinEvent,
   type FireEnjinErrorEvent,
   type FireEnjinFetchEvent,
