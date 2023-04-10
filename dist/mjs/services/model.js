@@ -1,25 +1,29 @@
-"use strict";
-// class Model<T> {
-//   collection: string;
-//   host?: string;
-//   constructor({ collection, host }: { collection: string; host?: string }) {
-//     this.collection = collection;
-//     this.host = host;
-//   }
-//   async find(): Promise<T> {
-//     return this.model;
-//   }
-// }
-// class Boat {
-//   public name: string;
-// }
-// class BoatModel extends Model<Boat> {
-//   constructor() {
-//     super({
-//       collection: "boats",
-//       host: "https://madnesslabs.net",
-//     });
-//   }
-// }
-// const boats = new BoatModel();
-// const speedboat = await boats.find();
+export default class Model {
+    fireenjin;
+    endpoint;
+    endpoints;
+    constructor({ fireenjin, endpoint, endpoints, }) {
+        this.fireenjin = fireenjin;
+        this.endpoint = endpoint;
+        this.endpoints = endpoints;
+    }
+    async create(data, { id, params, query, endpoint, }) {
+        return this.fireenjin.submit(endpoint || this.endpoints?.create || this.endpoint || "", { data, id, params, query });
+    }
+    async find(id, { params, query, endpoint, }) {
+        return this.fireenjin.fetch(endpoint || this.endpoints?.find || this.endpoint || "", { id, params, query });
+    }
+    async update(id, data, { params, query, endpoint, }) {
+        return this.fireenjin.submit(endpoint || this.endpoints?.update || this.endpoint || "", { data, id, params, query });
+    }
+    async delete(id, { params, query, endpoint, }) {
+        return await this.fireenjin.submit(id, {
+            endpoint: endpoint || this.endpoints?.delete || this.endpoint || "",
+            params,
+            query,
+        });
+    }
+    async list({ params, query, endpoint, }) {
+        return this.fireenjin.fetch(endpoint || this.endpoints?.list || this.endpoint || "", { params, query });
+    }
+}
