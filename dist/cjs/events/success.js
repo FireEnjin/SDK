@@ -27,7 +27,6 @@ function fireenjinSuccess(input, options) {
             composed: !!(input === null || input === void 0 ? void 0 : input.composed),
             cached: !!(input === null || input === void 0 ? void 0 : input.cached),
         };
-        console.log("try or fail - before: ", detail, input);
         if (input === null || input === void 0 ? void 0 : input.dataPropsMap) {
             try {
                 detail.data = yield (0, setComponentProps_1.default)(input === null || input === void 0 ? void 0 : input.dataPropsMap, input === null || input === void 0 ? void 0 : input.data);
@@ -38,7 +37,6 @@ function fireenjinSuccess(input, options) {
                     options.onError(detail);
             }
         }
-        console.log("try or fail - middle: ", detail, input);
         if (typeof (options === null || options === void 0 ? void 0 : options.onSuccess) === "function")
             options.onSuccess(detail);
         const el = (detail === null || detail === void 0 ? void 0 : detail.target) || document;
@@ -48,7 +46,6 @@ function fireenjinSuccess(input, options) {
             cancelable: !!(input === null || input === void 0 ? void 0 : input.cancelable),
             composed: !!(input === null || input === void 0 ? void 0 : input.composed),
         }));
-        console.log("try or fail - after: ", el, detail, input);
     });
 }
 exports.default = fireenjinSuccess;

@@ -726,7 +726,6 @@ async function fireenjinSuccess(input, options) {
         composed: !!input?.composed,
         cached: !!input?.cached,
     };
-    console.log("try or fail - before: ", detail, input);
     if (input?.dataPropsMap) {
         try {
             detail.data = await setComponentProps(input?.dataPropsMap, input?.data);
@@ -737,7 +736,6 @@ async function fireenjinSuccess(input, options) {
                 options.onError(detail);
         }
     }
-    console.log("try or fail - middle: ", detail, input);
     if (typeof options?.onSuccess === "function")
         options.onSuccess(detail);
     const el = detail?.target || document;
@@ -747,7 +745,6 @@ async function fireenjinSuccess(input, options) {
         cancelable: !!input?.cancelable,
         composed: !!input?.composed,
     }));
-    console.log("try or fail - after: ", el, detail, input);
 }
 
 async function tryOrFail(fn, options) {
