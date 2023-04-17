@@ -33,11 +33,11 @@ export default class AuthService {
         config?: IFireEnjinAuthConfig;
         app?: any;
     });
-    getUser(skipReload?: boolean): Promise<import("@firebase/auth").User | null>;
+    getUser(skipReload?: boolean): Promise<import("@firebase/auth").User>;
     getClaims(): Promise<import("@firebase/auth").ParsedToken>;
-    getToken(): Promise<string | null>;
+    getToken(): Promise<string>;
     setToken(token: any): Promise<any>;
-    onEmailLink(link: any): Promise<import("@firebase/auth").UserCredential | undefined>;
+    onEmailLink(link: any): Promise<import("@firebase/auth").UserCredential>;
     withGoogleCredential(token: any): import("@firebase/auth").OAuthCredential;
     withCredential(credential: any): Promise<import("@firebase/auth").UserCredential>;
     withToken(token: string): Promise<import("@firebase/auth").UserCredential>;
@@ -61,7 +61,7 @@ export default class AuthService {
     checkRolePermission(roleId: string, permission: string, ignoreAdmin?: boolean): Promise<boolean>;
     goOnline(): Promise<void>;
     goOffline(): Promise<any>;
-    getSessionManager(): Promise<SessionManager | undefined>;
+    getSessionManager(): Promise<SessionManager>;
     getApp(): Promise<FirebaseApp>;
     getService(): Promise<Auth>;
 }

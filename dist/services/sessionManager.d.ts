@@ -5,7 +5,7 @@ export default class SessionManager {
     forceOffline: any;
     auth: any;
     ref: any;
-    databaseConnected: null;
+    databaseConnected: any;
     constructor(rdb: any, auth: any);
     randomId(): string;
     setMetadata(newMetadata: any): void;

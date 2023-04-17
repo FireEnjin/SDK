@@ -18,8 +18,8 @@ export default class FireEnjin {
     upload<I = any, T = any>(input: FireEnjinUploadInput<I>, options?: FireEnjinMethodOptions): Promise<T>;
     fetch<I = any, T = any>(endpoint: string, input?: FireEnjinFetchInput<I>, options?: FireEnjinFetchOptions): Promise<T>;
     submit<I = any, T = any>(endpoint: string, input?: FireEnjinSubmitInput<I, T>, options?: FireEnjinSubmitOptions): Promise<T>;
-    setHeader(key: string, value: string): false | Client | GraphQLClient | FirestoreClient;
-    setHeaders(headers: any): false | Client | GraphQLClient | FirestoreClient;
+    setHeader(key: string, value: string): false | GraphQLClient | Client | FirestoreClient;
+    setHeaders(headers: any): false | GraphQLClient | Client | FirestoreClient;
     setConnection(nameUrlOrIndex: string | number): FireEnjinHost;
     uploadFile(file: File, input?: {
         event?: any;
@@ -27,5 +27,5 @@ export default class FireEnjin {
         path?: string;
         fileName?: string;
         onProgress?: (snapshot: any) => void;
-    }, options?: FireEnjinMethodOptions): Promise<import("@firebase/storage").UploadTaskSnapshot | undefined>;
+    }, options?: FireEnjinMethodOptions): Promise<import("@firebase/storage").UploadTaskSnapshot>;
 }

@@ -234,7 +234,6 @@ export default class FireEnjin {
     const endpoint = options?.endpoint || "upload";
     const method = options?.method || "post";
     const target = options?.target || options?.event?.target || document;
-    console.log("test", input);
     return tryOrFail<T>(
       async () =>
         this.storage
@@ -316,21 +315,23 @@ export default class FireEnjin {
       });
     }
 
-    const fn =
-      this.host?.type === "graphql"
-        ? input?.query
-          ? this.client.request(input?.query, input?.params, {
-              method,
-            })
-          : this.sdk[endpoint](input, options?.headers)
-        : this.client.request(endpoint, input, {
-            method,
-          });
     data = await tryOrFail<T>(
       async () =>
         (typeof this.options?.onFetch === "function" &&
-          this.options.onFetch(endpoint, input, { ...options, fn })) ||
-        fn,
+          (this.options as any).onFetch(endpoint, input, {
+            method,
+            name,
+            event,
+          })) ||
+        this.host?.type === "graphql"
+          ? input?.query
+            ? this.client.request(input?.query, input?.params, {
+                method,
+              })
+            : this.sdk[endpoint](input, options?.headers)
+          : this.client.request(endpoint, input, {
+              method,
+            }),
       {
         endpoint,
         event,
@@ -356,27 +357,29 @@ export default class FireEnjin {
     const event: any = options?.event || null;
     const name: string = options?.name || (null as any);
     const method = options?.method || "post";
-    const fn =
-      this.host?.type === "graphql"
-        ? input?.query
-          ? this.client.request(input.query, input.params, {
-              method,
-            })
-          : this.sdk[endpoint](
-              input?.params || {
-                id: input?.id,
-                data: input?.data,
-              }
-            )
-        : this.client.request(endpoint, input, {
-            method: input?.id ? "put" : "post",
-          });
 
     return tryOrFail<T>(
       async () =>
         (typeof this.options?.onSubmit === "function" &&
-          this.options.onSubmit(endpoint, input, { ...options, fn })) ||
-        fn,
+          (this.options as any).onSubmit(endpoint, input, {
+            method,
+            name,
+            event,
+          })) ||
+        this.host?.type === "graphql"
+          ? input?.query
+            ? this.client.request(input.query, input.params, {
+                method,
+              })
+            : this.sdk[endpoint](
+                input?.params || {
+                  id: input?.id,
+                  data: input?.data,
+                }
+              )
+          : this.client.request(endpoint, input, {
+              method: input?.id ? "put" : "post",
+            }),
       {
         endpoint,
         event,

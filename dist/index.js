@@ -1123,7 +1123,6 @@ class FireEnjin {
         const endpoint = options?.endpoint || "upload";
         const method = options?.method || "post";
         const target = options?.target || options?.event?.target || document;
-        console.log("test", input);
         return tryOrFail(async () => this.storage
             ? this.uploadFile(input?.data?.file, {
                 fileName: input?.data?.fileName,
@@ -1172,7 +1171,13 @@ class FireEnjin {
         catch {
             console.log("No Local data found");
         }
-        const fn = this.host?.type === "graphql"
+        data = await tryOrFail(async () => (typeof this.options?.onFetch === "function" &&
+            this.options.onFetch(endpoint, input, {
+                method,
+                name,
+                event,
+            })) ||
+            this.host?.type === "graphql"
             ? input?.query
                 ? this.client.request(input?.query, input?.params, {
                     method,
@@ -1180,10 +1185,7 @@ class FireEnjin {
                 : this.sdk[endpoint](input, options?.headers)
             : this.client.request(endpoint, input, {
                 method,
-            });
-        data = await tryOrFail(async () => (typeof this.options?.onFetch === "function" &&
-            this.options.onFetch(endpoint, input, { ...options, fn })) ||
-            fn, {
+            }), {
             endpoint,
             event,
             target: options?.target || options?.event?.target,
@@ -1201,7 +1203,13 @@ class FireEnjin {
         const event = options?.event || null;
         const name = options?.name || null;
         const method = options?.method || "post";
-        const fn = this.host?.type === "graphql"
+        return tryOrFail(async () => (typeof this.options?.onSubmit === "function" &&
+            this.options.onSubmit(endpoint, input, {
+                method,
+                name,
+                event,
+            })) ||
+            this.host?.type === "graphql"
             ? input?.query
                 ? this.client.request(input.query, input.params, {
                     method,
@@ -1212,10 +1220,7 @@ class FireEnjin {
                 })
             : this.client.request(endpoint, input, {
                 method: input?.id ? "put" : "post",
-            });
-        return tryOrFail(async () => (typeof this.options?.onSubmit === "function" &&
-            this.options.onSubmit(endpoint, input, { ...options, fn })) ||
-            fn, {
+            }), {
             endpoint,
             event,
             target: options?.target || event?.target,

@@ -250,7 +250,6 @@ var FireEnjin = /** @class */ (function () {
                 endpoint = (options === null || options === void 0 ? void 0 : options.endpoint) || "upload";
                 method = (options === null || options === void 0 ? void 0 : options.method) || "post";
                 target = (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target) || document;
-                console.log("test", input);
                 return [2 /*return*/, (0, tryOrFail_1.default)(function () { return __awaiter(_this, void 0, void 0, function () {
                         var _a, _b, _c, _d, _e, _f;
                         return __generator(this, function (_g) {
@@ -289,12 +288,12 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.fetch = function (endpoint, input, options) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function () {
-            var data, event, name, method, localKey, localData, _g, fn;
+            var data, event, name, method, localKey, localData, _f;
             var _this = this;
-            return __generator(this, function (_h) {
-                switch (_h.label) {
+            return __generator(this, function (_g) {
+                switch (_g.label) {
                     case 0:
                         data = null;
                         event = (options === null || options === void 0 ? void 0 : options.event) || null;
@@ -308,15 +307,15 @@ var FireEnjin = /** @class */ (function () {
                                     ? this.hash(JSON.stringify(Object.values(input.params)))
                                     : "").concat(this.hash(JSON.stringify(input || {})));
                         localData = null;
-                        _h.label = 1;
+                        _g.label = 1;
                     case 1:
-                        _h.trys.push([1, 3, , 4]);
+                        _g.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, localforage.getItem(localKey)];
                     case 2:
-                        data = _h.sent();
+                        data = _g.sent();
                         return [3 /*break*/, 4];
                     case 3:
-                        _g = _h.sent();
+                        _f = _g.sent();
                         console.log("No Local data found");
                         return [3 /*break*/, 4];
                     case 4:
@@ -336,71 +335,76 @@ var FireEnjin = /** @class */ (function () {
                                 onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
                             })];
                     case 5:
-                        data = _h.sent();
-                        _h.label = 6;
-                    case 6:
-                        fn = ((_c = this.host) === null || _c === void 0 ? void 0 : _c.type) === "graphql"
-                            ? (input === null || input === void 0 ? void 0 : input.query)
-                                ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
-                                    method: method,
-                                })
-                                : this.sdk[endpoint](input, options === null || options === void 0 ? void 0 : options.headers)
-                            : this.client.request(endpoint, input, {
-                                method: method,
+                        data = _g.sent();
+                        _g.label = 6;
+                    case 6: return [4 /*yield*/, (0, tryOrFail_1.default)(function () { return __awaiter(_this, void 0, void 0, function () {
+                            var _a, _b;
+                            return __generator(this, function (_c) {
+                                return [2 /*return*/, (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onFetch) === "function" &&
+                                        this.options.onFetch(endpoint, input, {
+                                            method: method,
+                                            name: name,
+                                            event: event,
+                                        })) ||
+                                        ((_b = this.host) === null || _b === void 0 ? void 0 : _b.type) === "graphql"
+                                        ? (input === null || input === void 0 ? void 0 : input.query)
+                                            ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
+                                                method: method,
+                                            })
+                                            : this.sdk[endpoint](input, options === null || options === void 0 ? void 0 : options.headers)
+                                        : this.client.request(endpoint, input, {
+                                            method: method,
+                                        })];
                             });
-                        return [4 /*yield*/, (0, tryOrFail_1.default)(function () { return __awaiter(_this, void 0, void 0, function () {
-                                var _a;
-                                return __generator(this, function (_b) {
-                                    return [2 /*return*/, (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onFetch) === "function" &&
-                                            this.options.onFetch(endpoint, input, __assign(__assign({}, options), { fn: fn }))) ||
-                                            fn];
-                                });
-                            }); }, {
-                                endpoint: endpoint,
-                                event: event,
-                                target: (options === null || options === void 0 ? void 0 : options.target) || ((_d = options === null || options === void 0 ? void 0 : options.event) === null || _d === void 0 ? void 0 : _d.target),
-                                name: name,
-                                cached: false,
-                                bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
-                                cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
-                                composed: options === null || options === void 0 ? void 0 : options.composed,
-                                onError: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onError,
-                                onSuccess: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onSuccess,
-                            })];
+                        }); }, {
+                            endpoint: endpoint,
+                            event: event,
+                            target: (options === null || options === void 0 ? void 0 : options.target) || ((_c = options === null || options === void 0 ? void 0 : options.event) === null || _c === void 0 ? void 0 : _c.target),
+                            name: name,
+                            cached: false,
+                            bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
+                            cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
+                            composed: options === null || options === void 0 ? void 0 : options.composed,
+                            onError: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onError,
+                            onSuccess: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onSuccess,
+                        })];
                     case 7:
-                        data = _h.sent();
+                        data = _g.sent();
                         return [2 /*return*/, data];
                 }
             });
         });
     };
     FireEnjin.prototype.submit = function (endpoint, input, options) {
-        var _a, _b, _c;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var event, name, method, fn;
+            var event, name, method;
             var _this = this;
-            return __generator(this, function (_d) {
+            return __generator(this, function (_c) {
                 event = (options === null || options === void 0 ? void 0 : options.event) || null;
                 name = (options === null || options === void 0 ? void 0 : options.name) || null;
                 method = (options === null || options === void 0 ? void 0 : options.method) || "post";
-                fn = ((_a = this.host) === null || _a === void 0 ? void 0 : _a.type) === "graphql"
-                    ? (input === null || input === void 0 ? void 0 : input.query)
-                        ? this.client.request(input.query, input.params, {
-                            method: method,
-                        })
-                        : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
-                            id: input === null || input === void 0 ? void 0 : input.id,
-                            data: input === null || input === void 0 ? void 0 : input.data,
-                        })
-                    : this.client.request(endpoint, input, {
-                        method: (input === null || input === void 0 ? void 0 : input.id) ? "put" : "post",
-                    });
                 return [2 /*return*/, (0, tryOrFail_1.default)(function () { return __awaiter(_this, void 0, void 0, function () {
-                        var _a;
-                        return __generator(this, function (_b) {
+                        var _a, _b;
+                        return __generator(this, function (_c) {
                             return [2 /*return*/, (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubmit) === "function" &&
-                                    this.options.onSubmit(endpoint, input, __assign(__assign({}, options), { fn: fn }))) ||
-                                    fn];
+                                    this.options.onSubmit(endpoint, input, {
+                                        method: method,
+                                        name: name,
+                                        event: event,
+                                    })) ||
+                                    ((_b = this.host) === null || _b === void 0 ? void 0 : _b.type) === "graphql"
+                                    ? (input === null || input === void 0 ? void 0 : input.query)
+                                        ? this.client.request(input.query, input.params, {
+                                            method: method,
+                                        })
+                                        : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
+                                            id: input === null || input === void 0 ? void 0 : input.id,
+                                            data: input === null || input === void 0 ? void 0 : input.data,
+                                        })
+                                    : this.client.request(endpoint, input, {
+                                        method: (input === null || input === void 0 ? void 0 : input.id) ? "put" : "post",
+                                    })];
                         });
                     }); }, {
                         endpoint: endpoint,
@@ -411,8 +415,8 @@ var FireEnjin = /** @class */ (function () {
                         bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                         cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                         composed: options === null || options === void 0 ? void 0 : options.composed,
-                        onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
-                        onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess,
+                        onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
+                        onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
                     })];
             });
         });
