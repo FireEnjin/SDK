@@ -315,36 +315,35 @@ export default class FireEnjin {
       });
     }
 
-    data = await tryOrFail<T>(
-      async () =>
-        (typeof this.options?.onFetch === "function" &&
-          (this.options as any).onFetch(endpoint, input, {
-            method,
-            name,
-            event,
-          })) ||
-        this.host?.type === "graphql"
-          ? input?.query
-            ? this.client.request(input?.query, input?.params, {
-                method,
-              })
-            : this.sdk[endpoint](input, options?.headers)
-          : this.client.request(endpoint, input, {
+    const fn =
+      (typeof this.options?.onFetch === "function" &&
+        (this.options as any).onFetch(endpoint, input, {
+          method,
+          name,
+          event,
+        })) ||
+      this.host?.type === "graphql"
+        ? input?.query
+          ? this.client.request(input?.query, input?.params, {
               method,
-            }),
-      {
-        endpoint,
-        event,
-        target: options?.target || options?.event?.target,
-        name,
-        cached: false,
-        bubbles: options?.bubbles,
-        cancelable: options?.cancelable,
-        composed: options?.composed,
-        onError: this.options?.onError,
-        onSuccess: this.options?.onSuccess,
-      }
-    );
+            })
+          : this.sdk[endpoint](input, options?.headers)
+        : this.client.request(endpoint, input, {
+            method,
+          });
+
+    data = await tryOrFail<T>(async () => fn, {
+      endpoint,
+      event,
+      target: options?.target || options?.event?.target,
+      name,
+      cached: false,
+      bubbles: options?.bubbles,
+      cancelable: options?.cancelable,
+      composed: options?.composed,
+      onError: this.options?.onError,
+      onSuccess: this.options?.onSuccess,
+    });
 
     return data as T;
   }
@@ -357,42 +356,39 @@ export default class FireEnjin {
     const event: any = options?.event || null;
     const name: string = options?.name || (null as any);
     const method = options?.method || "post";
-
-    return tryOrFail<T>(
-      async () =>
-        (typeof this.options?.onSubmit === "function" &&
-          (this.options as any).onSubmit(endpoint, input, {
-            method,
-            name,
-            event,
-          })) ||
-        this.host?.type === "graphql"
-          ? input?.query
-            ? this.client.request(input.query, input.params, {
-                method,
-              })
-            : this.sdk[endpoint](
-                input?.params || {
-                  id: input?.id,
-                  data: input?.data,
-                }
-              )
-          : this.client.request(endpoint, input, {
-              method: input?.id ? "put" : "post",
-            }),
-      {
-        endpoint,
-        event,
-        target: options?.target || event?.target,
-        name,
-        cached: false,
-        bubbles: options?.bubbles,
-        cancelable: options?.cancelable,
-        composed: options?.composed,
-        onError: this.options?.onError,
-        onSuccess: this.options?.onSuccess,
-      }
-    ) as Promise<T>;
+    const fn =
+      (typeof this.options?.onSubmit === "function" &&
+        (this.options as any).onSubmit(endpoint, input, {
+          method,
+          name,
+          event,
+        })) ||
+      this.host?.type === "graphql"
+        ? input?.query
+          ? this.client.request(input.query, input.params, {
+              method,
+            })
+          : this.sdk[endpoint](
+              input?.params || {
+                id: input?.id,
+                data: input?.data,
+              }
+            )
+        : this.client.request(endpoint, input, {
+            method: input?.id ? "put" : "post",
+          });
+    return tryOrFail<T>(async () => fn, {
+      endpoint,
+      event,
+      target: options?.target || event?.target,
+      name,
+      cached: false,
+      bubbles: options?.bubbles,
+      cancelable: options?.cancelable,
+      composed: options?.composed,
+      onError: this.options?.onError,
+      onSuccess: this.options?.onSuccess,
+    }) as Promise<T>;
   }
 
   setHeader(key: string, value: string) {

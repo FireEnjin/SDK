@@ -241,7 +241,7 @@ export default class FireEnjin {
                 onSuccess: this.options?.onSuccess,
             });
         }
-        data = await tryOrFail(async () => (typeof this.options?.onFetch === "function" &&
+        const fn = (typeof this.options?.onFetch === "function" &&
             this.options.onFetch(endpoint, input, {
                 method,
                 name,
@@ -255,7 +255,8 @@ export default class FireEnjin {
                 : this.sdk[endpoint](input, options?.headers)
             : this.client.request(endpoint, input, {
                 method,
-            }), {
+            });
+        data = await tryOrFail(async () => fn, {
             endpoint,
             event,
             target: options?.target || options?.event?.target,
@@ -273,7 +274,7 @@ export default class FireEnjin {
         const event = options?.event || null;
         const name = options?.name || null;
         const method = options?.method || "post";
-        return tryOrFail(async () => (typeof this.options?.onSubmit === "function" &&
+        const fn = (typeof this.options?.onSubmit === "function" &&
             this.options.onSubmit(endpoint, input, {
                 method,
                 name,
@@ -290,7 +291,8 @@ export default class FireEnjin {
                 })
             : this.client.request(endpoint, input, {
                 method: input?.id ? "put" : "post",
-            }), {
+            });
+        return tryOrFail(async () => fn, {
             endpoint,
             event,
             target: options?.target || event?.target,

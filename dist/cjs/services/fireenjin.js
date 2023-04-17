@@ -256,7 +256,7 @@ class FireEnjin {
         });
     }
     fetch(endpoint, input, options) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f, _g;
         return __awaiter(this, void 0, void 0, function* () {
             let data = null;
             const event = (options === null || options === void 0 ? void 0 : options.event) || null;
@@ -273,7 +273,7 @@ class FireEnjin {
             try {
                 data = yield localforage.getItem(localKey);
             }
-            catch (_f) {
+            catch (_h) {
                 console.log("No Local data found");
             }
             if (localData && !(options === null || options === void 0 ? void 0 : options.disableCache)) {
@@ -290,65 +290,61 @@ class FireEnjin {
                     onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
                 });
             }
-            data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
-                var _g, _h;
-                return (typeof ((_g = this.options) === null || _g === void 0 ? void 0 : _g.onFetch) === "function" &&
-                    this.options.onFetch(endpoint, input, {
+            const fn = (typeof ((_c = this.options) === null || _c === void 0 ? void 0 : _c.onFetch) === "function" &&
+                this.options.onFetch(endpoint, input, {
+                    method,
+                    name,
+                    event,
+                })) ||
+                ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql"
+                ? (input === null || input === void 0 ? void 0 : input.query)
+                    ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
                         method,
-                        name,
-                        event,
-                    })) ||
-                    ((_h = this.host) === null || _h === void 0 ? void 0 : _h.type) === "graphql"
-                    ? (input === null || input === void 0 ? void 0 : input.query)
-                        ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
-                            method,
-                        })
-                        : this.sdk[endpoint](input, options === null || options === void 0 ? void 0 : options.headers)
-                    : this.client.request(endpoint, input, {
-                        method,
-                    });
-            }), {
+                    })
+                    : this.sdk[endpoint](input, options === null || options === void 0 ? void 0 : options.headers)
+                : this.client.request(endpoint, input, {
+                    method,
+                });
+            data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () { return fn; }), {
                 endpoint,
                 event,
-                target: (options === null || options === void 0 ? void 0 : options.target) || ((_c = options === null || options === void 0 ? void 0 : options.event) === null || _c === void 0 ? void 0 : _c.target),
+                target: (options === null || options === void 0 ? void 0 : options.target) || ((_e = options === null || options === void 0 ? void 0 : options.event) === null || _e === void 0 ? void 0 : _e.target),
                 name,
                 cached: false,
                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                 composed: options === null || options === void 0 ? void 0 : options.composed,
-                onError: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onError,
-                onSuccess: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onSuccess,
+                onError: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onError,
+                onSuccess: (_g = this.options) === null || _g === void 0 ? void 0 : _g.onSuccess,
             });
             return data;
         });
     }
     submit(endpoint, input, options) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             const event = (options === null || options === void 0 ? void 0 : options.event) || null;
             const name = (options === null || options === void 0 ? void 0 : options.name) || null;
             const method = (options === null || options === void 0 ? void 0 : options.method) || "post";
-            return (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
-                var _c, _d;
-                return (typeof ((_c = this.options) === null || _c === void 0 ? void 0 : _c.onSubmit) === "function" &&
-                    this.options.onSubmit(endpoint, input, {
+            const fn = (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubmit) === "function" &&
+                this.options.onSubmit(endpoint, input, {
+                    method,
+                    name,
+                    event,
+                })) ||
+                ((_b = this.host) === null || _b === void 0 ? void 0 : _b.type) === "graphql"
+                ? (input === null || input === void 0 ? void 0 : input.query)
+                    ? this.client.request(input.query, input.params, {
                         method,
-                        name,
-                        event,
-                    })) ||
-                    ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql"
-                    ? (input === null || input === void 0 ? void 0 : input.query)
-                        ? this.client.request(input.query, input.params, {
-                            method,
-                        })
-                        : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
-                            id: input === null || input === void 0 ? void 0 : input.id,
-                            data: input === null || input === void 0 ? void 0 : input.data,
-                        })
-                    : this.client.request(endpoint, input, {
-                        method: (input === null || input === void 0 ? void 0 : input.id) ? "put" : "post",
-                    });
-            }), {
+                    })
+                    : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
+                        id: input === null || input === void 0 ? void 0 : input.id,
+                        data: input === null || input === void 0 ? void 0 : input.data,
+                    })
+                : this.client.request(endpoint, input, {
+                    method: (input === null || input === void 0 ? void 0 : input.id) ? "put" : "post",
+                });
+            return (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () { return fn; }), {
                 endpoint,
                 event,
                 target: (options === null || options === void 0 ? void 0 : options.target) || (event === null || event === void 0 ? void 0 : event.target),
@@ -357,8 +353,8 @@ class FireEnjin {
                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                 composed: options === null || options === void 0 ? void 0 : options.composed,
-                onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
-                onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
+                onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
+                onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess,
             });
         });
     }
