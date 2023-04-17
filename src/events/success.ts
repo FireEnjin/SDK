@@ -34,7 +34,7 @@ export default async function fireenjinSuccess(
     composed: !!input?.composed,
     cached: !!input?.cached,
   };
-
+  console.log("try or fail - before: ", detail, input);
   if (input?.dataPropsMap) {
     try {
       detail.data = await setComponentProps(input?.dataPropsMap, input?.data);
@@ -43,7 +43,7 @@ export default async function fireenjinSuccess(
       if (typeof options?.onError === "function") options.onError(detail);
     }
   }
-
+  console.log("try or fail - middle: ", detail, input);
   if (typeof options?.onSuccess === "function") options.onSuccess(detail);
   const el = detail?.target || document;
   el.dispatchEvent(
@@ -54,4 +54,5 @@ export default async function fireenjinSuccess(
       composed: !!input?.composed,
     })
   );
+  console.log("try or fail - after: ", el, detail, input);
 }

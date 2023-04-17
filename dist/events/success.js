@@ -55,6 +55,7 @@ function fireenjinSuccess(input, options) {
                         composed: !!(input === null || input === void 0 ? void 0 : input.composed),
                         cached: !!(input === null || input === void 0 ? void 0 : input.cached),
                     };
+                    console.log("try or fail - before: ", detail, input);
                     if (!(input === null || input === void 0 ? void 0 : input.dataPropsMap)) return [3 /*break*/, 4];
                     _d.label = 1;
                 case 1:
@@ -71,6 +72,7 @@ function fireenjinSuccess(input, options) {
                         options.onError(detail);
                     return [3 /*break*/, 4];
                 case 4:
+                    console.log("try or fail - middle: ", detail, input);
                     if (typeof (options === null || options === void 0 ? void 0 : options.onSuccess) === "function")
                         options.onSuccess(detail);
                     el = (detail === null || detail === void 0 ? void 0 : detail.target) || document;
@@ -80,6 +82,7 @@ function fireenjinSuccess(input, options) {
                         cancelable: !!(input === null || input === void 0 ? void 0 : input.cancelable),
                         composed: !!(input === null || input === void 0 ? void 0 : input.composed),
                     }));
+                    console.log("try or fail - after: ", el, detail, input);
                     return [2 /*return*/];
             }
         });

@@ -1,7 +1,3 @@
-/* TODO Add typings to fetch and submit
- * @example (keyof ReturnType<typeof getSdk>)
- */
-
 import * as localforage from "localforage";
 import { GraphQLClient } from "graphql-request";
 import {
@@ -316,13 +312,9 @@ export default class FireEnjin {
     }
 
     const fn =
-      (typeof this.options?.onFetch === "function" &&
-        (this.options as any).onFetch(endpoint, input, {
-          method,
-          name,
-          event,
-        })) ||
-      this.host?.type === "graphql"
+      typeof this.options?.onFetch === "function"
+        ? this.options.onFetch(endpoint, input, options)
+        : this.host?.type === "graphql"
         ? input?.query
           ? this.client.request(input?.query, input?.params, {
               method,
@@ -357,13 +349,9 @@ export default class FireEnjin {
     const name: string = options?.name || (null as any);
     const method = options?.method || "post";
     const fn =
-      (typeof this.options?.onSubmit === "function" &&
-        (this.options as any).onSubmit(endpoint, input, {
-          method,
-          name,
-          event,
-        })) ||
-      this.host?.type === "graphql"
+      typeof this.options?.onSubmit === "function"
+        ? this.options.onSubmit(endpoint, input, options)
+        : this.host?.type === "graphql"
         ? input?.query
           ? this.client.request(input.query, input.params, {
               method,

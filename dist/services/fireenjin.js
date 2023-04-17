@@ -1,7 +1,4 @@
 "use strict";
-/* TODO Add typings to fetch and submit
- * @example (keyof ReturnType<typeof getSdk>)
- */
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -338,21 +335,17 @@ var FireEnjin = /** @class */ (function () {
                         data = _j.sent();
                         _j.label = 6;
                     case 6:
-                        fn = (typeof ((_c = this.options) === null || _c === void 0 ? void 0 : _c.onFetch) === "function" &&
-                            this.options.onFetch(endpoint, input, {
-                                method: method,
-                                name: name,
-                                event: event,
-                            })) ||
-                            ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql"
-                            ? (input === null || input === void 0 ? void 0 : input.query)
-                                ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
+                        fn = typeof ((_c = this.options) === null || _c === void 0 ? void 0 : _c.onFetch) === "function"
+                            ? this.options.onFetch(endpoint, input, options)
+                            : ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql"
+                                ? (input === null || input === void 0 ? void 0 : input.query)
+                                    ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
+                                        method: method,
+                                    })
+                                    : this.sdk[endpoint](input, options === null || options === void 0 ? void 0 : options.headers)
+                                : this.client.request(endpoint, input, {
                                     method: method,
-                                })
-                                : this.sdk[endpoint](input, options === null || options === void 0 ? void 0 : options.headers)
-                            : this.client.request(endpoint, input, {
-                                method: method,
-                            });
+                                });
                         return [4 /*yield*/, (0, tryOrFail_1.default)(function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                 return [2 /*return*/, fn];
                             }); }); }, {
@@ -383,24 +376,20 @@ var FireEnjin = /** @class */ (function () {
                 event = (options === null || options === void 0 ? void 0 : options.event) || null;
                 name = (options === null || options === void 0 ? void 0 : options.name) || null;
                 method = (options === null || options === void 0 ? void 0 : options.method) || "post";
-                fn = (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubmit) === "function" &&
-                    this.options.onSubmit(endpoint, input, {
-                        method: method,
-                        name: name,
-                        event: event,
-                    })) ||
-                    ((_b = this.host) === null || _b === void 0 ? void 0 : _b.type) === "graphql"
-                    ? (input === null || input === void 0 ? void 0 : input.query)
-                        ? this.client.request(input.query, input.params, {
-                            method: method,
-                        })
-                        : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
-                            id: input === null || input === void 0 ? void 0 : input.id,
-                            data: input === null || input === void 0 ? void 0 : input.data,
-                        })
-                    : this.client.request(endpoint, input, {
-                        method: (input === null || input === void 0 ? void 0 : input.id) ? "put" : "post",
-                    });
+                fn = typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubmit) === "function"
+                    ? this.options.onSubmit(endpoint, input, options)
+                    : ((_b = this.host) === null || _b === void 0 ? void 0 : _b.type) === "graphql"
+                        ? (input === null || input === void 0 ? void 0 : input.query)
+                            ? this.client.request(input.query, input.params, {
+                                method: method,
+                            })
+                            : this.sdk[endpoint]((input === null || input === void 0 ? void 0 : input.params) || {
+                                id: input === null || input === void 0 ? void 0 : input.id,
+                                data: input === null || input === void 0 ? void 0 : input.data,
+                            })
+                        : this.client.request(endpoint, input, {
+                            method: (input === null || input === void 0 ? void 0 : input.id) ? "put" : "post",
+                        });
                 return [2 /*return*/, (0, tryOrFail_1.default)(function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                         return [2 /*return*/, fn];
                     }); }); }, {

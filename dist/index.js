@@ -726,6 +726,7 @@ async function fireenjinSuccess(input, options) {
         composed: !!input?.composed,
         cached: !!input?.cached,
     };
+    console.log("try or fail - before: ", detail, input);
     if (input?.dataPropsMap) {
         try {
             detail.data = await setComponentProps(input?.dataPropsMap, input?.data);
@@ -736,6 +737,7 @@ async function fireenjinSuccess(input, options) {
                 options.onError(detail);
         }
     }
+    console.log("try or fail - middle: ", detail, input);
     if (typeof options?.onSuccess === "function")
         options.onSuccess(detail);
     const el = detail?.target || document;
@@ -745,6 +747,7 @@ async function fireenjinSuccess(input, options) {
         cancelable: !!input?.cancelable,
         composed: !!input?.composed,
     }));
+    console.log("try or fail - after: ", el, detail, input);
 }
 
 async function tryOrFail(fn, options) {
@@ -950,9 +953,6 @@ class FirestoreClient {
     }
 }
 
-/* TODO Add typings to fetch and submit
- * @example (keyof ReturnType<typeof getSdk>)
- */
 class FireEnjin {
     client;
     sdk = {};
@@ -1171,21 +1171,17 @@ class FireEnjin {
         catch {
             console.log("No Local data found");
         }
-        const fn = (typeof this.options?.onFetch === "function" &&
-            this.options.onFetch(endpoint, input, {
-                method,
-                name,
-                event,
-            })) ||
-            this.host?.type === "graphql"
-            ? input?.query
-                ? this.client.request(input?.query, input?.params, {
+        const fn = typeof this.options?.onFetch === "function"
+            ? this.options.onFetch(endpoint, input, options)
+            : this.host?.type === "graphql"
+                ? input?.query
+                    ? this.client.request(input?.query, input?.params, {
+                        method,
+                    })
+                    : this.sdk[endpoint](input, options?.headers)
+                : this.client.request(endpoint, input, {
                     method,
-                })
-                : this.sdk[endpoint](input, options?.headers)
-            : this.client.request(endpoint, input, {
-                method,
-            });
+                });
         data = await tryOrFail(async () => fn, {
             endpoint,
             event,
@@ -1204,24 +1200,20 @@ class FireEnjin {
         const event = options?.event || null;
         const name = options?.name || null;
         const method = options?.method || "post";
-        const fn = (typeof this.options?.onSubmit === "function" &&
-            this.options.onSubmit(endpoint, input, {
-                method,
-                name,
-                event,
-            })) ||
-            this.host?.type === "graphql"
-            ? input?.query
-                ? this.client.request(input.query, input.params, {
-                    method,
-                })
-                : this.sdk[endpoint](input?.params || {
-                    id: input?.id,
-                    data: input?.data,
-                })
-            : this.client.request(endpoint, input, {
-                method: input?.id ? "put" : "post",
-            });
+        const fn = typeof this.options?.onSubmit === "function"
+            ? this.options.onSubmit(endpoint, input, options)
+            : this.host?.type === "graphql"
+                ? input?.query
+                    ? this.client.request(input.query, input.params, {
+                        method,
+                    })
+                    : this.sdk[endpoint](input?.params || {
+                        id: input?.id,
+                        data: input?.data,
+                    })
+                : this.client.request(endpoint, input, {
+                    method: input?.id ? "put" : "post",
+                });
         return tryOrFail(async () => fn, {
             endpoint,
             event,
