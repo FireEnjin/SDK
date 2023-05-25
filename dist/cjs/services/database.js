@@ -72,6 +72,13 @@ class DatabaseService {
     getCollection(path) {
         return (0, firestore_1.getDocs)(this.collection(path));
     }
+    getCount(query) {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield (0, firestore_1.getCountFromServer)(this.rawQuery(query === null || query === void 0 ? void 0 : query.collectionName, query === null || query === void 0 ? void 0 : query.where, query === null || query === void 0 ? void 0 : query.orderBy, query === null || query === void 0 ? void 0 : query.limit, query === null || query === void 0 ? void 0 : query.advanced));
+            return ((_b = (_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.call(res)) === null || _b === void 0 ? void 0 : _b.count) || 0;
+        });
+    }
     /**
      * Credit: https://stackoverflow.com/users/1701600/boern
      * generates a string, e.g. used as document ID

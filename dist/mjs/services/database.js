@@ -1,5 +1,5 @@
 import { initializeApp } from "@firebase/app";
-import { getFirestore, addDoc, collection, deleteDoc, doc, getDoc, getDocs, initializeFirestore, query as firestoreQuery, orderBy as firestoreOrderBy, limit as firestoreLimit, where as firestoreWhere, startAfter as firestoreStartAfter, startAt as firestoreStartAt, endAt as firestoreEndAt, setDoc, updateDoc, onSnapshot, enableIndexedDbPersistence, connectFirestoreEmulator, } from "@firebase/firestore";
+import { getFirestore, addDoc, collection, deleteDoc, doc, getDoc, getDocs, getCountFromServer, initializeFirestore, query as firestoreQuery, orderBy as firestoreOrderBy, limit as firestoreLimit, where as firestoreWhere, startAfter as firestoreStartAfter, startAt as firestoreStartAt, endAt as firestoreEndAt, setDoc, updateDoc, onSnapshot, enableIndexedDbPersistence, connectFirestoreEmulator, } from "@firebase/firestore";
 import { connectFunctionsEmulator, getFunctions, httpsCallable, } from "@firebase/functions";
 export default class DatabaseService {
     app;
@@ -57,6 +57,10 @@ export default class DatabaseService {
     }
     getCollection(path) {
         return getDocs(this.collection(path));
+    }
+    async getCount(query) {
+        const res = await getCountFromServer(this.rawQuery(query?.collectionName, query?.where, query?.orderBy, query?.limit, query?.advanced));
+        return res?.data?.()?.count || 0;
     }
     /**
      * Credit: https://stackoverflow.com/users/1701600/boern

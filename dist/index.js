@@ -545,6 +545,10 @@ class DatabaseService {
     getCollection(path) {
         return firestore.getDocs(this.collection(path));
     }
+    async getCount(query) {
+        const res = await firestore.getCountFromServer(this.rawQuery(query?.collectionName, query?.where, query?.orderBy, query?.limit, query?.advanced));
+        return res?.data?.()?.count || 0;
+    }
     /**
      * Credit: https://stackoverflow.com/users/1701600/boern
      * generates a string, e.g. used as document ID

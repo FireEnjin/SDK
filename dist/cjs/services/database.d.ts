@@ -19,6 +19,21 @@ export default class DatabaseService {
     find(collectionName: string, id?: string): Promise<import("@firebase/firestore").DocumentData | undefined>;
     collection(path: string): import("@firebase/firestore").CollectionReference<import("@firebase/firestore").DocumentData>;
     getCollection(path: any): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData>>;
+    getCount(query: {
+        collectionName: string;
+        where?: {
+            key?: string;
+            conditional?: WhereFilterOp;
+            value?: any;
+        }[];
+        orderBy?: string;
+        limit?: number;
+        advanced?: {
+            startAfter?: any;
+            startAt?: any;
+            endAt?: any;
+        };
+    }): Promise<number>;
     /**
      * Credit: https://stackoverflow.com/users/1701600/boern
      * generates a string, e.g. used as document ID

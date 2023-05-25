@@ -8,6 +8,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  getCountFromServer,
   initializeFirestore,
   query as firestoreQuery,
   orderBy as firestoreOrderBy,
@@ -95,6 +96,30 @@ export default class DatabaseService {
 
   getCollection(path) {
     return getDocs(this.collection(path));
+  }
+
+  async getCount(query: {
+    collectionName: string;
+    where?: { key?: string; conditional?: WhereFilterOp; value?: any }[];
+    orderBy?: string;
+    limit?: number;
+    advanced?: {
+      startAfter?: any;
+      startAt?: any;
+      endAt?: any;
+    };
+  }) {
+    const res = await getCountFromServer(
+      this.rawQuery(
+        query?.collectionName,
+        query?.where,
+        query?.orderBy,
+        query?.limit,
+        query?.advanced
+      )
+    );
+
+    return res?.data?.()?.count || 0;
   }
 
   /**
