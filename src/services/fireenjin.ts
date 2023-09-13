@@ -26,7 +26,7 @@ import DatabaseService from "./database";
 import FirestoreClient from "./firestore";
 
 export default class FireEnjin {
-  client: Client | GraphQLClient | FirestoreClient;
+  client: Client | GraphQLClient | FirestoreClient | any;
   sdk: any = {};
   host: FireEnjinHost = {
     url: "http://localhost:4000",

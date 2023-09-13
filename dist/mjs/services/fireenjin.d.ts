@@ -4,7 +4,7 @@ import { FireEnjinFetchInput, FireEnjinFetchOptions, FireEnjinHost, FireEnjinMet
 import Client from "./client";
 import FirestoreClient from "./firestore";
 export default class FireEnjin {
-    client: Client | GraphQLClient | FirestoreClient;
+    client: Client | GraphQLClient | FirestoreClient | any;
     sdk: any;
     host: FireEnjinHost;
     currentConnection: number;
@@ -18,8 +18,8 @@ export default class FireEnjin {
     upload<I = any, T = any>(input: FireEnjinUploadInput<I>, options?: FireEnjinMethodOptions): Promise<T>;
     fetch<I = any, T = any>(endpoint: string, input?: FireEnjinFetchInput<I>, options?: FireEnjinFetchOptions): Promise<T>;
     submit<I = any, T = any>(endpoint: string, input?: FireEnjinSubmitInput<I, T>, options?: FireEnjinSubmitOptions): Promise<T>;
-    setHeader(key: string, value: string): false | Client | GraphQLClient | FirestoreClient;
-    setHeaders(headers: any): false | Client | GraphQLClient | FirestoreClient;
+    setHeader(key: string, value: string): any;
+    setHeaders(headers: any): any;
     setConnection(nameUrlOrIndex: string | number): FireEnjinHost;
     uploadFile(file: File, input?: {
         event?: any;
