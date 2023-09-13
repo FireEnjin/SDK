@@ -12,13 +12,13 @@ export default class DatabaseService {
         config?: any;
     });
     call(functionName: string): import("@firebase/functions").HttpsCallable<unknown, unknown>;
-    add(collectionName: string, data: any, id?: string): Promise<import("@firebase/firestore").DocumentReference<import("@firebase/firestore").DocumentData, import("@firebase/firestore").DocumentData> | import("@firebase/firestore").DocumentReference<any, import("@firebase/firestore").DocumentData>>;
+    add(collectionName: string, data: any, id?: string): Promise<import("@firebase/firestore").DocumentReference<import("@firebase/firestore").DocumentData> | import("@firebase/firestore").DocumentReference<any>>;
     delete(path: string, id?: string): Promise<{
         id: string;
     }>;
     find(collectionName: string, id?: string): Promise<import("@firebase/firestore").DocumentData>;
-    collection(path: string): import("@firebase/firestore").CollectionReference<import("@firebase/firestore").DocumentData, import("@firebase/firestore").DocumentData>;
-    getCollection(path: any): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData, import("@firebase/firestore").DocumentData>>;
+    collection(path: string): import("@firebase/firestore").CollectionReference<import("@firebase/firestore").DocumentData>;
+    getCollection(path: any): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData>>;
     getCount(query: {
         collectionName: string;
         where?: {
@@ -41,12 +41,12 @@ export default class DatabaseService {
      * @return {string} a strich such as tyCiv5FpxRexG9JX4wjP
      */
     getDocumentId(len?: number): string;
-    document(path: string, id?: string): import("@firebase/firestore").DocumentReference<import("@firebase/firestore").DocumentData, import("@firebase/firestore").DocumentData>;
-    getDocument(path: string, id?: string): Promise<import("@firebase/firestore").DocumentSnapshot<import("@firebase/firestore").DocumentData, import("@firebase/firestore").DocumentData>>;
+    document(path: string, id?: string): import("@firebase/firestore").DocumentReference<import("@firebase/firestore").DocumentData>;
+    getDocument(path: string, id?: string): Promise<import("@firebase/firestore").DocumentSnapshot<import("@firebase/firestore").DocumentData>>;
     setDocument(path: string, data: any, id?: string, { merge, mergeFields }?: {
         merge?: boolean;
         mergeFields?: any;
-    }): Promise<import("@firebase/firestore").DocumentReference<import("@firebase/firestore").DocumentData, import("@firebase/firestore").DocumentData>>;
+    }): Promise<import("@firebase/firestore").DocumentReference<import("@firebase/firestore").DocumentData>>;
     update(collectionName: string, id: string, data: any): Promise<import("@firebase/firestore").DocumentData>;
     clearWatchers(): Promise<boolean>;
     subscribe(query: {
@@ -77,7 +77,7 @@ export default class DatabaseService {
         startAfter?: any;
         startAt?: any;
         endAt?: any;
-    }): import("@firebase/firestore").Query<import("@firebase/firestore").DocumentData, import("@firebase/firestore").DocumentData>;
+    }): import("@firebase/firestore").Query<import("@firebase/firestore").DocumentData>;
     query(collectionName: string, where: {
         key?: string;
         conditional?: WhereFilterOp;
@@ -86,7 +86,7 @@ export default class DatabaseService {
         startAfter?: any;
         startAt?: any;
         endAt?: any;
-    }): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData, import("@firebase/firestore").DocumentData>>;
+    }): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData>>;
     list(collectionName: string, where: {
         key?: string;
         conditional?: WhereFilterOp;
