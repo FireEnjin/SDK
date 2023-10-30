@@ -253,7 +253,7 @@ class FireEnjin {
         });
     }
     fetch(endpoint, input, options) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         return __awaiter(this, void 0, void 0, function* () {
             let data = null;
             const event = (options === null || options === void 0 ? void 0 : options.event) || null;
@@ -261,16 +261,16 @@ class FireEnjin {
             const method = (options === null || options === void 0 ? void 0 : options.method) || "get";
             const localKey = (options === null || options === void 0 ? void 0 : options.cacheKey)
                 ? options.cacheKey
-                : `${endpoint}_${(input === null || input === void 0 ? void 0 : input.id)
+                : `${((_a = this.options) === null || _a === void 0 ? void 0 : _a.cachePrefix) ? this.options.cachePrefix : ""}${endpoint}_${(input === null || input === void 0 ? void 0 : input.id)
                     ? `${input.id}:`
                     : (input === null || input === void 0 ? void 0 : input.params)
                         ? this.hash(JSON.stringify(Object.values(input.params)))
                         : ""}${this.hash(JSON.stringify(input || {}))}`;
             let localData = null;
             try {
-                data = yield localforage.getItem(localKey);
+                localData = yield localforage.getItem(localKey);
             }
-            catch (_h) {
+            catch (_j) {
                 console.log("No Local data found");
             }
             if (localData && !(options === null || options === void 0 ? void 0 : options.disableCache)) {
@@ -283,13 +283,13 @@ class FireEnjin {
                     bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                     cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                     composed: options === null || options === void 0 ? void 0 : options.composed,
-                    onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
-                    onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
+                    onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
+                    onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess,
                 });
             }
-            const fn = typeof ((_c = this.options) === null || _c === void 0 ? void 0 : _c.onFetch) === "function"
+            const fn = typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onFetch) === "function"
                 ? this.options.onFetch(endpoint, input, options)
-                : ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql"
+                : ((_e = this.host) === null || _e === void 0 ? void 0 : _e.type) === "graphql"
                     ? (input === null || input === void 0 ? void 0 : input.query)
                         ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
                             method,
@@ -301,15 +301,23 @@ class FireEnjin {
             data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () { return fn; }), {
                 endpoint,
                 event,
-                target: (options === null || options === void 0 ? void 0 : options.target) || ((_e = options === null || options === void 0 ? void 0 : options.event) === null || _e === void 0 ? void 0 : _e.target),
+                target: (options === null || options === void 0 ? void 0 : options.target) || ((_f = options === null || options === void 0 ? void 0 : options.event) === null || _f === void 0 ? void 0 : _f.target),
                 name,
                 cached: false,
                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                 composed: options === null || options === void 0 ? void 0 : options.composed,
-                onError: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onError,
-                onSuccess: (_g = this.options) === null || _g === void 0 ? void 0 : _g.onSuccess,
+                onError: (_g = this.options) === null || _g === void 0 ? void 0 : _g.onError,
+                onSuccess: (_h = this.options) === null || _h === void 0 ? void 0 : _h.onSuccess,
             });
+            if (!(options === null || options === void 0 ? void 0 : options.disableCache)) {
+                try {
+                    yield localforage.setItem(localKey, data);
+                }
+                catch (_k) {
+                    console.log("No Local data found");
+                }
+            }
             return data;
         });
     }

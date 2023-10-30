@@ -285,12 +285,12 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.fetch = function (endpoint, input, options) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         return __awaiter(this, void 0, void 0, function () {
-            var data, event, name, method, localKey, localData, _h, fn;
+            var data, event, name, method, localKey, localData, _j, fn, _k;
             var _this = this;
-            return __generator(this, function (_j) {
-                switch (_j.label) {
+            return __generator(this, function (_l) {
+                switch (_l.label) {
                     case 0:
                         data = null;
                         event = (options === null || options === void 0 ? void 0 : options.event) || null;
@@ -298,21 +298,21 @@ var FireEnjin = /** @class */ (function () {
                         method = (options === null || options === void 0 ? void 0 : options.method) || "get";
                         localKey = (options === null || options === void 0 ? void 0 : options.cacheKey)
                             ? options.cacheKey
-                            : "".concat(endpoint, "_").concat((input === null || input === void 0 ? void 0 : input.id)
+                            : "".concat(((_a = this.options) === null || _a === void 0 ? void 0 : _a.cachePrefix) ? this.options.cachePrefix : "").concat(endpoint, "_").concat((input === null || input === void 0 ? void 0 : input.id)
                                 ? "".concat(input.id, ":")
                                 : (input === null || input === void 0 ? void 0 : input.params)
                                     ? this.hash(JSON.stringify(Object.values(input.params)))
                                     : "").concat(this.hash(JSON.stringify(input || {})));
                         localData = null;
-                        _j.label = 1;
+                        _l.label = 1;
                     case 1:
-                        _j.trys.push([1, 3, , 4]);
+                        _l.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, localforage.getItem(localKey)];
                     case 2:
-                        data = _j.sent();
+                        localData = _l.sent();
                         return [3 /*break*/, 4];
                     case 3:
-                        _h = _j.sent();
+                        _j = _l.sent();
                         console.log("No Local data found");
                         return [3 /*break*/, 4];
                     case 4:
@@ -328,16 +328,16 @@ var FireEnjin = /** @class */ (function () {
                                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                                 composed: options === null || options === void 0 ? void 0 : options.composed,
-                                onError: (_a = this.options) === null || _a === void 0 ? void 0 : _a.onError,
-                                onSuccess: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onSuccess,
+                                onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
+                                onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess,
                             })];
                     case 5:
-                        data = _j.sent();
-                        _j.label = 6;
+                        data = _l.sent();
+                        _l.label = 6;
                     case 6:
-                        fn = typeof ((_c = this.options) === null || _c === void 0 ? void 0 : _c.onFetch) === "function"
+                        fn = typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onFetch) === "function"
                             ? this.options.onFetch(endpoint, input, options)
-                            : ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql"
+                            : ((_e = this.host) === null || _e === void 0 ? void 0 : _e.type) === "graphql"
                                 ? (input === null || input === void 0 ? void 0 : input.query)
                                     ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
                                         method: method,
@@ -351,18 +351,30 @@ var FireEnjin = /** @class */ (function () {
                             }); }); }, {
                                 endpoint: endpoint,
                                 event: event,
-                                target: (options === null || options === void 0 ? void 0 : options.target) || ((_e = options === null || options === void 0 ? void 0 : options.event) === null || _e === void 0 ? void 0 : _e.target),
+                                target: (options === null || options === void 0 ? void 0 : options.target) || ((_f = options === null || options === void 0 ? void 0 : options.event) === null || _f === void 0 ? void 0 : _f.target),
                                 name: name,
                                 cached: false,
                                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                                 composed: options === null || options === void 0 ? void 0 : options.composed,
-                                onError: (_f = this.options) === null || _f === void 0 ? void 0 : _f.onError,
-                                onSuccess: (_g = this.options) === null || _g === void 0 ? void 0 : _g.onSuccess,
+                                onError: (_g = this.options) === null || _g === void 0 ? void 0 : _g.onError,
+                                onSuccess: (_h = this.options) === null || _h === void 0 ? void 0 : _h.onSuccess,
                             })];
                     case 7:
-                        data = _j.sent();
-                        return [2 /*return*/, data];
+                        data = _l.sent();
+                        if (!!(options === null || options === void 0 ? void 0 : options.disableCache)) return [3 /*break*/, 11];
+                        _l.label = 8;
+                    case 8:
+                        _l.trys.push([8, 10, , 11]);
+                        return [4 /*yield*/, localforage.setItem(localKey, data)];
+                    case 9:
+                        _l.sent();
+                        return [3 /*break*/, 11];
+                    case 10:
+                        _k = _l.sent();
+                        console.log("No Local data found");
+                        return [3 /*break*/, 11];
+                    case 11: return [2 /*return*/, data];
                 }
             });
         });

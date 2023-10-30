@@ -67,6 +67,7 @@ export type FireEnjinOptions = {
   debug?: boolean;
   disableCache?: boolean;
   emulate?: boolean;
+  cachePrefix?: string;
 };
 
 export interface FireEnjinUploadData {

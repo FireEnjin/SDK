@@ -212,14 +212,14 @@ export default class FireEnjin {
         const method = options?.method || "get";
         const localKey = options?.cacheKey
             ? options.cacheKey
-            : `${endpoint}_${input?.id
+            : `${this.options?.cachePrefix ? this.options.cachePrefix : ""}${endpoint}_${input?.id
                 ? `${input.id}:`
                 : input?.params
                     ? this.hash(JSON.stringify(Object.values(input.params)))
                     : ""}${this.hash(JSON.stringify(input || {}))}`;
         let localData = null;
         try {
-            data = await localforage.getItem(localKey);
+            localData = await localforage.getItem(localKey);
         }
         catch {
             console.log("No Local data found");
@@ -261,6 +261,14 @@ export default class FireEnjin {
             onError: this.options?.onError,
             onSuccess: this.options?.onSuccess,
         });
+        if (!options?.disableCache) {
+            try {
+                await localforage.setItem(localKey, data);
+            }
+            catch {
+                console.log("No Local data found");
+            }
+        }
         return data;
     }
     async submit(endpoint, input, options) {
