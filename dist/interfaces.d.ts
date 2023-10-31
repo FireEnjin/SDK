@@ -114,6 +114,7 @@ export interface FireEnjinErrorEvent extends FireEnjinEvent {
 }
 export interface FireEnjinFetchEvent extends FireEnjinEvent {
     id?: string | number;
+    collection?: string;
     disableFetch?: boolean;
     dataPropsMap?: any;
     cacheKey?: string;
@@ -122,6 +123,7 @@ export interface FireEnjinFetchEvent extends FireEnjinEvent {
 }
 export interface FireEnjinSubmitEvent extends FireEnjinEvent {
     id?: string | number;
+    collection?: string;
     disableSubmit?: boolean;
     data?: any;
     params?: any;
