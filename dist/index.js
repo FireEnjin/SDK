@@ -158,6 +158,8 @@ class SessionManager {
 
 class AuthService {
     app;
+    confirmationResult;
+    recaptchaVerifier;
     sessionManager;
     config = {
         authLocalStorageKey: "enjin:session",
@@ -182,6 +184,7 @@ class AuthService {
             }
         }
         this.service = isWindow ? auth.getAuth(this.app) : null;
+        this.service.useDeviceLanguage();
         if (!this.config.googlePlus ||
             !this.config.googlePlus.options ||
             !this.config.googlePlus.options.webClientId) {
@@ -229,6 +232,9 @@ class AuthService {
     //     );
     //   }
     // }
+    async getApplicationVerifier() {
+        return this.recaptchaVerifier;
+    }
     async getUser(skipReload) {
         if (!skipReload)
             await auth.reload(this.service.currentUser);
@@ -267,26 +273,44 @@ class AuthService {
             return authUser;
         }
     }
-    // createCaptcha(buttonEl: HTMLButtonElement) {
-    //   return new Promise((resolve, reject) => {
-    //     try {
-    //       (window as any).RecaptchaVerifier = new RecaptchaVerifier(
-    //         buttonEl,
-    //         {
-    //           size: "invisible",
-    //           callback(response) {
-    //             resolve(response);
-    //           },
-    //         }
-    //       );
-    //     } catch (error) {
-    //       reject(error);
-    //     }
-    //   });
-    // }
-    // createRecapchaWidget(id: string) {
-    //   (window as any).recaptchaVerifier = new RecaptchaVerifier(id);
-    // }
+    async verify() {
+        return new Promise((resolve, reject) => {
+            try {
+                this.recaptchaVerifier?.verify()?.then?.((response) => {
+                    resolve(response);
+                });
+                reject("No recaptchaVerifier found");
+            }
+            catch (error) {
+                reject(error);
+            }
+        });
+    }
+    createCaptcha(el, options = {}) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.recaptchaVerifier = new auth.RecaptchaVerifier(this.service, el, {
+                    size: "invisible",
+                    callback(response) {
+                        resolve(response);
+                    },
+                    "expired-callback": () => {
+                        reject("expired");
+                    },
+                    ...options,
+                });
+                window.recaptchaVerifier = this.recaptchaVerifier;
+            }
+            catch (error) {
+                reject(error);
+            }
+        });
+    }
+    resetCaptcha(widgetId) {
+        const captcha = this.recaptchaVerifier || window.recaptchaVerifier;
+        captcha.reset(widgetId);
+        return captcha;
+    }
     withGoogleCredential(token) {
         return auth.GoogleAuthProvider.credential(token);
     }
@@ -299,7 +323,15 @@ class AuthService {
     withPhoneNumber(phoneNumber, capId) {
         phoneNumber = "+" + phoneNumber;
         window.localStorage.setItem("phoneForSignIn", phoneNumber);
-        return auth.signInWithPhoneNumber(this.service, phoneNumber, capId);
+        const signInRef = auth.signInWithPhoneNumber(this.service, phoneNumber, (this.recaptchaVerifier ||
+            window.recaptchaVerifier));
+        signInRef.then((confirmationResult) => {
+            this.confirmationResult = confirmationResult;
+        });
+        return signInRef;
+    }
+    confirmPhoneNumber(code) {
+        return this.confirmationResult?.confirm?.(code);
     }
     withEmailLink(email, actionCodeSettings) {
         window.localStorage.setItem("emailForSignIn", email);

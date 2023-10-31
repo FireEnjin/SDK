@@ -1,10 +1,12 @@
 import { initializeApp } from "@firebase/app";
-import { getAuth, connectAuthEmulator, getIdTokenResult, signOut, reauthenticateWithCredential, updatePassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, getIdToken, isSignInWithEmailLink, onAuthStateChanged, sendSignInLinkToEmail, signInAnonymously, signInWithEmailAndPassword, signInWithEmailLink, updateEmail, signInWithRedirect, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, signInWithPhoneNumber, signInWithCredential, signInWithCustomToken, reload, } from "@firebase/auth";
+import { getAuth, connectAuthEmulator, getIdTokenResult, signOut, reauthenticateWithCredential, updatePassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, getIdToken, isSignInWithEmailLink, onAuthStateChanged, sendSignInLinkToEmail, signInAnonymously, signInWithEmailAndPassword, signInWithEmailLink, updateEmail, signInWithRedirect, signInWithPopup, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, signInWithPhoneNumber, signInWithCredential, signInWithCustomToken, reload, RecaptchaVerifier, } from "@firebase/auth";
 // import { getMessaging, getToken, onMessage } from "@firebase/messaging";
 import { getDatabase } from "@firebase/database";
 import SessionManager from "./sessionManager";
 export default class AuthService {
     app;
+    confirmationResult;
+    recaptchaVerifier;
     sessionManager;
     config = {
         authLocalStorageKey: "enjin:session",
@@ -29,6 +31,7 @@ export default class AuthService {
             }
         }
         this.service = isWindow ? getAuth(this.app) : null;
+        this.service.useDeviceLanguage();
         if (!this.config.googlePlus ||
             !this.config.googlePlus.options ||
             !this.config.googlePlus.options.webClientId) {
@@ -76,6 +79,9 @@ export default class AuthService {
     //     );
     //   }
     // }
+    async getApplicationVerifier() {
+        return this.recaptchaVerifier;
+    }
     async getUser(skipReload) {
         if (!skipReload)
             await reload(this.service.currentUser);
@@ -114,26 +120,44 @@ export default class AuthService {
             return authUser;
         }
     }
-    // createCaptcha(buttonEl: HTMLButtonElement) {
-    //   return new Promise((resolve, reject) => {
-    //     try {
-    //       (window as any).RecaptchaVerifier = new RecaptchaVerifier(
-    //         buttonEl,
-    //         {
-    //           size: "invisible",
-    //           callback(response) {
-    //             resolve(response);
-    //           },
-    //         }
-    //       );
-    //     } catch (error) {
-    //       reject(error);
-    //     }
-    //   });
-    // }
-    // createRecapchaWidget(id: string) {
-    //   (window as any).recaptchaVerifier = new RecaptchaVerifier(id);
-    // }
+    async verify() {
+        return new Promise((resolve, reject) => {
+            try {
+                this.recaptchaVerifier?.verify()?.then?.((response) => {
+                    resolve(response);
+                });
+                reject("No recaptchaVerifier found");
+            }
+            catch (error) {
+                reject(error);
+            }
+        });
+    }
+    createCaptcha(el, options = {}) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.recaptchaVerifier = new RecaptchaVerifier(this.service, el, {
+                    size: "invisible",
+                    callback(response) {
+                        resolve(response);
+                    },
+                    "expired-callback": () => {
+                        reject("expired");
+                    },
+                    ...options,
+                });
+                window.recaptchaVerifier = this.recaptchaVerifier;
+            }
+            catch (error) {
+                reject(error);
+            }
+        });
+    }
+    resetCaptcha(widgetId) {
+        const captcha = this.recaptchaVerifier || window.recaptchaVerifier;
+        captcha.reset(widgetId);
+        return captcha;
+    }
     withGoogleCredential(token) {
         return GoogleAuthProvider.credential(token);
     }
@@ -146,7 +170,15 @@ export default class AuthService {
     withPhoneNumber(phoneNumber, capId) {
         phoneNumber = "+" + phoneNumber;
         window.localStorage.setItem("phoneForSignIn", phoneNumber);
-        return signInWithPhoneNumber(this.service, phoneNumber, capId);
+        const signInRef = signInWithPhoneNumber(this.service, phoneNumber, (this.recaptchaVerifier ||
+            window.recaptchaVerifier));
+        signInRef.then((confirmationResult) => {
+            this.confirmationResult = confirmationResult;
+        });
+        return signInRef;
+    }
+    confirmPhoneNumber(code) {
+        return this.confirmationResult?.confirm?.(code);
     }
     withEmailLink(email, actionCodeSettings) {
         window.localStorage.setItem("emailForSignIn", email);

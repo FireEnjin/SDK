@@ -88,6 +88,7 @@ export interface FireEnjinUploadInput<I = any> {
 
 export interface FireEnjinFetchInput<I = any> {
   id?: string | number;
+  collection?: string;
   params?: I;
   query?: any;
   [key: string]: any;
@@ -95,6 +96,7 @@ export interface FireEnjinFetchInput<I = any> {
 
 export interface FireEnjinSubmitInput<I = any, T = any> {
   id?: string | number;
+  collection?: string;
   params?: I;
   query?: any;
   data?: T;

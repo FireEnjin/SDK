@@ -76,6 +76,7 @@ var AuthService = /** @class */ (function () {
             }
         }
         this.service = isWindow ? (0, auth_1.getAuth)(this.app) : null;
+        this.service.useDeviceLanguage();
         if (!this.config.googlePlus ||
             !this.config.googlePlus.options ||
             !this.config.googlePlus.options.webClientId) {
@@ -123,6 +124,13 @@ var AuthService = /** @class */ (function () {
     //     );
     //   }
     // }
+    AuthService.prototype.getApplicationVerifier = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.recaptchaVerifier];
+            });
+        });
+    };
     AuthService.prototype.getUser = function (skipReload) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -216,26 +224,47 @@ var AuthService = /** @class */ (function () {
             });
         });
     };
-    // createCaptcha(buttonEl: HTMLButtonElement) {
-    //   return new Promise((resolve, reject) => {
-    //     try {
-    //       (window as any).RecaptchaVerifier = new RecaptchaVerifier(
-    //         buttonEl,
-    //         {
-    //           size: "invisible",
-    //           callback(response) {
-    //             resolve(response);
-    //           },
-    //         }
-    //       );
-    //     } catch (error) {
-    //       reject(error);
-    //     }
-    //   });
-    // }
-    // createRecapchaWidget(id: string) {
-    //   (window as any).recaptchaVerifier = new RecaptchaVerifier(id);
-    // }
+    AuthService.prototype.verify = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        var _a, _b, _c;
+                        try {
+                            (_c = (_b = (_a = _this.recaptchaVerifier) === null || _a === void 0 ? void 0 : _a.verify()) === null || _b === void 0 ? void 0 : _b.then) === null || _c === void 0 ? void 0 : _c.call(_b, function (response) {
+                                resolve(response);
+                            });
+                            reject("No recaptchaVerifier found");
+                        }
+                        catch (error) {
+                            reject(error);
+                        }
+                    })];
+            });
+        });
+    };
+    AuthService.prototype.createCaptcha = function (el, options) {
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        return new Promise(function (resolve, reject) {
+            try {
+                _this.recaptchaVerifier = new auth_1.RecaptchaVerifier(_this.service, el, __assign({ size: "invisible", callback: function (response) {
+                        resolve(response);
+                    }, "expired-callback": function () {
+                        reject("expired");
+                    } }, options));
+                window.recaptchaVerifier = _this.recaptchaVerifier;
+            }
+            catch (error) {
+                reject(error);
+            }
+        });
+    };
+    AuthService.prototype.resetCaptcha = function (widgetId) {
+        var captcha = this.recaptchaVerifier || window.recaptchaVerifier;
+        captcha.reset(widgetId);
+        return captcha;
+    };
     AuthService.prototype.withGoogleCredential = function (token) {
         return auth_1.GoogleAuthProvider.credential(token);
     };
@@ -246,9 +275,19 @@ var AuthService = /** @class */ (function () {
         return (0, auth_1.signInWithCustomToken)(this.service, token);
     };
     AuthService.prototype.withPhoneNumber = function (phoneNumber, capId) {
+        var _this = this;
         phoneNumber = "+" + phoneNumber;
         window.localStorage.setItem("phoneForSignIn", phoneNumber);
-        return (0, auth_1.signInWithPhoneNumber)(this.service, phoneNumber, capId);
+        var signInRef = (0, auth_1.signInWithPhoneNumber)(this.service, phoneNumber, (this.recaptchaVerifier ||
+            window.recaptchaVerifier));
+        signInRef.then(function (confirmationResult) {
+            _this.confirmationResult = confirmationResult;
+        });
+        return signInRef;
+    };
+    AuthService.prototype.confirmPhoneNumber = function (code) {
+        var _a, _b;
+        return (_b = (_a = this.confirmationResult) === null || _a === void 0 ? void 0 : _a.confirm) === null || _b === void 0 ? void 0 : _b.call(_a, code);
     };
     AuthService.prototype.withEmailLink = function (email, actionCodeSettings) {
         window.localStorage.setItem("emailForSignIn", email);

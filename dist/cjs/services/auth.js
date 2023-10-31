@@ -41,6 +41,7 @@ class AuthService {
             }
         }
         this.service = isWindow ? (0, auth_1.getAuth)(this.app) : null;
+        this.service.useDeviceLanguage();
         if (!this.config.googlePlus ||
             !this.config.googlePlus.options ||
             !this.config.googlePlus.options.webClientId) {
@@ -88,6 +89,11 @@ class AuthService {
     //     );
     //   }
     // }
+    getApplicationVerifier() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.recaptchaVerifier;
+        });
+    }
     getUser(skipReload) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!skipReload)
@@ -138,26 +144,42 @@ class AuthService {
             }
         });
     }
-    // createCaptcha(buttonEl: HTMLButtonElement) {
-    //   return new Promise((resolve, reject) => {
-    //     try {
-    //       (window as any).RecaptchaVerifier = new RecaptchaVerifier(
-    //         buttonEl,
-    //         {
-    //           size: "invisible",
-    //           callback(response) {
-    //             resolve(response);
-    //           },
-    //         }
-    //       );
-    //     } catch (error) {
-    //       reject(error);
-    //     }
-    //   });
-    // }
-    // createRecapchaWidget(id: string) {
-    //   (window as any).recaptchaVerifier = new RecaptchaVerifier(id);
-    // }
+    verify() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                var _a, _b, _c;
+                try {
+                    (_c = (_b = (_a = this.recaptchaVerifier) === null || _a === void 0 ? void 0 : _a.verify()) === null || _b === void 0 ? void 0 : _b.then) === null || _c === void 0 ? void 0 : _c.call(_b, (response) => {
+                        resolve(response);
+                    });
+                    reject("No recaptchaVerifier found");
+                }
+                catch (error) {
+                    reject(error);
+                }
+            });
+        });
+    }
+    createCaptcha(el, options = {}) {
+        return new Promise((resolve, reject) => {
+            try {
+                this.recaptchaVerifier = new auth_1.RecaptchaVerifier(this.service, el, Object.assign({ size: "invisible", callback(response) {
+                        resolve(response);
+                    }, "expired-callback": () => {
+                        reject("expired");
+                    } }, options));
+                window.recaptchaVerifier = this.recaptchaVerifier;
+            }
+            catch (error) {
+                reject(error);
+            }
+        });
+    }
+    resetCaptcha(widgetId) {
+        const captcha = this.recaptchaVerifier || window.recaptchaVerifier;
+        captcha.reset(widgetId);
+        return captcha;
+    }
     withGoogleCredential(token) {
         return auth_1.GoogleAuthProvider.credential(token);
     }
@@ -170,7 +192,16 @@ class AuthService {
     withPhoneNumber(phoneNumber, capId) {
         phoneNumber = "+" + phoneNumber;
         window.localStorage.setItem("phoneForSignIn", phoneNumber);
-        return (0, auth_1.signInWithPhoneNumber)(this.service, phoneNumber, capId);
+        const signInRef = (0, auth_1.signInWithPhoneNumber)(this.service, phoneNumber, (this.recaptchaVerifier ||
+            window.recaptchaVerifier));
+        signInRef.then((confirmationResult) => {
+            this.confirmationResult = confirmationResult;
+        });
+        return signInRef;
+    }
+    confirmPhoneNumber(code) {
+        var _a, _b;
+        return (_b = (_a = this.confirmationResult) === null || _a === void 0 ? void 0 : _a.confirm) === null || _b === void 0 ? void 0 : _b.call(_a, code);
     }
     withEmailLink(email, actionCodeSettings) {
         window.localStorage.setItem("emailForSignIn", email);
