@@ -210,16 +210,19 @@ export default class FireEnjin {
         const event = options?.event || null;
         const name = options?.name || null;
         const method = options?.method || "get";
-        const localKey = options?.cacheKey
-            ? options.cacheKey
-            : `${this.options?.cachePrefix ? this.options.cachePrefix : ""}${endpoint}_${input?.id
-                ? `${input.id}:`
-                : input?.params
-                    ? this.hash(JSON.stringify(Object.values(input.params)))
-                    : ""}${this.hash(JSON.stringify(input || {}))}`;
+        const localKey = input?.collection ||
+            (options?.cacheKey
+                ? options.cacheKey
+                : `${this.options?.cachePrefix ? this.options.cachePrefix : ""}${endpoint}_${input?.id
+                    ? `${input.id}:`
+                    : input?.params
+                        ? this.hash(JSON.stringify(Object.values(input.params)))
+                        : ""}${this.hash(JSON.stringify(input || {}))}`);
         let localData = null;
         try {
-            localData = await localforage.getItem(localKey);
+            localData = (await localforage?.getItem?.(localKey)) || null;
+            if (localData && input?.id && input?.collection)
+                localData = localData?.[input.id];
         }
         catch {
             console.log("No Local data found");

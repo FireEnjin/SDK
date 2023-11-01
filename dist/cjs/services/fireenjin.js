@@ -253,24 +253,27 @@ class FireEnjin {
         });
     }
     fetch(endpoint, input, options) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         return __awaiter(this, void 0, void 0, function* () {
             let data = null;
             const event = (options === null || options === void 0 ? void 0 : options.event) || null;
             const name = (options === null || options === void 0 ? void 0 : options.name) || null;
             const method = (options === null || options === void 0 ? void 0 : options.method) || "get";
-            const localKey = (options === null || options === void 0 ? void 0 : options.cacheKey)
-                ? options.cacheKey
-                : `${((_a = this.options) === null || _a === void 0 ? void 0 : _a.cachePrefix) ? this.options.cachePrefix : ""}${endpoint}_${(input === null || input === void 0 ? void 0 : input.id)
-                    ? `${input.id}:`
-                    : (input === null || input === void 0 ? void 0 : input.params)
-                        ? this.hash(JSON.stringify(Object.values(input.params)))
-                        : ""}${this.hash(JSON.stringify(input || {}))}`;
+            const localKey = (input === null || input === void 0 ? void 0 : input.collection) ||
+                ((options === null || options === void 0 ? void 0 : options.cacheKey)
+                    ? options.cacheKey
+                    : `${((_a = this.options) === null || _a === void 0 ? void 0 : _a.cachePrefix) ? this.options.cachePrefix : ""}${endpoint}_${(input === null || input === void 0 ? void 0 : input.id)
+                        ? `${input.id}:`
+                        : (input === null || input === void 0 ? void 0 : input.params)
+                            ? this.hash(JSON.stringify(Object.values(input.params)))
+                            : ""}${this.hash(JSON.stringify(input || {}))}`);
             let localData = null;
             try {
-                localData = yield localforage.getItem(localKey);
+                localData = (yield ((_b = localforage === null || localforage === void 0 ? void 0 : localforage.getItem) === null || _b === void 0 ? void 0 : _b.call(localforage, localKey))) || null;
+                if (localData && (input === null || input === void 0 ? void 0 : input.id) && (input === null || input === void 0 ? void 0 : input.collection))
+                    localData = localData === null || localData === void 0 ? void 0 : localData[input.id];
             }
-            catch (_j) {
+            catch (_k) {
                 console.log("No Local data found");
             }
             if (localData && !(options === null || options === void 0 ? void 0 : options.disableCache)) {
@@ -283,13 +286,13 @@ class FireEnjin {
                     bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                     cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                     composed: options === null || options === void 0 ? void 0 : options.composed,
-                    onError: (_b = this.options) === null || _b === void 0 ? void 0 : _b.onError,
-                    onSuccess: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onSuccess,
+                    onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
+                    onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess,
                 });
             }
-            const fn = typeof ((_d = this.options) === null || _d === void 0 ? void 0 : _d.onFetch) === "function"
+            const fn = typeof ((_e = this.options) === null || _e === void 0 ? void 0 : _e.onFetch) === "function"
                 ? this.options.onFetch(endpoint, input, options)
-                : ((_e = this.host) === null || _e === void 0 ? void 0 : _e.type) === "graphql"
+                : ((_f = this.host) === null || _f === void 0 ? void 0 : _f.type) === "graphql"
                     ? (input === null || input === void 0 ? void 0 : input.query)
                         ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
                             method,
@@ -301,20 +304,20 @@ class FireEnjin {
             data = yield (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () { return fn; }), {
                 endpoint,
                 event,
-                target: (options === null || options === void 0 ? void 0 : options.target) || ((_f = options === null || options === void 0 ? void 0 : options.event) === null || _f === void 0 ? void 0 : _f.target),
+                target: (options === null || options === void 0 ? void 0 : options.target) || ((_g = options === null || options === void 0 ? void 0 : options.event) === null || _g === void 0 ? void 0 : _g.target),
                 name,
                 cached: false,
                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                 composed: options === null || options === void 0 ? void 0 : options.composed,
-                onError: (_g = this.options) === null || _g === void 0 ? void 0 : _g.onError,
-                onSuccess: (_h = this.options) === null || _h === void 0 ? void 0 : _h.onSuccess,
+                onError: (_h = this.options) === null || _h === void 0 ? void 0 : _h.onError,
+                onSuccess: (_j = this.options) === null || _j === void 0 ? void 0 : _j.onSuccess,
             });
             if (!(options === null || options === void 0 ? void 0 : options.disableCache)) {
                 try {
                     yield localforage.setItem(localKey, data);
                 }
-                catch (_k) {
+                catch (_l) {
                     console.log("No Local data found");
                 }
             }
