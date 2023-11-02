@@ -161,7 +161,8 @@ class AuthService {
         });
     }
     createCaptcha(el, options = {}) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             try {
                 this.recaptchaVerifier = new auth_1.RecaptchaVerifier(this.service, el, Object.assign({ size: "invisible", callback(response) {
                         resolve(response);
@@ -169,15 +170,16 @@ class AuthService {
                         reject("expired");
                     } }, options));
                 window.recaptchaVerifier = this.recaptchaVerifier;
+                this.widgetId = yield ((_b = (_a = this.recaptchaVerifier) === null || _a === void 0 ? void 0 : _a.render) === null || _b === void 0 ? void 0 : _b.call(_a));
             }
             catch (error) {
                 reject(error);
             }
-        });
+        }));
     }
     resetCaptcha(widgetId) {
         const captcha = this.recaptchaVerifier || window.recaptchaVerifier;
-        captcha.reset(widgetId);
+        captcha.reset(this.widgetId || widgetId);
         return captcha;
     }
     withGoogleCredential(token) {
@@ -189,7 +191,7 @@ class AuthService {
     withToken(token) {
         return (0, auth_1.signInWithCustomToken)(this.service, token);
     }
-    withPhoneNumber(phoneNumber, capId) {
+    withPhoneNumber(phoneNumber) {
         phoneNumber = "+" + phoneNumber;
         window.localStorage.setItem("phoneForSignIn", phoneNumber);
         const signInRef = (0, auth_1.signInWithPhoneNumber)(this.service, phoneNumber, (this.recaptchaVerifier ||

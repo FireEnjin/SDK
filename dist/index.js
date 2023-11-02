@@ -168,6 +168,7 @@ class AuthService {
             permissions: ["email", "public_profile", "user_friends"],
         },
     };
+    widgetId;
     isOnline = false;
     service;
     constructor(options) {
@@ -287,7 +288,7 @@ class AuthService {
         });
     }
     createCaptcha(el, options = {}) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 this.recaptchaVerifier = new auth.RecaptchaVerifier(this.service, el, {
                     size: "invisible",
@@ -300,6 +301,7 @@ class AuthService {
                     ...options,
                 });
                 window.recaptchaVerifier = this.recaptchaVerifier;
+                this.widgetId = await this.recaptchaVerifier?.render?.();
             }
             catch (error) {
                 reject(error);
@@ -308,7 +310,7 @@ class AuthService {
     }
     resetCaptcha(widgetId) {
         const captcha = this.recaptchaVerifier || window.recaptchaVerifier;
-        captcha.reset(widgetId);
+        captcha.reset(this.widgetId || widgetId);
         return captcha;
     }
     withGoogleCredential(token) {
@@ -320,7 +322,7 @@ class AuthService {
     withToken(token) {
         return auth.signInWithCustomToken(this.service, token);
     }
-    withPhoneNumber(phoneNumber, capId) {
+    withPhoneNumber(phoneNumber) {
         phoneNumber = "+" + phoneNumber;
         window.localStorage.setItem("phoneForSignIn", phoneNumber);
         const signInRef = auth.signInWithPhoneNumber(this.service, phoneNumber, (this.recaptchaVerifier ||

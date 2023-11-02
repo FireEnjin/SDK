@@ -62,7 +62,7 @@ interface IFireEnjinAuthConfig {
 export default class AuthService {
   private app: FirebaseApp;
   private confirmationResult?: ConfirmationResult;
-  private recaptchaVerifier?: ApplicationVerifier;
+  private recaptchaVerifier?: RecaptchaVerifier;
   private sessionManager?: SessionManager;
   private config: IFireEnjinAuthConfig = {
     authLocalStorageKey: "enjin:session",
@@ -71,6 +71,7 @@ export default class AuthService {
       permissions: ["email", "public_profile", "user_friends"],
     },
   };
+  private widgetId?: number;
 
   public isOnline = false;
   public service: Auth;
@@ -216,7 +217,7 @@ export default class AuthService {
   }
 
   createCaptcha(el: string | HTMLElement, options: RecaptchaParameters = {}) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         this.recaptchaVerifier = new RecaptchaVerifier(this.service, el, {
           size: "invisible",
@@ -229,6 +230,7 @@ export default class AuthService {
           ...options,
         });
         (window as any).recaptchaVerifier = this.recaptchaVerifier;
+        this.widgetId = await this.recaptchaVerifier?.render?.();
       } catch (error) {
         reject(error);
       }
@@ -237,7 +239,7 @@ export default class AuthService {
 
   resetCaptcha(widgetId?: string) {
     const captcha = this.recaptchaVerifier || (window as any).recaptchaVerifier;
-    captcha.reset(widgetId);
+    captcha.reset(this.widgetId || widgetId);
     return captcha;
   }
 
@@ -253,7 +255,7 @@ export default class AuthService {
     return signInWithCustomToken(this.service, token);
   }
 
-  withPhoneNumber(phoneNumber: string, capId: any) {
+  withPhoneNumber(phoneNumber: string) {
     phoneNumber = "+" + phoneNumber;
     window.localStorage.setItem("phoneForSignIn", phoneNumber);
 

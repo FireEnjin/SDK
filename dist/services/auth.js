@@ -246,23 +246,36 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.createCaptcha = function (el, options) {
         var _this = this;
         if (options === void 0) { options = {}; }
-        return new Promise(function (resolve, reject) {
-            try {
-                _this.recaptchaVerifier = new auth_1.RecaptchaVerifier(_this.service, el, __assign({ size: "invisible", callback: function (response) {
-                        resolve(response);
-                    }, "expired-callback": function () {
-                        reject("expired");
-                    } }, options));
-                window.recaptchaVerifier = _this.recaptchaVerifier;
-            }
-            catch (error) {
-                reject(error);
-            }
-        });
+        return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+            var _a, error_2;
+            var _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _d.trys.push([0, 2, , 3]);
+                        this.recaptchaVerifier = new auth_1.RecaptchaVerifier(this.service, el, __assign({ size: "invisible", callback: function (response) {
+                                resolve(response);
+                            }, "expired-callback": function () {
+                                reject("expired");
+                            } }, options));
+                        window.recaptchaVerifier = this.recaptchaVerifier;
+                        _a = this;
+                        return [4 /*yield*/, ((_c = (_b = this.recaptchaVerifier) === null || _b === void 0 ? void 0 : _b.render) === null || _c === void 0 ? void 0 : _c.call(_b))];
+                    case 1:
+                        _a.widgetId = _d.sent();
+                        return [3 /*break*/, 3];
+                    case 2:
+                        error_2 = _d.sent();
+                        reject(error_2);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); });
     };
     AuthService.prototype.resetCaptcha = function (widgetId) {
         var captcha = this.recaptchaVerifier || window.recaptchaVerifier;
-        captcha.reset(widgetId);
+        captcha.reset(this.widgetId || widgetId);
         return captcha;
     };
     AuthService.prototype.withGoogleCredential = function (token) {
@@ -274,7 +287,7 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.withToken = function (token) {
         return (0, auth_1.signInWithCustomToken)(this.service, token);
     };
-    AuthService.prototype.withPhoneNumber = function (phoneNumber, capId) {
+    AuthService.prototype.withPhoneNumber = function (phoneNumber) {
         var _this = this;
         phoneNumber = "+" + phoneNumber;
         window.localStorage.setItem("phoneForSignIn", phoneNumber);
@@ -405,7 +418,7 @@ var AuthService = /** @class */ (function () {
                     shouldRedirect = true;
                 }
                 return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var error_2;
+                        var error_3;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
@@ -439,8 +452,8 @@ var AuthService = /** @class */ (function () {
                                     this.emitLoggedInEvent({ currentUser: this.service.currentUser });
                                     return [3 /*break*/, 7];
                                 case 6:
-                                    error_2 = _a.sent();
-                                    console.log(error_2);
+                                    error_3 = _a.sent();
+                                    console.log(error_3);
                                     return [3 /*break*/, 7];
                                 case 7: return [2 /*return*/];
                             }

@@ -1,5 +1,5 @@
 import { FirebaseApp } from "@firebase/app";
-import { Auth, RecaptchaParameters, ApplicationVerifier, ConfirmationResult } from "@firebase/auth";
+import { Auth, RecaptchaVerifier, RecaptchaParameters, ConfirmationResult } from "@firebase/auth";
 import SessionManager from "./sessionManager";
 interface IFireEnjinAuthConfig {
     emulate?: boolean;
@@ -29,13 +29,14 @@ export default class AuthService {
     private recaptchaVerifier?;
     private sessionManager?;
     private config;
+    private widgetId?;
     isOnline: boolean;
     service: Auth;
     constructor(options?: {
         config?: IFireEnjinAuthConfig;
         app?: any;
     });
-    getApplicationVerifier(): Promise<ApplicationVerifier | undefined>;
+    getApplicationVerifier(): Promise<RecaptchaVerifier | undefined>;
     getUser(skipReload?: boolean): Promise<import("@firebase/auth").User | null>;
     getClaims(): Promise<import("@firebase/auth").ParsedToken>;
     getToken(): Promise<string | null>;
@@ -47,7 +48,7 @@ export default class AuthService {
     withGoogleCredential(token: any): import("@firebase/auth").OAuthCredential;
     withCredential(credential: any): Promise<import("@firebase/auth").UserCredential>;
     withToken(token: string): Promise<import("@firebase/auth").UserCredential>;
-    withPhoneNumber(phoneNumber: string, capId: any): Promise<ConfirmationResult>;
+    withPhoneNumber(phoneNumber: string): Promise<ConfirmationResult>;
     confirmPhoneNumber(code: string): Promise<import("@firebase/auth").UserCredential> | undefined;
     withEmailLink(email: string, actionCodeSettings: any): Promise<void>;
     anonymously(): Promise<import("@firebase/auth").UserCredential>;
