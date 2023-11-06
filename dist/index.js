@@ -1069,10 +1069,8 @@ class FireEnjin {
     async onUpload(event) {
         if (this.options?.debug)
             console.log("fireenjinUpload: ", event);
-        if (typeof this.options?.onUpload === "function") {
-            this.options.onUpload(event);
-            return false;
-        }
+        if (typeof this.options?.onUpload === "function")
+            return this.options.onUpload(event);
         const data = await this.upload({
             data: {
                 id: event.detail.data?.id,

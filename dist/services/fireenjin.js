@@ -136,10 +136,8 @@ var FireEnjin = /** @class */ (function () {
                     case 0:
                         if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                             console.log("fireenjinUpload: ", event);
-                        if (typeof ((_b = this.options) === null || _b === void 0 ? void 0 : _b.onUpload) === "function") {
-                            this.options.onUpload(event);
-                            return [2 /*return*/, false];
-                        }
+                        if (typeof ((_b = this.options) === null || _b === void 0 ? void 0 : _b.onUpload) === "function")
+                            return [2 /*return*/, this.options.onUpload(event)];
                         return [4 /*yield*/, this.upload({
                                 data: {
                                     id: (_c = event.detail.data) === null || _c === void 0 ? void 0 : _c.id,

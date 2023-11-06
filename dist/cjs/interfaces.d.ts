@@ -20,7 +20,7 @@ export type FireEnjinHost = {
 };
 export type FireEnjinErrorCallback = (data: FireEnjinErrorEvent) => void;
 export type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
-export type FireEnjinUploadCallback = (data: FireEnjinUploadEvent) => void;
+export type FireEnjinUploadCallback = (data: CustomEvent<FireEnjinUploadEvent>) => Promise<any>;
 export type FireEnjinProgressCallback = (data: FireEnjinProgressEvent) => void;
 export type FireEnjinFetchCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinFetchInput<I>, options?: FireEnjinFetchOptions) => Promise<T>;
 export type FireEnjinSubmitCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinSubmitInput<I, T>, options?: FireEnjinSubmitOptions) => Promise<T>;

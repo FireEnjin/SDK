@@ -29,7 +29,9 @@ export type FireEnjinErrorCallback = (data: FireEnjinErrorEvent) => void;
 
 export type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
 
-export type FireEnjinUploadCallback = (data: FireEnjinUploadEvent) => void;
+export type FireEnjinUploadCallback = (
+  data: CustomEvent<FireEnjinUploadEvent>
+) => Promise<any>;
 
 export type FireEnjinProgressCallback = (data: FireEnjinProgressEvent) => void;
 
