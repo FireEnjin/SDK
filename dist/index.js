@@ -8,6 +8,7 @@ var functions = require('@firebase/functions');
 var localforage = require('localforage');
 var graphqlRequest = require('graphql-request');
 var storage = require('@firebase/storage');
+var storage$1 = require('firebase/storage');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -1345,39 +1346,51 @@ class FireEnjin {
         const path = input?.path || "/";
         const fileName = input?.fileName || (typeof file !== "string" && file?.name);
         const storageRef = storage.ref(this.storage, path + fileName);
-        let uploadResult = null;
-        if (typeof file === "string" && file?.includes("data:")) {
-            uploadResult = await storage.uploadString(storageRef, file, "data_url");
-        }
-        else if (typeof file !== "string") {
-            uploadResult = storage.uploadBytesResumable(storageRef, file);
-            const onProgress = input?.onProgress || this.options.onProgress;
-            const target = options?.target || input?.target || document;
-            uploadResult.on("state_changed", (snapshot) => {
-                const eventData = {
-                    bubbles: true,
-                    cancelable: true,
-                    detail: {
-                        bubbles: true,
-                        cancelable: true,
-                        composed: false,
-                        endpoint: options?.endpoint || "upload",
-                        event: input?.event || options?.event,
-                        method: options?.method || "post",
-                        name: options?.name || "upload",
-                        fileName,
-                        path,
-                        progress: (snapshot?.bytesTransferred || 0) / (snapshot?.totalBytes || 0),
-                        target,
-                        snapshot,
-                    },
-                };
-                if (typeof onProgress === "function")
-                    onProgress(eventData);
-                target.dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
-            });
-            return uploadResult;
-        }
+        return new Promise(async (resolve, reject) => {
+            try {
+                if (typeof file === "string" && file?.includes("data:")) {
+                    const { ref, metadata } = await storage.uploadString(storageRef, file, "data_url");
+                    resolve({ ref, metadata, url: await storage$1.getDownloadURL(ref) });
+                }
+                else if (typeof file !== "string") {
+                    const uploadTask = storage.uploadBytesResumable(storageRef, file);
+                    const onProgress = input?.onProgress || this.options.onProgress;
+                    const target = options?.target || input?.target || document;
+                    uploadTask.on("state_changed", (snapshot) => {
+                        const eventData = {
+                            bubbles: true,
+                            cancelable: true,
+                            detail: {
+                                bubbles: true,
+                                cancelable: true,
+                                composed: false,
+                                endpoint: options?.endpoint || "upload",
+                                event: input?.event || options?.event,
+                                method: options?.method || "post",
+                                name: options?.name || "upload",
+                                fileName,
+                                path,
+                                progress: (snapshot?.bytesTransferred || 0) /
+                                    (snapshot?.totalBytes || 0),
+                                target,
+                                snapshot,
+                            },
+                        };
+                        if (typeof onProgress === "function")
+                            onProgress(eventData);
+                        target.dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
+                    }, null, async () => {
+                        const ref = uploadTask?.snapshot?.ref;
+                        const metadata = uploadTask?.snapshot?.metadata;
+                        resolve({ ref, metadata, url: await storage$1.getDownloadURL(ref) });
+                    });
+                }
+            }
+            catch (e) {
+                console.log("Error uploading file: ", e);
+                reject(e);
+            }
+        });
     }
 }
 

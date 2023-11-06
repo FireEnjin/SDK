@@ -54,6 +54,7 @@ var tryOrFail_1 = require("../helpers/tryOrFail");
 var client_1 = require("./client");
 var database_1 = require("./database");
 var firestore_1 = require("./firestore");
+var storage_2 = require("firebase/storage");
 var FireEnjin = /** @class */ (function () {
     function FireEnjin(options) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
@@ -475,54 +476,90 @@ var FireEnjin = /** @class */ (function () {
      */
     file, input, options) {
         return __awaiter(this, void 0, void 0, function () {
-            var path, fileName, storageRef, uploadResult, onProgress_1, target_1;
+            var path, fileName, storageRef;
+            var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!this.storage)
-                            return [2 /*return*/];
-                        path = (input === null || input === void 0 ? void 0 : input.path) || "/";
-                        fileName = (input === null || input === void 0 ? void 0 : input.fileName) || (typeof file !== "string" && (file === null || file === void 0 ? void 0 : file.name));
-                        storageRef = (0, storage_1.ref)(this.storage, path + fileName);
-                        uploadResult = null;
-                        if (!(typeof file === "string" && (file === null || file === void 0 ? void 0 : file.includes("data:")))) return [3 /*break*/, 2];
-                        return [4 /*yield*/, (0, storage_1.uploadString)(storageRef, file, "data_url")];
-                    case 1:
-                        uploadResult = _a.sent();
-                        return [3 /*break*/, 3];
-                    case 2:
-                        if (typeof file !== "string") {
-                            uploadResult = (0, storage_1.uploadBytesResumable)(storageRef, file);
-                            onProgress_1 = (input === null || input === void 0 ? void 0 : input.onProgress) || this.options.onProgress;
-                            target_1 = (options === null || options === void 0 ? void 0 : options.target) || (input === null || input === void 0 ? void 0 : input.target) || document;
-                            uploadResult.on("state_changed", function (snapshot) {
-                                var eventData = {
-                                    bubbles: true,
-                                    cancelable: true,
-                                    detail: {
-                                        bubbles: true,
-                                        cancelable: true,
-                                        composed: false,
-                                        endpoint: (options === null || options === void 0 ? void 0 : options.endpoint) || "upload",
-                                        event: (input === null || input === void 0 ? void 0 : input.event) || (options === null || options === void 0 ? void 0 : options.event),
-                                        method: (options === null || options === void 0 ? void 0 : options.method) || "post",
-                                        name: (options === null || options === void 0 ? void 0 : options.name) || "upload",
-                                        fileName: fileName,
-                                        path: path,
-                                        progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
-                                        target: target_1,
-                                        snapshot: snapshot,
-                                    },
-                                };
-                                if (typeof onProgress_1 === "function")
-                                    onProgress_1(eventData);
-                                target_1.dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
-                            });
-                            return [2 /*return*/, uploadResult];
-                        }
-                        _a.label = 3;
-                    case 3: return [2 /*return*/];
-                }
+                if (!this.storage)
+                    return [2 /*return*/];
+                path = (input === null || input === void 0 ? void 0 : input.path) || "/";
+                fileName = (input === null || input === void 0 ? void 0 : input.fileName) || (typeof file !== "string" && (file === null || file === void 0 ? void 0 : file.name));
+                storageRef = (0, storage_1.ref)(this.storage, path + fileName);
+                return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                        var _a, ref_1, metadata, _b, uploadTask_1, onProgress_1, target_1, e_1;
+                        var _c;
+                        var _this = this;
+                        return __generator(this, function (_d) {
+                            switch (_d.label) {
+                                case 0:
+                                    _d.trys.push([0, 5, , 6]);
+                                    if (!(typeof file === "string" && (file === null || file === void 0 ? void 0 : file.includes("data:")))) return [3 /*break*/, 3];
+                                    return [4 /*yield*/, (0, storage_1.uploadString)(storageRef, file, "data_url")];
+                                case 1:
+                                    _a = _d.sent(), ref_1 = _a.ref, metadata = _a.metadata;
+                                    _b = resolve;
+                                    _c = { ref: ref_1, metadata: metadata };
+                                    return [4 /*yield*/, (0, storage_2.getDownloadURL)(ref_1)];
+                                case 2:
+                                    _b.apply(void 0, [(_c.url = _d.sent(), _c)]);
+                                    return [3 /*break*/, 4];
+                                case 3:
+                                    if (typeof file !== "string") {
+                                        uploadTask_1 = (0, storage_1.uploadBytesResumable)(storageRef, file);
+                                        onProgress_1 = (input === null || input === void 0 ? void 0 : input.onProgress) || this.options.onProgress;
+                                        target_1 = (options === null || options === void 0 ? void 0 : options.target) || (input === null || input === void 0 ? void 0 : input.target) || document;
+                                        uploadTask_1.on("state_changed", function (snapshot) {
+                                            var eventData = {
+                                                bubbles: true,
+                                                cancelable: true,
+                                                detail: {
+                                                    bubbles: true,
+                                                    cancelable: true,
+                                                    composed: false,
+                                                    endpoint: (options === null || options === void 0 ? void 0 : options.endpoint) || "upload",
+                                                    event: (input === null || input === void 0 ? void 0 : input.event) || (options === null || options === void 0 ? void 0 : options.event),
+                                                    method: (options === null || options === void 0 ? void 0 : options.method) || "post",
+                                                    name: (options === null || options === void 0 ? void 0 : options.name) || "upload",
+                                                    fileName: fileName,
+                                                    path: path,
+                                                    progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) /
+                                                        ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
+                                                    target: target_1,
+                                                    snapshot: snapshot,
+                                                },
+                                            };
+                                            if (typeof onProgress_1 === "function")
+                                                onProgress_1(eventData);
+                                            target_1.dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
+                                        }, null, function () { return __awaiter(_this, void 0, void 0, function () {
+                                            var ref, metadata, _a;
+                                            var _b;
+                                            var _c, _d;
+                                            return __generator(this, function (_e) {
+                                                switch (_e.label) {
+                                                    case 0:
+                                                        ref = (_c = uploadTask_1 === null || uploadTask_1 === void 0 ? void 0 : uploadTask_1.snapshot) === null || _c === void 0 ? void 0 : _c.ref;
+                                                        metadata = (_d = uploadTask_1 === null || uploadTask_1 === void 0 ? void 0 : uploadTask_1.snapshot) === null || _d === void 0 ? void 0 : _d.metadata;
+                                                        _a = resolve;
+                                                        _b = { ref: ref, metadata: metadata };
+                                                        return [4 /*yield*/, (0, storage_2.getDownloadURL)(ref)];
+                                                    case 1:
+                                                        _a.apply(void 0, [(_b.url = _e.sent(), _b)]);
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); });
+                                    }
+                                    _d.label = 4;
+                                case 4: return [3 /*break*/, 6];
+                                case 5:
+                                    e_1 = _d.sent();
+                                    console.log("Error uploading file: ", e_1);
+                                    reject(e_1);
+                                    return [3 /*break*/, 6];
+                                case 6: return [2 /*return*/];
+                            }
+                        });
+                    }); })];
             });
         });
     };

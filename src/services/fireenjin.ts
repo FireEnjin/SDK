@@ -25,7 +25,13 @@ import tryOrFail from "../helpers/tryOrFail";
 import Client from "./client";
 import DatabaseService from "./database";
 import FirestoreClient from "./firestore";
-import { UploadResult, UploadTask } from "firebase/storage";
+import {
+  FullMetadata,
+  StorageReference,
+  UploadResult,
+  UploadTask,
+  getDownloadURL,
+} from "firebase/storage";
 
 export default class FireEnjin {
   client: Client | GraphQLClient | FirestoreClient | any;
@@ -471,37 +477,59 @@ export default class FireEnjin {
     const fileName =
       input?.fileName || (typeof file !== "string" && file?.name);
     const storageRef = ref(this.storage, path + fileName);
-    let uploadResult: UploadResult | UploadTask | null = null;
-    if (typeof file === "string" && (file as string)?.includes("data:")) {
-      uploadResult = await uploadString(storageRef, file, "data_url");
-    } else if (typeof file !== "string") {
-      uploadResult = uploadBytesResumable(storageRef, file);
-      const onProgress = input?.onProgress || this.options.onProgress;
-      const target = options?.target || input?.target || document;
-      uploadResult.on("state_changed", (snapshot) => {
-        const eventData = {
-          bubbles: true,
-          cancelable: true,
-          detail: {
-            bubbles: true,
-            cancelable: true,
-            composed: false,
-            endpoint: options?.endpoint || "upload",
-            event: input?.event || options?.event,
-            method: options?.method || "post",
-            name: options?.name || "upload",
-            fileName,
-            path,
-            progress:
-              (snapshot?.bytesTransferred || 0) / (snapshot?.totalBytes || 0),
-            target,
-            snapshot,
-          } as FireEnjinProgressEvent,
-        };
-        if (typeof onProgress === "function") onProgress(eventData);
-        target.dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
-      });
-      return uploadResult;
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (typeof file === "string" && (file as string)?.includes("data:")) {
+          const { ref, metadata } = await uploadString(
+            storageRef,
+            file,
+            "data_url"
+          );
+          resolve({ ref, metadata, url: await getDownloadURL(ref) });
+        } else if (typeof file !== "string") {
+          const uploadTask = uploadBytesResumable(storageRef, file);
+          const onProgress = input?.onProgress || this.options.onProgress;
+          const target = options?.target || input?.target || document;
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const eventData = {
+                bubbles: true,
+                cancelable: true,
+                detail: {
+                  bubbles: true,
+                  cancelable: true,
+                  composed: false,
+                  endpoint: options?.endpoint || "upload",
+                  event: input?.event || options?.event,
+                  method: options?.method || "post",
+                  name: options?.name || "upload",
+                  fileName,
+                  path,
+                  progress:
+                    (snapshot?.bytesTransferred || 0) /
+                    (snapshot?.totalBytes || 0),
+                  target,
+                  snapshot,
+                } as FireEnjinProgressEvent,
+              };
+              if (typeof onProgress === "function") onProgress(eventData);
+              target.dispatchEvent(
+                new CustomEvent("fireenjinProgress", eventData)
+              );
+            },
+            null,
+            async () => {
+              const ref = uploadTask?.snapshot?.ref;
+              const metadata = uploadTask?.snapshot?.metadata;
+              resolve({ ref, metadata, url: await getDownloadURL(ref) });
+            }
+          );
+        }
+      } catch (e) {
+        console.log("Error uploading file: ", e);
+        reject(e);
+      }
+    });
   }
 }

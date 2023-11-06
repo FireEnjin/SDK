@@ -42,6 +42,7 @@ const tryOrFail_1 = __importDefault(require("../helpers/tryOrFail"));
 const client_1 = __importDefault(require("./client"));
 const database_1 = __importDefault(require("./database"));
 const firestore_1 = __importDefault(require("./firestore"));
+const storage_2 = require("firebase/storage");
 class FireEnjin {
     constructor(options) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
@@ -415,39 +416,52 @@ class FireEnjin {
             const path = (input === null || input === void 0 ? void 0 : input.path) || "/";
             const fileName = (input === null || input === void 0 ? void 0 : input.fileName) || (typeof file !== "string" && (file === null || file === void 0 ? void 0 : file.name));
             const storageRef = (0, storage_1.ref)(this.storage, path + fileName);
-            let uploadResult = null;
-            if (typeof file === "string" && (file === null || file === void 0 ? void 0 : file.includes("data:"))) {
-                uploadResult = yield (0, storage_1.uploadString)(storageRef, file, "data_url");
-            }
-            else if (typeof file !== "string") {
-                uploadResult = (0, storage_1.uploadBytesResumable)(storageRef, file);
-                const onProgress = (input === null || input === void 0 ? void 0 : input.onProgress) || this.options.onProgress;
-                const target = (options === null || options === void 0 ? void 0 : options.target) || (input === null || input === void 0 ? void 0 : input.target) || document;
-                uploadResult.on("state_changed", (snapshot) => {
-                    const eventData = {
-                        bubbles: true,
-                        cancelable: true,
-                        detail: {
-                            bubbles: true,
-                            cancelable: true,
-                            composed: false,
-                            endpoint: (options === null || options === void 0 ? void 0 : options.endpoint) || "upload",
-                            event: (input === null || input === void 0 ? void 0 : input.event) || (options === null || options === void 0 ? void 0 : options.event),
-                            method: (options === null || options === void 0 ? void 0 : options.method) || "post",
-                            name: (options === null || options === void 0 ? void 0 : options.name) || "upload",
-                            fileName,
-                            path,
-                            progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
-                            target,
-                            snapshot,
-                        },
-                    };
-                    if (typeof onProgress === "function")
-                        onProgress(eventData);
-                    target.dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
-                });
-                return uploadResult;
-            }
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    if (typeof file === "string" && (file === null || file === void 0 ? void 0 : file.includes("data:"))) {
+                        const { ref, metadata } = yield (0, storage_1.uploadString)(storageRef, file, "data_url");
+                        resolve({ ref, metadata, url: yield (0, storage_2.getDownloadURL)(ref) });
+                    }
+                    else if (typeof file !== "string") {
+                        const uploadTask = (0, storage_1.uploadBytesResumable)(storageRef, file);
+                        const onProgress = (input === null || input === void 0 ? void 0 : input.onProgress) || this.options.onProgress;
+                        const target = (options === null || options === void 0 ? void 0 : options.target) || (input === null || input === void 0 ? void 0 : input.target) || document;
+                        uploadTask.on("state_changed", (snapshot) => {
+                            const eventData = {
+                                bubbles: true,
+                                cancelable: true,
+                                detail: {
+                                    bubbles: true,
+                                    cancelable: true,
+                                    composed: false,
+                                    endpoint: (options === null || options === void 0 ? void 0 : options.endpoint) || "upload",
+                                    event: (input === null || input === void 0 ? void 0 : input.event) || (options === null || options === void 0 ? void 0 : options.event),
+                                    method: (options === null || options === void 0 ? void 0 : options.method) || "post",
+                                    name: (options === null || options === void 0 ? void 0 : options.name) || "upload",
+                                    fileName,
+                                    path,
+                                    progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) /
+                                        ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
+                                    target,
+                                    snapshot,
+                                },
+                            };
+                            if (typeof onProgress === "function")
+                                onProgress(eventData);
+                            target.dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
+                        }, null, () => __awaiter(this, void 0, void 0, function* () {
+                            var _a, _b;
+                            const ref = (_a = uploadTask === null || uploadTask === void 0 ? void 0 : uploadTask.snapshot) === null || _a === void 0 ? void 0 : _a.ref;
+                            const metadata = (_b = uploadTask === null || uploadTask === void 0 ? void 0 : uploadTask.snapshot) === null || _b === void 0 ? void 0 : _b.metadata;
+                            resolve({ ref, metadata, url: yield (0, storage_2.getDownloadURL)(ref) });
+                        }));
+                    }
+                }
+                catch (e) {
+                    console.log("Error uploading file: ", e);
+                    reject(e);
+                }
+            }));
         });
     }
 }

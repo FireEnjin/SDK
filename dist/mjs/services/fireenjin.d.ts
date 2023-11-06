@@ -31,5 +31,5 @@ export default class FireEnjin {
         path?: string;
         fileName?: string;
         onProgress?: (snapshot: any) => void;
-    }, options?: FireEnjinMethodOptions): Promise<import("@firebase/storage").UploadTaskSnapshot | undefined>;
+    }, options?: FireEnjinMethodOptions): Promise<unknown>;
 }
