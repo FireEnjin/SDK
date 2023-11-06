@@ -21,7 +21,11 @@ export default class FireEnjin {
     setHeader(key: string, value: string): any;
     setHeaders(headers: any): any;
     setConnection(nameUrlOrIndex: string | number): FireEnjinHost;
-    uploadFile(file: File, input?: {
+    uploadFile(
+    /**
+     * The file or Data URI to upload
+     */
+    file: File | string, input?: {
         event?: any;
         target?: any;
         path?: string;

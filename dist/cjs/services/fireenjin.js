@@ -406,40 +406,50 @@ class FireEnjin {
         this.client.setEndpoint(((_r = this.host) === null || _r === void 0 ? void 0 : _r.url) || "http://localhost:4000");
         return this.host;
     }
-    uploadFile(file, input, options) {
+    uploadFile(
+    /**
+     * The file or Data URI to upload
+     */
+    file, input, options) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.storage)
                 return;
             const path = (input === null || input === void 0 ? void 0 : input.path) || "/";
-            const fileName = (input === null || input === void 0 ? void 0 : input.fileName) || (file === null || file === void 0 ? void 0 : file.name);
+            const fileName = (input === null || input === void 0 ? void 0 : input.fileName) || (typeof file !== "string" && (file === null || file === void 0 ? void 0 : file.name));
             const storageRef = (0, storage_1.ref)(this.storage, path + fileName);
-            const uploadTask = (0, storage_1.uploadBytesResumable)(storageRef, file);
-            const onProgress = (input === null || input === void 0 ? void 0 : input.onProgress) || this.options.onProgress;
-            const target = (options === null || options === void 0 ? void 0 : options.target) || (input === null || input === void 0 ? void 0 : input.target) || document;
-            uploadTask.on("state_changed", (snapshot) => {
-                const eventData = {
-                    bubbles: true,
-                    cancelable: true,
-                    detail: {
+            let uploadResult = null;
+            if (typeof file === "string" && (file === null || file === void 0 ? void 0 : file.includes("data:"))) {
+                uploadResult = yield (0, storage_1.uploadString)(storageRef, file, "data_url");
+            }
+            else if (typeof file !== "string") {
+                uploadResult = (0, storage_1.uploadBytesResumable)(storageRef, file);
+                const onProgress = (input === null || input === void 0 ? void 0 : input.onProgress) || this.options.onProgress;
+                const target = (options === null || options === void 0 ? void 0 : options.target) || (input === null || input === void 0 ? void 0 : input.target) || document;
+                uploadResult.on("state_changed", (snapshot) => {
+                    const eventData = {
                         bubbles: true,
                         cancelable: true,
-                        composed: false,
-                        endpoint: (options === null || options === void 0 ? void 0 : options.endpoint) || "upload",
-                        event: (input === null || input === void 0 ? void 0 : input.event) || (options === null || options === void 0 ? void 0 : options.event),
-                        method: (options === null || options === void 0 ? void 0 : options.method) || "post",
-                        name: (options === null || options === void 0 ? void 0 : options.name) || "upload",
-                        fileName,
-                        path,
-                        progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
-                        target,
-                        snapshot,
-                    },
-                };
-                if (typeof onProgress === "function")
-                    onProgress(eventData);
-                target.dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
-            });
-            return uploadTask;
+                        detail: {
+                            bubbles: true,
+                            cancelable: true,
+                            composed: false,
+                            endpoint: (options === null || options === void 0 ? void 0 : options.endpoint) || "upload",
+                            event: (input === null || input === void 0 ? void 0 : input.event) || (options === null || options === void 0 ? void 0 : options.event),
+                            method: (options === null || options === void 0 ? void 0 : options.method) || "post",
+                            name: (options === null || options === void 0 ? void 0 : options.name) || "upload",
+                            fileName,
+                            path,
+                            progress: ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.bytesTransferred) || 0) / ((snapshot === null || snapshot === void 0 ? void 0 : snapshot.totalBytes) || 0),
+                            target,
+                            snapshot,
+                        },
+                    };
+                    if (typeof onProgress === "function")
+                        onProgress(eventData);
+                    target.dispatchEvent(new CustomEvent("fireenjinProgress", eventData));
+                });
+                return uploadResult;
+            }
         });
     }
 }
