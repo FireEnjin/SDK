@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/fireenjin/sdk#readme",
   "dependencies": {
+    "@firebase/auth": "^1.4.0",
     "firebase": "^10.6.0",
     "graphql": "^15.8.0",
     "graphql-request": "^4.2.0",
