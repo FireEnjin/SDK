@@ -43,6 +43,9 @@ const client_1 = __importDefault(require("./client"));
 const database_1 = __importDefault(require("./database"));
 const firestore_1 = __importDefault(require("./firestore"));
 const storage_2 = require("firebase/storage");
+const firstToLowerCase_1 = __importDefault(require("../helpers/firstToLowerCase"));
+const getByPath_1 = __importDefault(require("../helpers/getByPath"));
+const setByPath_1 = __importDefault(require("../helpers/setByPath"));
 class FireEnjin {
     constructor(options) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
@@ -165,6 +168,19 @@ class FireEnjin {
             document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
             document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
             document.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+            if (options === null || options === void 0 ? void 0 : options.autoBindAttributes)
+                document.addEventListener("DOMContentLoaded", () => {
+                    this.watchDataAttributes();
+                    let oldHref = document.location.href;
+                    const body = document.querySelector("body");
+                    const observer = new MutationObserver((mutations) => {
+                        if (oldHref !== document.location.href) {
+                            oldHref = document.location.href;
+                            this.watchDataAttributes();
+                        }
+                    });
+                    observer.observe(body, { childList: true, subtree: true });
+                }, false);
             if (options === null || options === void 0 ? void 0 : options.debug) {
                 document.addEventListener("fireenjinSuccess", (event) => {
                     console.log("fireenjinSuccess: ", event);
@@ -271,6 +287,12 @@ class FireEnjin {
             });
         });
     }
+    mergeSignal(signalKey, signal) {
+        if (!this.signals[signalKey])
+            this.signals[signalKey] = new Set();
+        this.signals[signalKey].add(signal);
+        return this.signals[signalKey];
+    }
     createSignal(initialValue, signalKey) {
         let value = initialValue;
         const key = signalKey || `signal:${Math.random()}`;
@@ -286,7 +308,7 @@ class FireEnjin {
             value = newValue;
             this.signals[key].forEach((fn) => fn());
         };
-        return [read, write, signalKey];
+        return [read, write, key];
     }
     createEffect(callback) {
         this.currentSignal = callback;
@@ -567,6 +589,55 @@ class FireEnjin {
                 }
             }));
         });
+    }
+    watchDataAttributes() {
+        document.querySelectorAll("[data-fetch]").forEach((element) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+            const url = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.fetch;
+            const fetchInput = ((_c = (_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.fetchInput) === null || _c === void 0 ? void 0 : _c.includes("{")) &&
+                JSON.parse((_d = element === null || element === void 0 ? void 0 : element.dataset) === null || _d === void 0 ? void 0 : _d.fetchInput);
+            const fetchOptions = ((_f = (_e = element === null || element === void 0 ? void 0 : element.dataset) === null || _e === void 0 ? void 0 : _e.fetchOptions) === null || _f === void 0 ? void 0 : _f.includes("{")) &&
+                JSON.parse((_g = element === null || element === void 0 ? void 0 : element.dataset) === null || _g === void 0 ? void 0 : _g.fetchOptions);
+            const stateKey = (_h = element === null || element === void 0 ? void 0 : element.dataset) === null || _h === void 0 ? void 0 : _h.state;
+            const signalKey = ((_j = element === null || element === void 0 ? void 0 : element.dataset) === null || _j === void 0 ? void 0 : _j.signal) || `state:${stateKey}`;
+            const res = yield this.fetch(url, fetchInput, fetchOptions);
+            this.mergeSignal(signalKey, () => {
+                Object.keys(element.dataset).forEach((key) => {
+                    if (key.includes("bind")) {
+                        let propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
+                        if (propName === "innerHtml")
+                            propName = "innerHTML";
+                        if (propName === "outerHtml")
+                            propName = "outerHTML";
+                        const value = (0, getByPath_1.default)(this.state[stateKey], element.dataset[key]);
+                        element[propName] = value;
+                    }
+                    return;
+                });
+            });
+            if (typeof stateKey === "string")
+                (0, setByPath_1.default)(this.state, stateKey, res);
+        }));
+        document.querySelectorAll("[data-signal]").forEach((element) => __awaiter(this, void 0, void 0, function* () {
+            var _k, _l;
+            const stateKey = (_k = element === null || element === void 0 ? void 0 : element.dataset) === null || _k === void 0 ? void 0 : _k.state;
+            const signalKey = ((_l = element === null || element === void 0 ? void 0 : element.dataset) === null || _l === void 0 ? void 0 : _l.signal) || `state:${stateKey}`;
+            this.mergeSignal(signalKey, () => {
+                Object.keys(element.dataset).forEach((key) => {
+                    var _a;
+                    if (key.includes("bind")) {
+                        let propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
+                        if (propName === "innerHtml")
+                            propName = "innerHTML";
+                        if (propName === "outerHtml")
+                            propName = "outerHTML";
+                        if ((_a = this.state) === null || _a === void 0 ? void 0 : _a[stateKey])
+                            element[propName] = (0, getByPath_1.default)(this.state[stateKey], element.dataset[key]);
+                    }
+                    return;
+                });
+            });
+        }));
     }
 }
 exports.default = FireEnjin;

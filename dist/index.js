@@ -989,6 +989,57 @@ class FirestoreClient {
     }
 }
 
+/**
+ * Lowercases the first character in the `string`.
+ *
+ * @param {String} string
+ *
+ * @returns {String}
+ */
+function firstToLowerCase(string) {
+    if (typeof string !== 'string') {
+        return string;
+    }
+    if (string.length === 0) {
+        return string;
+    }
+    return string[0].toLowerCase() + string.slice(1);
+}
+
+function getByPath(o, s) {
+    s = s.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties
+    s = s.replace(/^\./, ""); // strip a leading dot
+    var a = s.split(".");
+    for (var i = 0, n = a.length; i < n; ++i) {
+        var k = a[i];
+        if (k in o) {
+            o = o[k];
+        }
+        else {
+            return;
+        }
+    }
+    return o;
+}
+
+function isNumeric(value) {
+    return /^-?\d+$/.test(value);
+}
+
+function setByPath(obj, path, value) {
+    const pList = path.split(".");
+    const len = pList.length;
+    for (let i = 0; i < len - 1; i++) {
+        const nextElemIsArray = isNumeric(pList[i + 1]);
+        const elem = pList[i];
+        if (!obj[elem])
+            obj[elem] = nextElemIsArray ? [] : {};
+        obj = obj[elem];
+    }
+    obj[pList[len - 1]] = value;
+    return obj;
+}
+
 class FireEnjin {
     client;
     sdk = {};
@@ -1114,6 +1165,19 @@ class FireEnjin {
             document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
             document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
             document.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+            if (options?.autoBindAttributes)
+                document.addEventListener("DOMContentLoaded", () => {
+                    this.watchDataAttributes();
+                    let oldHref = document.location.href;
+                    const body = document.querySelector("body");
+                    const observer = new MutationObserver((mutations) => {
+                        if (oldHref !== document.location.href) {
+                            oldHref = document.location.href;
+                            this.watchDataAttributes();
+                        }
+                    });
+                    observer.observe(body, { childList: true, subtree: true });
+                }, false);
             if (options?.debug) {
                 document.addEventListener("fireenjinSuccess", (event) => {
                     console.log("fireenjinSuccess: ", event);
@@ -1211,6 +1275,12 @@ class FireEnjin {
             method: event?.detail?.method || target?.method,
         });
     }
+    mergeSignal(signalKey, signal) {
+        if (!this.signals[signalKey])
+            this.signals[signalKey] = new Set();
+        this.signals[signalKey].add(signal);
+        return this.signals[signalKey];
+    }
     createSignal(initialValue, signalKey) {
         let value = initialValue;
         const key = signalKey || `signal:${Math.random()}`;
@@ -1226,7 +1296,7 @@ class FireEnjin {
             value = newValue;
             this.signals[key].forEach((fn) => fn());
         };
-        return [read, write, signalKey];
+        return [read, write, key];
     }
     createEffect(callback) {
         this.currentSignal = callback;
@@ -1492,6 +1562,52 @@ class FireEnjin {
                 console.log("Error uploading file: ", e);
                 reject(e);
             }
+        });
+    }
+    watchDataAttributes() {
+        document.querySelectorAll("[data-fetch]").forEach(async (element) => {
+            const url = element?.dataset?.fetch;
+            const fetchInput = element?.dataset?.fetchInput?.includes("{") &&
+                JSON.parse(element?.dataset?.fetchInput);
+            const fetchOptions = element?.dataset?.fetchOptions?.includes("{") &&
+                JSON.parse(element?.dataset?.fetchOptions);
+            const stateKey = element?.dataset?.state;
+            const signalKey = element?.dataset?.signal || `state:${stateKey}`;
+            const res = await this.fetch(url, fetchInput, fetchOptions);
+            this.mergeSignal(signalKey, () => {
+                Object.keys(element.dataset).forEach((key) => {
+                    if (key.includes("bind")) {
+                        let propName = firstToLowerCase(key.replace("bind", ""));
+                        if (propName === "innerHtml")
+                            propName = "innerHTML";
+                        if (propName === "outerHtml")
+                            propName = "outerHTML";
+                        const value = getByPath(this.state[stateKey], element.dataset[key]);
+                        element[propName] = value;
+                    }
+                    return;
+                });
+            });
+            if (typeof stateKey === "string")
+                setByPath(this.state, stateKey, res);
+        });
+        document.querySelectorAll("[data-signal]").forEach(async (element) => {
+            const stateKey = element?.dataset?.state;
+            const signalKey = element?.dataset?.signal || `state:${stateKey}`;
+            this.mergeSignal(signalKey, () => {
+                Object.keys(element.dataset).forEach((key) => {
+                    if (key.includes("bind")) {
+                        let propName = firstToLowerCase(key.replace("bind", ""));
+                        if (propName === "innerHtml")
+                            propName = "innerHTML";
+                        if (propName === "outerHtml")
+                            propName = "outerHTML";
+                        if (this.state?.[stateKey])
+                            element[propName] = getByPath(this.state[stateKey], element.dataset[key]);
+                    }
+                    return;
+                });
+            });
         });
     }
 }

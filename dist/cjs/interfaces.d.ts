@@ -49,6 +49,7 @@ export type FireEnjinOptions<I = any> = {
     emulate?: boolean;
     cachePrefix?: string;
     state?: I;
+    autoBindAttributes?: boolean;
 };
 export interface FireEnjinUploadData {
     id?: string | number;

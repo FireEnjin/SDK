@@ -19,7 +19,8 @@ export default class FireEnjin<I = any> {
     private onUpload;
     private onSubmit;
     private onFetch;
-    createSignal(initialValue: any, signalKey?: string): (string | ((newValue: any) => void))[];
+    mergeSignal(signalKey: string, signal: () => void): Set<() => void>;
+    createSignal(initialValue: any, signalKey?: string): [() => any, any, string];
     createEffect(callback: () => void): void;
     createEffectPromise(callback: () => Promise<void>): void;
     clearSignal(signalKey: string): {
@@ -43,4 +44,5 @@ export default class FireEnjin<I = any> {
         fileName?: string;
         onProgress?: (snapshot: any) => void;
     }, options?: FireEnjinMethodOptions): Promise<unknown>;
+    watchDataAttributes(): void;
 }

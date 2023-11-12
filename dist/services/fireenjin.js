@@ -55,6 +55,9 @@ var client_1 = require("./client");
 var database_1 = require("./database");
 var firestore_1 = require("./firestore");
 var storage_2 = require("firebase/storage");
+var firstToLowerCase_1 = require("../helpers/firstToLowerCase");
+var getByPath_1 = require("../helpers/getByPath");
+var setByPath_1 = require("../helpers/setByPath");
 var FireEnjin = /** @class */ (function () {
     function FireEnjin(options) {
         var _this = this;
@@ -178,6 +181,19 @@ var FireEnjin = /** @class */ (function () {
             document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
             document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
             document.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+            if (options === null || options === void 0 ? void 0 : options.autoBindAttributes)
+                document.addEventListener("DOMContentLoaded", function () {
+                    _this.watchDataAttributes();
+                    var oldHref = document.location.href;
+                    var body = document.querySelector("body");
+                    var observer = new MutationObserver(function (mutations) {
+                        if (oldHref !== document.location.href) {
+                            oldHref = document.location.href;
+                            _this.watchDataAttributes();
+                        }
+                    });
+                    observer.observe(body, { childList: true, subtree: true });
+                }, false);
             if (options === null || options === void 0 ? void 0 : options.debug) {
                 document.addEventListener("fireenjinSuccess", function (event) {
                     console.log("fireenjinSuccess: ", event);
@@ -298,6 +314,12 @@ var FireEnjin = /** @class */ (function () {
             });
         });
     };
+    FireEnjin.prototype.mergeSignal = function (signalKey, signal) {
+        if (!this.signals[signalKey])
+            this.signals[signalKey] = new Set();
+        this.signals[signalKey].add(signal);
+        return this.signals[signalKey];
+    };
     FireEnjin.prototype.createSignal = function (initialValue, signalKey) {
         var _this = this;
         var value = initialValue;
@@ -314,7 +336,7 @@ var FireEnjin = /** @class */ (function () {
             value = newValue;
             _this.signals[key].forEach(function (fn) { return fn(); });
         };
-        return [read, write, signalKey];
+        return [read, write, key];
     };
     FireEnjin.prototype.createEffect = function (callback) {
         this.currentSignal = callback;
@@ -669,6 +691,71 @@ var FireEnjin = /** @class */ (function () {
                     }); })];
             });
         });
+    };
+    FireEnjin.prototype.watchDataAttributes = function () {
+        var _this = this;
+        document.querySelectorAll("[data-fetch]").forEach(function (element) { return __awaiter(_this, void 0, void 0, function () {
+            var url, fetchInput, fetchOptions, stateKey, signalKey, res;
+            var _this = this;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+            return __generator(this, function (_k) {
+                switch (_k.label) {
+                    case 0:
+                        url = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.fetch;
+                        fetchInput = ((_c = (_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.fetchInput) === null || _c === void 0 ? void 0 : _c.includes("{")) &&
+                            JSON.parse((_d = element === null || element === void 0 ? void 0 : element.dataset) === null || _d === void 0 ? void 0 : _d.fetchInput);
+                        fetchOptions = ((_f = (_e = element === null || element === void 0 ? void 0 : element.dataset) === null || _e === void 0 ? void 0 : _e.fetchOptions) === null || _f === void 0 ? void 0 : _f.includes("{")) &&
+                            JSON.parse((_g = element === null || element === void 0 ? void 0 : element.dataset) === null || _g === void 0 ? void 0 : _g.fetchOptions);
+                        stateKey = (_h = element === null || element === void 0 ? void 0 : element.dataset) === null || _h === void 0 ? void 0 : _h.state;
+                        signalKey = ((_j = element === null || element === void 0 ? void 0 : element.dataset) === null || _j === void 0 ? void 0 : _j.signal) || "state:".concat(stateKey);
+                        return [4 /*yield*/, this.fetch(url, fetchInput, fetchOptions)];
+                    case 1:
+                        res = _k.sent();
+                        this.mergeSignal(signalKey, function () {
+                            Object.keys(element.dataset).forEach(function (key) {
+                                if (key.includes("bind")) {
+                                    var propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
+                                    if (propName === "innerHtml")
+                                        propName = "innerHTML";
+                                    if (propName === "outerHtml")
+                                        propName = "outerHTML";
+                                    var value = (0, getByPath_1.default)(_this.state[stateKey], element.dataset[key]);
+                                    element[propName] = value;
+                                }
+                                return;
+                            });
+                        });
+                        if (typeof stateKey === "string")
+                            (0, setByPath_1.default)(this.state, stateKey, res);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        document.querySelectorAll("[data-signal]").forEach(function (element) { return __awaiter(_this, void 0, void 0, function () {
+            var stateKey, signalKey;
+            var _this = this;
+            var _a, _b;
+            return __generator(this, function (_c) {
+                stateKey = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.state;
+                signalKey = ((_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.signal) || "state:".concat(stateKey);
+                this.mergeSignal(signalKey, function () {
+                    Object.keys(element.dataset).forEach(function (key) {
+                        var _a;
+                        if (key.includes("bind")) {
+                            var propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
+                            if (propName === "innerHtml")
+                                propName = "innerHTML";
+                            if (propName === "outerHtml")
+                                propName = "outerHTML";
+                            if ((_a = _this.state) === null || _a === void 0 ? void 0 : _a[stateKey])
+                                element[propName] = (0, getByPath_1.default)(_this.state[stateKey], element.dataset[key]);
+                        }
+                        return;
+                    });
+                });
+                return [2 /*return*/];
+            });
+        }); });
     };
     return FireEnjin;
 }());

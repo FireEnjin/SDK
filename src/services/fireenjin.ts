@@ -26,6 +26,9 @@ import Client from "./client";
 import DatabaseService from "./database";
 import FirestoreClient from "./firestore";
 import { getDownloadURL } from "firebase/storage";
+import firstToLowerCase from "../helpers/firstToLowerCase";
+import getByPath from "../helpers/getByPath";
+import setByPath from "../helpers/setByPath";
 
 export default class FireEnjin<I = any> {
   client: Client | GraphQLClient | FirestoreClient | any;
@@ -165,6 +168,23 @@ export default class FireEnjin<I = any> {
         "fireenjinFetch",
         this.onFetch.bind(this) as any
       );
+      if (options?.autoBindAttributes)
+        document.addEventListener(
+          "DOMContentLoaded",
+          () => {
+            this.watchDataAttributes();
+            let oldHref = document.location.href;
+            const body = document.querySelector("body") as HTMLBodyElement;
+            const observer = new MutationObserver((mutations) => {
+              if (oldHref !== document.location.href) {
+                oldHref = document.location.href;
+                this.watchDataAttributes();
+              }
+            });
+            observer.observe(body, { childList: true, subtree: true });
+          },
+          false
+        );
       if (options?.debug) {
         document.addEventListener("fireenjinSuccess", (event) => {
           console.log("fireenjinSuccess: ", event);
@@ -280,22 +300,31 @@ export default class FireEnjin<I = any> {
     });
   }
 
-  createSignal(initialValue: any, signalKey?: string) {
+  mergeSignal(signalKey: string, signal: () => void) {
+    if (!this.signals[signalKey]) this.signals[signalKey] = new Set();
+    this.signals[signalKey].add(signal);
+    return this.signals[signalKey];
+  }
+
+  createSignal(
+    initialValue: any,
+    signalKey?: string
+  ): [() => any, any, string] {
     let value = initialValue;
     const key = signalKey || `signal:${Math.random()}`;
     if (!this.signals[key]) this.signals[key] = new Set();
-    const read = () => {
+    const read: () => any = () => {
       if (this.currentSignal !== undefined) {
         this.signals[key].add(this.currentSignal);
       }
       return value;
     };
-    const write = (newValue) => {
+    const write: (val: any) => void = (newValue: any) => {
       value = newValue;
       this.signals[key].forEach((fn) => fn());
     };
 
-    return [read, write, signalKey];
+    return [read, write, key];
   }
 
   createEffect(callback: () => void) {
@@ -630,6 +659,53 @@ export default class FireEnjin<I = any> {
         console.log("Error uploading file: ", e);
         reject(e);
       }
+    });
+  }
+
+  public watchDataAttributes() {
+    document.querySelectorAll("[data-fetch]").forEach(async (element: any) => {
+      const url: string = element?.dataset?.fetch;
+      const fetchInput =
+        element?.dataset?.fetchInput?.includes("{") &&
+        JSON.parse(element?.dataset?.fetchInput);
+      const fetchOptions =
+        element?.dataset?.fetchOptions?.includes("{") &&
+        JSON.parse(element?.dataset?.fetchOptions);
+      const stateKey: string = element?.dataset?.state;
+      const signalKey: string = element?.dataset?.signal || `state:${stateKey}`;
+      const res = await this.fetch(url, fetchInput, fetchOptions);
+      this.mergeSignal(signalKey, () => {
+        Object.keys(element.dataset).forEach((key) => {
+          if (key.includes("bind")) {
+            let propName = firstToLowerCase(key.replace("bind", ""));
+            if (propName === "innerHtml") propName = "innerHTML";
+            if (propName === "outerHtml") propName = "outerHTML";
+            const value = getByPath(this.state[stateKey], element.dataset[key]);
+            element[propName] = value;
+          }
+          return;
+        });
+      });
+      if (typeof stateKey === "string") setByPath(this.state, stateKey, res);
+    });
+    document.querySelectorAll("[data-signal]").forEach(async (element: any) => {
+      const stateKey: string = element?.dataset?.state;
+      const signalKey: string = element?.dataset?.signal || `state:${stateKey}`;
+      this.mergeSignal(signalKey, () => {
+        Object.keys(element.dataset).forEach((key) => {
+          if (key.includes("bind")) {
+            let propName = firstToLowerCase(key.replace("bind", ""));
+            if (propName === "innerHtml") propName = "innerHTML";
+            if (propName === "outerHtml") propName = "outerHTML";
+            if (this.state?.[stateKey])
+              element[propName] = getByPath(
+                this.state[stateKey],
+                element.dataset[key]
+              );
+          }
+          return;
+        });
+      });
     });
   }
 }
