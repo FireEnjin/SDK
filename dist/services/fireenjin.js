@@ -152,6 +152,8 @@ var FireEnjin = /** @class */ (function () {
                         var _a;
                         return __generator(this, function (_b) {
                             stateKey = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.state;
+                            console.log(stateKey);
+                            console.dir(element);
                             Object.keys(element.dataset).forEach(function (key) {
                                 if (key.includes("bind")) {
                                     var propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));

@@ -136,6 +136,8 @@ class FireEnjin {
                         .forEach((element) => __awaiter(this, void 0, void 0, function* () {
                         var _c;
                         const stateKey = (_c = element === null || element === void 0 ? void 0 : element.dataset) === null || _c === void 0 ? void 0 : _c.state;
+                        console.log(stateKey);
+                        console.dir(element);
                         Object.keys(element.dataset).forEach((key) => {
                             if (key.includes("bind")) {
                                 let propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));

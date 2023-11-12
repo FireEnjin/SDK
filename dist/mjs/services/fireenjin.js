@@ -102,6 +102,8 @@ export default class FireEnjin {
                         .querySelectorAll("[data-state]")
                         .forEach(async (element) => {
                         const stateKey = element?.dataset?.state;
+                        console.log(stateKey);
+                        console.dir(element);
                         Object.keys(element.dataset).forEach((key) => {
                             if (key.includes("bind")) {
                                 let propName = firstToLowerCase(key.replace("bind", ""));
