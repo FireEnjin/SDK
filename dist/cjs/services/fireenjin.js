@@ -134,8 +134,6 @@ class FireEnjin {
                     (_e = (_d = (_c = document === null || document === void 0 ? void 0 : document.querySelectorAll) === null || _c === void 0 ? void 0 : _c.call(document, "[data-state]")) === null || _d === void 0 ? void 0 : _d.forEach) === null || _e === void 0 ? void 0 : _e.call(_d, (element) => __awaiter(this, void 0, void 0, function* () {
                         var _f;
                         const stateKey = (_f = element === null || element === void 0 ? void 0 : element.dataset) === null || _f === void 0 ? void 0 : _f.state;
-                        console.log(stateKey);
-                        console.dir(element);
                         Object.keys(element.dataset).forEach((key) => {
                             if (key.includes("bind")) {
                                 let propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
@@ -150,7 +148,7 @@ class FireEnjin {
                 return reflection;
             },
             deleteProperty: (proxyTarget, stateKey) => {
-                var _a, _b;
+                var _a, _b, _c, _d, _e;
                 const detail = {
                     state: this.state,
                     proxyTarget,
@@ -170,10 +168,8 @@ class FireEnjin {
                 if (!(stateKey in proxyTarget))
                     return false;
                 delete proxyTarget[stateKey];
-                if ((options === null || options === void 0 ? void 0 : options.autoBindAttributes) && document)
-                    document
-                        .querySelectorAll("[data-state]")
-                        .forEach((element) => __awaiter(this, void 0, void 0, function* () {
+                if (options === null || options === void 0 ? void 0 : options.autoBindAttributes)
+                    (_e = (_d = (_c = document === null || document === void 0 ? void 0 : document.querySelectorAll) === null || _c === void 0 ? void 0 : _c.call(document, "[data-state]")) === null || _d === void 0 ? void 0 : _d.forEach) === null || _e === void 0 ? void 0 : _e.call(_d, (element) => __awaiter(this, void 0, void 0, function* () {
                         Object.keys(element.dataset).forEach((key) => {
                             if (key.includes("bind")) {
                                 let propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));

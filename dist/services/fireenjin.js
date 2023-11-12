@@ -150,8 +150,6 @@ var FireEnjin = /** @class */ (function () {
                         var _a;
                         return __generator(this, function (_b) {
                             stateKey = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.state;
-                            console.log(stateKey);
-                            console.dir(element);
                             Object.keys(element.dataset).forEach(function (key) {
                                 if (key.includes("bind")) {
                                     var propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
@@ -168,7 +166,7 @@ var FireEnjin = /** @class */ (function () {
                 return reflection;
             },
             deleteProperty: function (proxyTarget, stateKey) {
-                var _a, _b;
+                var _a, _b, _c, _d, _e;
                 var detail = {
                     state: _this.state,
                     proxyTarget: proxyTarget,
@@ -188,10 +186,8 @@ var FireEnjin = /** @class */ (function () {
                 if (!(stateKey in proxyTarget))
                     return false;
                 delete proxyTarget[stateKey];
-                if ((options === null || options === void 0 ? void 0 : options.autoBindAttributes) && document)
-                    document
-                        .querySelectorAll("[data-state]")
-                        .forEach(function (element) { return __awaiter(_this, void 0, void 0, function () {
+                if (options === null || options === void 0 ? void 0 : options.autoBindAttributes)
+                    (_e = (_d = (_c = document === null || document === void 0 ? void 0 : document.querySelectorAll) === null || _c === void 0 ? void 0 : _c.call(document, "[data-state]")) === null || _d === void 0 ? void 0 : _d.forEach) === null || _e === void 0 ? void 0 : _e.call(_d, function (element) { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             Object.keys(element.dataset).forEach(function (key) {
                                 if (key.includes("bind")) {
