@@ -124,7 +124,7 @@ var FireEnjin = /** @class */ (function () {
                 return value;
             },
             set: function (proxyTarget, stateKey, value, receiver) {
-                var _a, _b;
+                var _a, _b, _c, _d, _e;
                 var detail = {
                     receiver: receiver,
                     proxyTarget: proxyTarget,
@@ -143,10 +143,8 @@ var FireEnjin = /** @class */ (function () {
                 var reflection = Reflect.set(proxyTarget, stateKey, value, receiver);
                 if (_this.signals["state:".concat(stateKey)])
                     _this.signals["state:".concat(stateKey)].forEach(function (fn) { return fn(); });
-                if ((options === null || options === void 0 ? void 0 : options.autoBindAttributes) && document)
-                    document
-                        .querySelectorAll("[data-state]")
-                        .forEach(function (element) { return __awaiter(_this, void 0, void 0, function () {
+                if (options === null || options === void 0 ? void 0 : options.autoBindAttributes)
+                    (_e = (_d = (_c = document === null || document === void 0 ? void 0 : document.querySelectorAll) === null || _c === void 0 ? void 0 : _c.call(document, "[data-state]")) === null || _d === void 0 ? void 0 : _d.forEach) === null || _e === void 0 ? void 0 : _e.call(_d, function (element) { return __awaiter(_this, void 0, void 0, function () {
                         var stateKey;
                         var _this = this;
                         var _a;

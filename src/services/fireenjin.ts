@@ -122,10 +122,10 @@ export default class FireEnjin<I = any> {
         const reflection = Reflect.set(proxyTarget, stateKey, value, receiver);
         if (this.signals[`state:${stateKey}`])
           this.signals[`state:${stateKey}`].forEach((fn: any) => fn());
-        if (options?.autoBindAttributes && document)
+        if (options?.autoBindAttributes)
           document
-            .querySelectorAll("[data-state]")
-            .forEach(async (element: any) => {
+            ?.querySelectorAll?.("[data-state]")
+            ?.forEach?.(async (element: any) => {
               const stateKey: string = element?.dataset?.state;
               console.log(stateKey);
               console.dir(element);
