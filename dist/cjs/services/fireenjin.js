@@ -51,6 +51,8 @@ class FireEnjin {
             url: "http://localhost:4000",
         };
         this.currentConnection = 0;
+        this.state = {};
+        this.signals = {};
         this.options = options || {};
         const headers = Object.assign({ Authorization: (options === null || options === void 0 ? void 0 : options.token) ? `Bearer ${options.token}` : "" }, (options.headers ? options.headers : {}));
         this.host = ((_a = options === null || options === void 0 ? void 0 : options.connections) === null || _a === void 0 ? void 0 : _a.length)
@@ -82,6 +84,75 @@ class FireEnjin {
             typeof (options === null || options === void 0 ? void 0 : options.getSdk) === "function"
                 ? options.getSdk(this.client, (_o = this.options) === null || _o === void 0 ? void 0 : _o.onRequest)
                 : null;
+        this.state = new Proxy((options === null || options === void 0 ? void 0 : options.state) || {}, {
+            get: (proxyTarget, stateKey, receiver) => {
+                var _a, _b;
+                const value = Reflect.get(proxyTarget, stateKey, receiver);
+                if (this.currentSignal !== undefined) {
+                    this.signals[`state:${stateKey}`].add(this.currentSignal);
+                }
+                const detail = {
+                    receiver,
+                    proxyTarget,
+                    stateKey,
+                    value,
+                };
+                if (document)
+                    document.dispatchEvent(new CustomEvent("fireenjinStateRead", {
+                        detail,
+                    }));
+                if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                    console.log("fireenjinStateRead:", detail);
+                if (typeof ((_b = this.options) === null || _b === void 0 ? void 0 : _b.onStateRead) === "function")
+                    return this.options.onStateRead(detail);
+                return value;
+            },
+            set: (proxyTarget, stateKey, value, receiver) => {
+                var _a, _b;
+                const detail = {
+                    receiver,
+                    proxyTarget,
+                    state: this.state,
+                    stateKey,
+                    value,
+                };
+                if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                    console.log("fireenjinStateChange: ", detail);
+                if (typeof ((_b = this.options) === null || _b === void 0 ? void 0 : _b.onStateChange) === "function")
+                    return this.options.onStateChange(detail);
+                if (document)
+                    document.dispatchEvent(new CustomEvent("fireenjinStateChange", {
+                        detail,
+                    }));
+                const reflection = Reflect.set(proxyTarget, stateKey, value, receiver);
+                if (this.signals[`state:${stateKey}`])
+                    this.signals[`state:${stateKey}`].forEach((fn) => fn());
+                return reflection;
+            },
+            deleteProperty: (proxyTarget, stateKey) => {
+                var _a, _b;
+                const detail = {
+                    state: this.state,
+                    proxyTarget,
+                    stateKey,
+                    value: undefined,
+                };
+                if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                    console.log("fireenjinStateChange: ", detail);
+                if (typeof ((_b = this.options) === null || _b === void 0 ? void 0 : _b.onStateChange) === "function")
+                    return this.options.onStateChange(detail);
+                if (document)
+                    document.dispatchEvent(new CustomEvent("fireenjinStateChange", {
+                        detail,
+                    }));
+                if (this.signals[`state:${stateKey}`])
+                    this.clearSignal(`state:${stateKey}`);
+                if (!(stateKey in proxyTarget))
+                    return false;
+                delete proxyTarget[stateKey];
+                return true;
+            },
+        });
         if ((_p = this.options) === null || _p === void 0 ? void 0 : _p.debug)
             console.log("fireenjinStart:", {
                 host: this.host,
@@ -199,6 +270,39 @@ class FireEnjin {
                 method: ((_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.method) || (target === null || target === void 0 ? void 0 : target.method),
             });
         });
+    }
+    createSignal(initialValue, signalKey) {
+        let value = initialValue;
+        const key = signalKey || `signal:${Math.random()}`;
+        if (!this.signals[key])
+            this.signals[key] = new Set();
+        const read = () => {
+            if (this.currentSignal !== undefined) {
+                this.signals[key].add(this.currentSignal);
+            }
+            return value;
+        };
+        const write = (newValue) => {
+            value = newValue;
+            this.signals[key].forEach((fn) => fn());
+        };
+        return [read, write, signalKey];
+    }
+    createEffect(callback) {
+        this.currentSignal = callback;
+        callback();
+        this.currentSignal = undefined;
+    }
+    createEffectPromise(callback) {
+        this.currentSignal = callback;
+        callback().then(() => (this.currentSignal = undefined));
+    }
+    clearSignal(signalKey) {
+        if (signalKey && this.signals[signalKey])
+            delete this.signals[signalKey];
+        if (!signalKey)
+            this.signals = {};
+        return this.signals;
     }
     hash(input) {
         var hash = 0, i, chr;

@@ -35,6 +35,14 @@ export type FireEnjinUploadCallback = (
 
 export type FireEnjinProgressCallback = (data: FireEnjinProgressEvent) => void;
 
+export type FireEnjinStateChangeCallback = (
+  data: FireEnjinStateChangeEvent
+) => boolean;
+
+export type FireEnjinStateReadCallback = (
+  data: FireEnjinStateReadEvent
+) => boolean;
+
 export type FireEnjinFetchCallback<I = any, T = any> = (
   endpoint: string,
   input?: FireEnjinFetchInput<I>,
@@ -47,7 +55,7 @@ export type FireEnjinSubmitCallback<I = any, T = any> = (
   options?: FireEnjinSubmitOptions
 ) => Promise<T>;
 
-export type FireEnjinOptions = {
+export type FireEnjinOptions<I = any> = {
   getSdk?: (
     client?: Client | GraphQLClient,
     withWrapper?: SdkFunctionWrapper
@@ -63,6 +71,8 @@ export type FireEnjinOptions = {
   onFetch?: FireEnjinFetchCallback;
   onSubmit?: FireEnjinSubmitCallback;
   onProgress?: FireEnjinProgressCallback;
+  onStateChange?: FireEnjinStateChangeCallback;
+  onStateRead?: FireEnjinStateReadCallback;
   uploadFileEncoding?: boolean;
   headers?: HeadersInit;
   uploadUrl?: string;
@@ -70,6 +80,7 @@ export type FireEnjinOptions = {
   disableCache?: boolean;
   emulate?: boolean;
   cachePrefix?: string;
+  state?: I;
 };
 
 export interface FireEnjinUploadData {
@@ -187,4 +198,21 @@ export interface FireEnjinProgressEvent extends FireEnjinEvent {
   progress?: number;
   snapshot?: any;
   target?: any;
+}
+
+export interface FireEnjinStateReadEvent<I = any> extends FireEnjinEvent {
+  proxyTarget?: any;
+  receiver?: any;
+  state?: I;
+  value?: any;
+  stateKey?: string;
+}
+
+export interface FireEnjinStateChangeEvent<I = any> extends FireEnjinEvent {
+  proxyTarget?: any;
+  receiver?: any;
+  state?: I;
+  value?: any;
+  prevState?: I;
+  stateKey?: string;
 }

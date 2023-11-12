@@ -5,7 +5,7 @@ import tryOrFail from "../helpers/tryOrFail";
 import Client from "./client";
 import DatabaseService from "./database";
 import FirestoreClient from "./firestore";
-import { getDownloadURL, } from "firebase/storage";
+import { getDownloadURL } from "firebase/storage";
 export default class FireEnjin {
     client;
     sdk = {};
@@ -15,6 +15,9 @@ export default class FireEnjin {
     currentConnection = 0;
     options;
     storage;
+    state = {};
+    signals = {};
+    currentSignal;
     constructor(options) {
         this.options = options || {};
         const headers = {
@@ -50,6 +53,72 @@ export default class FireEnjin {
             typeof options?.getSdk === "function"
                 ? options.getSdk(this.client, this.options?.onRequest)
                 : null;
+        this.state = new Proxy(options?.state || {}, {
+            get: (proxyTarget, stateKey, receiver) => {
+                const value = Reflect.get(proxyTarget, stateKey, receiver);
+                if (this.currentSignal !== undefined) {
+                    this.signals[`state:${stateKey}`].add(this.currentSignal);
+                }
+                const detail = {
+                    receiver,
+                    proxyTarget,
+                    stateKey,
+                    value,
+                };
+                if (document)
+                    document.dispatchEvent(new CustomEvent("fireenjinStateRead", {
+                        detail,
+                    }));
+                if (this.options?.debug)
+                    console.log("fireenjinStateRead:", detail);
+                if (typeof this.options?.onStateRead === "function")
+                    return this.options.onStateRead(detail);
+                return value;
+            },
+            set: (proxyTarget, stateKey, value, receiver) => {
+                const detail = {
+                    receiver,
+                    proxyTarget,
+                    state: this.state,
+                    stateKey,
+                    value,
+                };
+                if (this.options?.debug)
+                    console.log("fireenjinStateChange: ", detail);
+                if (typeof this.options?.onStateChange === "function")
+                    return this.options.onStateChange(detail);
+                if (document)
+                    document.dispatchEvent(new CustomEvent("fireenjinStateChange", {
+                        detail,
+                    }));
+                const reflection = Reflect.set(proxyTarget, stateKey, value, receiver);
+                if (this.signals[`state:${stateKey}`])
+                    this.signals[`state:${stateKey}`].forEach((fn) => fn());
+                return reflection;
+            },
+            deleteProperty: (proxyTarget, stateKey) => {
+                const detail = {
+                    state: this.state,
+                    proxyTarget,
+                    stateKey,
+                    value: undefined,
+                };
+                if (this.options?.debug)
+                    console.log("fireenjinStateChange: ", detail);
+                if (typeof this.options?.onStateChange === "function")
+                    return this.options.onStateChange(detail);
+                if (document)
+                    document.dispatchEvent(new CustomEvent("fireenjinStateChange", {
+                        detail,
+                    }));
+                if (this.signals[`state:${stateKey}`])
+                    this.clearSignal(`state:${stateKey}`);
+                if (!(stateKey in proxyTarget))
+                    return false;
+                delete proxyTarget[stateKey];
+                return true;
+            },
+        });
         if (this.options?.debug)
             console.log("fireenjinStart:", {
                 host: this.host,
@@ -158,6 +227,39 @@ export default class FireEnjin {
             composed: event?.detail?.composed,
             method: event?.detail?.method || target?.method,
         });
+    }
+    createSignal(initialValue, signalKey) {
+        let value = initialValue;
+        const key = signalKey || `signal:${Math.random()}`;
+        if (!this.signals[key])
+            this.signals[key] = new Set();
+        const read = () => {
+            if (this.currentSignal !== undefined) {
+                this.signals[key].add(this.currentSignal);
+            }
+            return value;
+        };
+        const write = (newValue) => {
+            value = newValue;
+            this.signals[key].forEach((fn) => fn());
+        };
+        return [read, write, signalKey];
+    }
+    createEffect(callback) {
+        this.currentSignal = callback;
+        callback();
+        this.currentSignal = undefined;
+    }
+    createEffectPromise(callback) {
+        this.currentSignal = callback;
+        callback().then(() => (this.currentSignal = undefined));
+    }
+    clearSignal(signalKey) {
+        if (signalKey && this.signals[signalKey])
+            delete this.signals[signalKey];
+        if (!signalKey)
+            this.signals = {};
+        return this.signals;
     }
     hash(input) {
         var hash = 0, i, chr;
