@@ -122,6 +122,24 @@ export default class FireEnjin<I = any> {
         const reflection = Reflect.set(proxyTarget, stateKey, value, receiver);
         if (this.signals[`state:${stateKey}`])
           this.signals[`state:${stateKey}`].forEach((fn: any) => fn());
+        if (options?.autoBindAttributes && document)
+          document
+            .querySelectorAll("[data-state]")
+            .forEach(async (element: any) => {
+              const stateKey: string = element?.dataset?.state;
+              Object.keys(element.dataset).forEach((key) => {
+                if (key.includes("bind")) {
+                  let propName = firstToLowerCase(key.replace("bind", ""));
+                  if (propName === "innerHtml") propName = "innerHTML";
+                  if (propName === "outerHtml") propName = "outerHTML";
+                  if (this.state?.[stateKey])
+                    element[propName] = getByPath(
+                      this.state[stateKey],
+                      element.dataset[key]
+                    );
+                }
+              });
+            });
         return reflection;
       },
       deleteProperty: (proxyTarget: any, stateKey: string) => {

@@ -143,6 +143,30 @@ var FireEnjin = /** @class */ (function () {
                 var reflection = Reflect.set(proxyTarget, stateKey, value, receiver);
                 if (_this.signals["state:".concat(stateKey)])
                     _this.signals["state:".concat(stateKey)].forEach(function (fn) { return fn(); });
+                if ((options === null || options === void 0 ? void 0 : options.autoBindAttributes) && document)
+                    document
+                        .querySelectorAll("[data-state]")
+                        .forEach(function (element) { return __awaiter(_this, void 0, void 0, function () {
+                        var stateKey;
+                        var _this = this;
+                        var _a;
+                        return __generator(this, function (_b) {
+                            stateKey = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.state;
+                            Object.keys(element.dataset).forEach(function (key) {
+                                var _a;
+                                if (key.includes("bind")) {
+                                    var propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
+                                    if (propName === "innerHtml")
+                                        propName = "innerHTML";
+                                    if (propName === "outerHtml")
+                                        propName = "outerHTML";
+                                    if ((_a = _this.state) === null || _a === void 0 ? void 0 : _a[stateKey])
+                                        element[propName] = (0, getByPath_1.default)(_this.state[stateKey], element.dataset[key]);
+                                }
+                            });
+                            return [2 /*return*/];
+                        });
+                    }); });
                 return reflection;
             },
             deleteProperty: function (proxyTarget, stateKey) {
