@@ -109,8 +109,7 @@ export default class FireEnjin {
                                     propName = "innerHTML";
                                 if (propName === "outerHtml")
                                     propName = "outerHTML";
-                                if (this.state?.[stateKey])
-                                    element[propName] = getByPath(this.state[stateKey], element.dataset[key]);
+                                element[propName] = getByPath(this.state[stateKey], element.dataset[key]);
                             }
                         });
                     });
@@ -136,6 +135,21 @@ export default class FireEnjin {
                 if (!(stateKey in proxyTarget))
                     return false;
                 delete proxyTarget[stateKey];
+                if (options?.autoBindAttributes && document)
+                    document
+                        .querySelectorAll("[data-state]")
+                        .forEach(async (element) => {
+                        Object.keys(element.dataset).forEach((key) => {
+                            if (key.includes("bind")) {
+                                let propName = firstToLowerCase(key.replace("bind", ""));
+                                if (propName === "innerHtml")
+                                    propName = "innerHTML";
+                                if (propName === "outerHtml")
+                                    propName = "outerHTML";
+                                element[propName] = null;
+                            }
+                        });
+                    });
                 return true;
             },
         });

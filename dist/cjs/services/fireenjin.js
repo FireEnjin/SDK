@@ -137,15 +137,13 @@ class FireEnjin {
                         var _c;
                         const stateKey = (_c = element === null || element === void 0 ? void 0 : element.dataset) === null || _c === void 0 ? void 0 : _c.state;
                         Object.keys(element.dataset).forEach((key) => {
-                            var _a;
                             if (key.includes("bind")) {
                                 let propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
                                 if (propName === "innerHtml")
                                     propName = "innerHTML";
                                 if (propName === "outerHtml")
                                     propName = "outerHTML";
-                                if ((_a = this.state) === null || _a === void 0 ? void 0 : _a[stateKey])
-                                    element[propName] = (0, getByPath_1.default)(this.state[stateKey], element.dataset[key]);
+                                element[propName] = (0, getByPath_1.default)(this.state[stateKey], element.dataset[key]);
                             }
                         });
                     }));
@@ -172,6 +170,21 @@ class FireEnjin {
                 if (!(stateKey in proxyTarget))
                     return false;
                 delete proxyTarget[stateKey];
+                if ((options === null || options === void 0 ? void 0 : options.autoBindAttributes) && document)
+                    document
+                        .querySelectorAll("[data-state]")
+                        .forEach((element) => __awaiter(this, void 0, void 0, function* () {
+                        Object.keys(element.dataset).forEach((key) => {
+                            if (key.includes("bind")) {
+                                let propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
+                                if (propName === "innerHtml")
+                                    propName = "innerHTML";
+                                if (propName === "outerHtml")
+                                    propName = "outerHTML";
+                                element[propName] = null;
+                            }
+                        });
+                    }));
                 return true;
             },
         });
