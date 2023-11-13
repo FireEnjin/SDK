@@ -25,7 +25,7 @@ export default class FireEnjin<I = any> {
     createSignal(initialValue: any, signalKey?: string): [() => any, any, string];
     createEffect(callback: () => void): void;
     createEffectPromise(callback: () => Promise<void>): void;
-    clearSignal(signalKey: string): {
+    clearSignal(signalKey?: string): {
         [signalKey: string]: Set<() => void>;
     };
     private hash;

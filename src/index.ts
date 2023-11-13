@@ -3,7 +3,7 @@ import DatabaseService from "./services/database";
 import FireEnjin from "./services/fireenjin";
 import SessionService from "./services/session";
 import FireEnjinModel from "./services/model";
-import {
+import type {
   FireEnjinEvent,
   FireEnjinErrorEvent,
   FireEnjinFetchEvent,

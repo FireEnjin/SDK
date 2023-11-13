@@ -426,7 +426,7 @@ export default class FireEnjin<I = any> {
     callback().then(() => (this.currentSignal = undefined));
   }
 
-  clearSignal(signalKey: string) {
+  clearSignal(signalKey?: string) {
     if (signalKey && this.signals[signalKey]) delete this.signals[signalKey];
     if (!signalKey) this.signals = {};
     return this.signals;
