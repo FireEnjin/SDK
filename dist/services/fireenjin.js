@@ -58,6 +58,7 @@ var storage_2 = require("firebase/storage");
 var firstToLowerCase_1 = require("../helpers/firstToLowerCase");
 var getByPath_1 = require("../helpers/getByPath");
 var setByPath_1 = require("../helpers/setByPath");
+var subscription_1 = require("../events/subscription");
 var FireEnjin = /** @class */ (function () {
     function FireEnjin(options) {
         var _this = this;
@@ -217,6 +218,7 @@ var FireEnjin = /** @class */ (function () {
             document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
             document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
             document.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+            document.addEventListener("fireenjinSubscribe", this.onSubscribe.bind(this));
             if (options === null || options === void 0 ? void 0 : options.autoBindAttributes)
                 document.addEventListener("DOMContentLoaded", function () {
                     _this.watchDataAttributes();
@@ -350,10 +352,62 @@ var FireEnjin = /** @class */ (function () {
             });
         });
     };
-    FireEnjin.prototype.mergeSignal = function (signalKey, signal) {
+    FireEnjin.prototype.onSubscribe = function (event) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
+        return __awaiter(this, void 0, void 0, function () {
+            var signalKey, subscriptionDetails, collectionName;
+            var _this = this;
+            return __generator(this, function (_u) {
+                if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                    console.log("fireenjinSubscribe: ", event);
+                signalKey = ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.signalKey) || ((_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.endpoint);
+                subscriptionDetails = {
+                    bubbles: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.bubbles,
+                    cancelable: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.cancelable,
+                    composed: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.composed,
+                    data: null,
+                    dataPropsMap: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.dataPropsMap,
+                    endpoint: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.endpoint,
+                    event: event,
+                    name: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.name,
+                    params: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.params,
+                    query: (_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.query,
+                    signalKey: signalKey,
+                    target: (_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.target,
+                };
+                if (signalKey) {
+                    this.subscribe(signalKey, function () {
+                        subscriptionDetails.data = {
+                            state: _this.state,
+                            signal: _this.signals[signalKey],
+                            timestamp: new Date(),
+                        };
+                        (0, subscription_1.default)(subscriptionDetails);
+                    });
+                }
+                else {
+                    collectionName = ((_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.collection) || ((_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.endpoint);
+                    (_s = (_r = (_q = this.host) === null || _q === void 0 ? void 0 : _q.db) === null || _r === void 0 ? void 0 : _r.subscribe) === null || _s === void 0 ? void 0 : _s.call(_r, __assign({ collectionName: collectionName }, (_t = event === null || event === void 0 ? void 0 : event.detail) === null || _t === void 0 ? void 0 : _t.query), function (data) { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            subscriptionDetails.data = data;
+                            (0, subscription_1.default)(subscriptionDetails);
+                            return [2 /*return*/];
+                        });
+                    }); });
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    FireEnjin.prototype.subscribe = function (signalKey, signal) {
         if (!this.signals[signalKey])
             this.signals[signalKey] = new Set();
         this.signals[signalKey].add(signal);
+        return this.signals[signalKey];
+    };
+    FireEnjin.prototype.unsubscribe = function (signalKey, signal) {
+        if (this.signals[signalKey])
+            this.signals[signalKey].delete(signal);
         return this.signals[signalKey];
     };
     FireEnjin.prototype.createSignal = function (initialValue, signalKey) {
@@ -747,7 +801,7 @@ var FireEnjin = /** @class */ (function () {
                         return [4 /*yield*/, this.fetch(url, fetchInput, fetchOptions)];
                     case 1:
                         res = _k.sent();
-                        this.mergeSignal(signalKey, function () {
+                        this.subscribe(signalKey, function () {
                             Object.keys(element.dataset).forEach(function (key) {
                                 if (key.includes("bind")) {
                                     var propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
@@ -774,7 +828,7 @@ var FireEnjin = /** @class */ (function () {
             return __generator(this, function (_c) {
                 stateKey = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.state;
                 signalKey = ((_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.signal) || "state:".concat(stateKey);
-                this.mergeSignal(signalKey, function () {
+                this.subscribe(signalKey, function () {
                     Object.keys(element.dataset).forEach(function (key) {
                         var _a;
                         if (key.includes("bind")) {
@@ -787,6 +841,17 @@ var FireEnjin = /** @class */ (function () {
                                 element[propName] = (0, getByPath_1.default)(_this.state[stateKey], element.dataset[key]);
                         }
                         return;
+                    });
+                    (0, subscription_1.default)({
+                        bubbles: true,
+                        cancelable: true,
+                        composed: false,
+                        data: {
+                            state: _this.state,
+                            signal: _this.signals[signalKey],
+                            timestamp: new Date(),
+                        },
+                        signalKey: signalKey,
                     });
                 });
                 return [2 /*return*/];

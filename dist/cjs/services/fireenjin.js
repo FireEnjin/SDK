@@ -46,6 +46,7 @@ const storage_2 = require("firebase/storage");
 const firstToLowerCase_1 = __importDefault(require("../helpers/firstToLowerCase"));
 const getByPath_1 = __importDefault(require("../helpers/getByPath"));
 const setByPath_1 = __importDefault(require("../helpers/setByPath"));
+const subscription_1 = __importDefault(require("../events/subscription"));
 class FireEnjin {
     constructor(options) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
@@ -196,6 +197,7 @@ class FireEnjin {
             document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
             document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
             document.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+            document.addEventListener("fireenjinSubscribe", this.onSubscribe.bind(this));
             if (options === null || options === void 0 ? void 0 : options.autoBindAttributes)
                 document.addEventListener("DOMContentLoaded", () => {
                     this.watchDataAttributes();
@@ -315,10 +317,54 @@ class FireEnjin {
             });
         });
     }
-    mergeSignal(signalKey, signal) {
+    onSubscribe(event) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
+        return __awaiter(this, void 0, void 0, function* () {
+            if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                console.log("fireenjinSubscribe: ", event);
+            const signalKey = ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.signalKey) || ((_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.endpoint);
+            const subscriptionDetails = {
+                bubbles: (_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.bubbles,
+                cancelable: (_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.cancelable,
+                composed: (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.composed,
+                data: null,
+                dataPropsMap: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.dataPropsMap,
+                endpoint: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.endpoint,
+                event,
+                name: (_j = event === null || event === void 0 ? void 0 : event.detail) === null || _j === void 0 ? void 0 : _j.name,
+                params: (_k = event === null || event === void 0 ? void 0 : event.detail) === null || _k === void 0 ? void 0 : _k.params,
+                query: (_l = event === null || event === void 0 ? void 0 : event.detail) === null || _l === void 0 ? void 0 : _l.query,
+                signalKey,
+                target: (_m = event === null || event === void 0 ? void 0 : event.detail) === null || _m === void 0 ? void 0 : _m.target,
+            };
+            if (signalKey) {
+                this.subscribe(signalKey, () => {
+                    subscriptionDetails.data = {
+                        state: this.state,
+                        signal: this.signals[signalKey],
+                        timestamp: new Date(),
+                    };
+                    (0, subscription_1.default)(subscriptionDetails);
+                });
+            }
+            else {
+                const collectionName = ((_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.collection) || ((_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.endpoint);
+                (_s = (_r = (_q = this.host) === null || _q === void 0 ? void 0 : _q.db) === null || _r === void 0 ? void 0 : _r.subscribe) === null || _s === void 0 ? void 0 : _s.call(_r, Object.assign({ collectionName }, (_t = event === null || event === void 0 ? void 0 : event.detail) === null || _t === void 0 ? void 0 : _t.query), (data) => __awaiter(this, void 0, void 0, function* () {
+                    subscriptionDetails.data = data;
+                    (0, subscription_1.default)(subscriptionDetails);
+                }));
+            }
+        });
+    }
+    subscribe(signalKey, signal) {
         if (!this.signals[signalKey])
             this.signals[signalKey] = new Set();
         this.signals[signalKey].add(signal);
+        return this.signals[signalKey];
+    }
+    unsubscribe(signalKey, signal) {
+        if (this.signals[signalKey])
+            this.signals[signalKey].delete(signal);
         return this.signals[signalKey];
     }
     createSignal(initialValue, signalKey) {
@@ -629,7 +675,7 @@ class FireEnjin {
             const stateKey = (_h = element === null || element === void 0 ? void 0 : element.dataset) === null || _h === void 0 ? void 0 : _h.state;
             const signalKey = ((_j = element === null || element === void 0 ? void 0 : element.dataset) === null || _j === void 0 ? void 0 : _j.signal) || `state:${stateKey}`;
             const res = yield this.fetch(url, fetchInput, fetchOptions);
-            this.mergeSignal(signalKey, () => {
+            this.subscribe(signalKey, () => {
                 Object.keys(element.dataset).forEach((key) => {
                     if (key.includes("bind")) {
                         let propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
@@ -650,7 +696,7 @@ class FireEnjin {
             var _k, _l;
             const stateKey = (_k = element === null || element === void 0 ? void 0 : element.dataset) === null || _k === void 0 ? void 0 : _k.state;
             const signalKey = ((_l = element === null || element === void 0 ? void 0 : element.dataset) === null || _l === void 0 ? void 0 : _l.signal) || `state:${stateKey}`;
-            this.mergeSignal(signalKey, () => {
+            this.subscribe(signalKey, () => {
                 Object.keys(element.dataset).forEach((key) => {
                     var _a;
                     if (key.includes("bind")) {
@@ -663,6 +709,17 @@ class FireEnjin {
                             element[propName] = (0, getByPath_1.default)(this.state[stateKey], element.dataset[key]);
                     }
                     return;
+                });
+                (0, subscription_1.default)({
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                    data: {
+                        state: this.state,
+                        signal: this.signals[signalKey],
+                        timestamp: new Date(),
+                    },
+                    signalKey,
                 });
             });
         }));

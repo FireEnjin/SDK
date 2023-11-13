@@ -1042,6 +1042,39 @@ function setByPath(obj, path, value) {
     return obj;
 }
 
+async function fireenjinSubscription(input, options) {
+    const detail = {
+        event: input?.event,
+        target: input?.target || input?.event?.target,
+        data: input?.data || null,
+        name: input?.name,
+        endpoint: input?.endpoint,
+        bubbles: !!input?.bubbles,
+        cancelable: !!input?.cancelable,
+        composed: !!input?.composed,
+        query: input?.query || input?.event?.detail?.query,
+        params: input?.params || input?.event?.detail?.params,
+        signalKey: input?.signalKey || input?.event?.detail?.signalKey,
+    };
+    if (input?.dataPropsMap) {
+        try {
+            detail.data = await setComponentProps(input?.dataPropsMap, input?.data);
+        }
+        catch {
+            console.log("Error setting data props");
+            if (typeof options?.onError === "function")
+                options.onError(detail);
+        }
+    }
+    const el = detail?.target || document;
+    el.dispatchEvent(new CustomEvent("fireenjinSubscription", {
+        detail,
+        bubbles: !!input?.bubbles,
+        cancelable: !!input?.cancelable,
+        composed: !!input?.composed,
+    }));
+}
+
 class FireEnjin {
     client;
     sdk = {};
@@ -1198,6 +1231,7 @@ class FireEnjin {
             document.addEventListener("fireenjinUpload", this.onUpload.bind(this));
             document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
             document.addEventListener("fireenjinFetch", this.onFetch.bind(this));
+            document.addEventListener("fireenjinSubscribe", this.onSubscribe.bind(this));
             if (options?.autoBindAttributes)
                 document.addEventListener("DOMContentLoaded", () => {
                     this.watchDataAttributes();
@@ -1308,10 +1342,51 @@ class FireEnjin {
             method: event?.detail?.method || target?.method,
         });
     }
-    mergeSignal(signalKey, signal) {
+    async onSubscribe(event) {
+        if (this.options?.debug)
+            console.log("fireenjinSubscribe: ", event);
+        const signalKey = event?.detail?.signalKey || event?.detail?.endpoint;
+        const subscriptionDetails = {
+            bubbles: event?.detail?.bubbles,
+            cancelable: event?.detail?.cancelable,
+            composed: event?.detail?.composed,
+            data: null,
+            dataPropsMap: event?.detail?.dataPropsMap,
+            endpoint: event?.detail?.endpoint,
+            event,
+            name: event?.detail?.name,
+            params: event?.detail?.params,
+            query: event?.detail?.query,
+            signalKey,
+            target: event?.detail?.target,
+        };
+        if (signalKey) {
+            this.subscribe(signalKey, () => {
+                subscriptionDetails.data = {
+                    state: this.state,
+                    signal: this.signals[signalKey],
+                    timestamp: new Date(),
+                };
+                fireenjinSubscription(subscriptionDetails);
+            });
+        }
+        else {
+            const collectionName = event?.detail?.collection || event?.detail?.endpoint;
+            this.host?.db?.subscribe?.({ collectionName, ...event?.detail?.query }, async (data) => {
+                subscriptionDetails.data = data;
+                fireenjinSubscription(subscriptionDetails);
+            });
+        }
+    }
+    subscribe(signalKey, signal) {
         if (!this.signals[signalKey])
             this.signals[signalKey] = new Set();
         this.signals[signalKey].add(signal);
+        return this.signals[signalKey];
+    }
+    unsubscribe(signalKey, signal) {
+        if (this.signals[signalKey])
+            this.signals[signalKey].delete(signal);
         return this.signals[signalKey];
     }
     createSignal(initialValue, signalKey) {
@@ -1607,7 +1682,7 @@ class FireEnjin {
             const stateKey = element?.dataset?.state;
             const signalKey = element?.dataset?.signal || `state:${stateKey}`;
             const res = await this.fetch(url, fetchInput, fetchOptions);
-            this.mergeSignal(signalKey, () => {
+            this.subscribe(signalKey, () => {
                 Object.keys(element.dataset).forEach((key) => {
                     if (key.includes("bind")) {
                         let propName = firstToLowerCase(key.replace("bind", ""));
@@ -1627,7 +1702,7 @@ class FireEnjin {
         document.querySelectorAll("[data-signal]").forEach(async (element) => {
             const stateKey = element?.dataset?.state;
             const signalKey = element?.dataset?.signal || `state:${stateKey}`;
-            this.mergeSignal(signalKey, () => {
+            this.subscribe(signalKey, () => {
                 Object.keys(element.dataset).forEach((key) => {
                     if (key.includes("bind")) {
                         let propName = firstToLowerCase(key.replace("bind", ""));
@@ -1639,6 +1714,17 @@ class FireEnjin {
                             element[propName] = getByPath(this.state[stateKey], element.dataset[key]);
                     }
                     return;
+                });
+                fireenjinSubscription({
+                    bubbles: true,
+                    cancelable: true,
+                    composed: false,
+                    data: {
+                        state: this.state,
+                        signal: this.signals[signalKey],
+                        timestamp: new Date(),
+                    },
+                    signalKey,
                 });
             });
         });

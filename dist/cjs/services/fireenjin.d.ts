@@ -19,7 +19,9 @@ export default class FireEnjin<I = any> {
     private onUpload;
     private onSubmit;
     private onFetch;
-    mergeSignal(signalKey: string, signal: () => void): Set<() => void>;
+    private onSubscribe;
+    subscribe(signalKey: string, signal: () => void): Set<() => void>;
+    unsubscribe(signalKey: string, signal: () => void): Set<() => void>;
     createSignal(initialValue: any, signalKey?: string): [() => any, any, string];
     createEffect(callback: () => void): void;
     createEffectPromise(callback: () => Promise<void>): void;

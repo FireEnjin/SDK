@@ -1,7 +1,8 @@
-import { GraphQLClient } from "graphql-request";
+import type { GraphQLClient } from "graphql-request";
 import DatabaseService from "./services/database";
 import Client from "./services/client";
-import { FirebaseStorage } from "firebase/storage";
+import type { FirebaseStorage } from "firebase/storage";
+import type { WhereFilterOp } from "@firebase/firestore";
 
 type SdkFunctionWrapper = <T>(
   action: (requestHeaders?: Record<string, string>) => Promise<T>,
@@ -25,6 +26,18 @@ export type FireEnjinHost = {
   endpoints?: FireEnjinEndpoints;
 };
 
+export type FireEnjinQuery = {
+  collectionName?: string;
+  where?: { key?: string; conditional?: WhereFilterOp; value?: any }[];
+  orderBy?: string;
+  limit?: number;
+  advanced?: {
+    startAfter?: any;
+    startAt?: any;
+    endAt?: any;
+  };
+};
+
 export type FireEnjinErrorCallback = (data: FireEnjinErrorEvent) => void;
 
 export type FireEnjinSuccessCallback = (data: FireEnjinSuccessEvent) => void;
@@ -41,6 +54,10 @@ export type FireEnjinStateChangeCallback = (
 
 export type FireEnjinStateReadCallback = (
   data: FireEnjinStateReadEvent
+) => boolean;
+
+export type FireEnjinSubscriptionCallback<I = any> = (
+  data: FireEnjinSubscriptionEvent<I>
 ) => boolean;
 
 export type FireEnjinFetchCallback<I = any, T = any> = (
@@ -73,6 +90,7 @@ export type FireEnjinOptions<I = any> = {
   onProgress?: FireEnjinProgressCallback;
   onStateChange?: FireEnjinStateChangeCallback;
   onStateRead?: FireEnjinStateReadCallback;
+  onSubscription?: FireEnjinSubscriptionCallback;
   uploadFileEncoding?: boolean;
   headers?: HeadersInit;
   uploadUrl?: string;
@@ -216,4 +234,29 @@ export interface FireEnjinStateChangeEvent<I = any> extends FireEnjinEvent {
   value?: any;
   prevState?: I;
   stateKey?: string;
+}
+
+export interface FireEnjinSubscribeEvent extends FireEnjinEvent {
+  id?: string | number;
+  collection?: string;
+  query?: FireEnjinQuery;
+  disableFetch?: boolean;
+  dataPropsMap?: any;
+  cacheKey?: string;
+  disableCache?: boolean;
+  params?: any;
+  signalKey?: string;
+}
+
+export interface FireEnjinSubscriptionEvent<I = any> extends FireEnjinEvent {
+  id?: string | number;
+  collection?: string;
+  query?: FireEnjinQuery;
+  disableFetch?: boolean;
+  dataPropsMap?: any;
+  cacheKey?: string;
+  disableCache?: boolean;
+  params?: any;
+  signalKey?: string;
+  data?: I;
 }

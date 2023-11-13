@@ -18,6 +18,7 @@ import {
   FireEnjinSubmitEvent,
   FireEnjinSubmitInput,
   FireEnjinSubmitOptions,
+  FireEnjinSubscribeEvent,
   FireEnjinUploadEvent,
   FireEnjinUploadInput,
 } from "../interfaces";
@@ -29,6 +30,7 @@ import { getDownloadURL } from "firebase/storage";
 import firstToLowerCase from "../helpers/firstToLowerCase";
 import getByPath from "../helpers/getByPath";
 import setByPath from "../helpers/setByPath";
+import fireenjinSubscription from "../events/subscription";
 
 export default class FireEnjin<I = any> {
   client: Client | GraphQLClient | FirestoreClient | any;
@@ -198,6 +200,10 @@ export default class FireEnjin<I = any> {
         "fireenjinFetch",
         this.onFetch.bind(this) as any
       );
+      document.addEventListener(
+        "fireenjinSubscribe",
+        this.onSubscribe.bind(this) as any
+      );
       if (options?.autoBindAttributes)
         document.addEventListener(
           "DOMContentLoaded",
@@ -330,9 +336,53 @@ export default class FireEnjin<I = any> {
     });
   }
 
-  mergeSignal(signalKey: string, signal: () => void) {
+  private async onSubscribe(event: CustomEvent<FireEnjinSubscribeEvent>) {
+    if (this.options?.debug) console.log("fireenjinSubscribe: ", event);
+    const signalKey = event?.detail?.signalKey || event?.detail?.endpoint;
+    const subscriptionDetails = {
+      bubbles: event?.detail?.bubbles,
+      cancelable: event?.detail?.cancelable,
+      composed: event?.detail?.composed,
+      data: null as any,
+      dataPropsMap: event?.detail?.dataPropsMap,
+      endpoint: event?.detail?.endpoint,
+      event,
+      name: event?.detail?.name,
+      params: event?.detail?.params,
+      query: event?.detail?.query,
+      signalKey,
+      target: event?.detail?.target,
+    };
+    if (signalKey) {
+      this.subscribe(signalKey, () => {
+        subscriptionDetails.data = {
+          state: this.state,
+          signal: this.signals[signalKey],
+          timestamp: new Date(),
+        };
+        fireenjinSubscription(subscriptionDetails);
+      });
+    } else {
+      const collectionName =
+        event?.detail?.collection || event?.detail?.endpoint;
+      this.host?.db?.subscribe?.(
+        { collectionName, ...event?.detail?.query },
+        async (data) => {
+          subscriptionDetails.data = data;
+          fireenjinSubscription(subscriptionDetails);
+        }
+      );
+    }
+  }
+
+  subscribe(signalKey: string, signal: () => void) {
     if (!this.signals[signalKey]) this.signals[signalKey] = new Set();
     this.signals[signalKey].add(signal);
+    return this.signals[signalKey];
+  }
+
+  unsubscribe(signalKey: string, signal: () => void) {
+    if (this.signals[signalKey]) this.signals[signalKey].delete(signal);
     return this.signals[signalKey];
   }
 
@@ -704,7 +754,7 @@ export default class FireEnjin<I = any> {
       const stateKey: string = element?.dataset?.state;
       const signalKey: string = element?.dataset?.signal || `state:${stateKey}`;
       const res = await this.fetch(url, fetchInput, fetchOptions);
-      this.mergeSignal(signalKey, () => {
+      this.subscribe(signalKey, () => {
         Object.keys(element.dataset).forEach((key) => {
           if (key.includes("bind")) {
             let propName = firstToLowerCase(key.replace("bind", ""));
@@ -721,7 +771,7 @@ export default class FireEnjin<I = any> {
     document.querySelectorAll("[data-signal]").forEach(async (element: any) => {
       const stateKey: string = element?.dataset?.state;
       const signalKey: string = element?.dataset?.signal || `state:${stateKey}`;
-      this.mergeSignal(signalKey, () => {
+      this.subscribe(signalKey, () => {
         Object.keys(element.dataset).forEach((key) => {
           if (key.includes("bind")) {
             let propName = firstToLowerCase(key.replace("bind", ""));
@@ -734,6 +784,17 @@ export default class FireEnjin<I = any> {
               );
           }
           return;
+        });
+        fireenjinSubscription({
+          bubbles: true,
+          cancelable: true,
+          composed: false,
+          data: {
+            state: this.state,
+            signal: this.signals[signalKey],
+            timestamp: new Date(),
+          },
+          signalKey,
         });
       });
     });

@@ -32,6 +32,7 @@ import {
   getFunctions,
   httpsCallable,
 } from "@firebase/functions";
+import type { FireEnjinQuery } from "../interfaces";
 
 export default class DatabaseService {
   app: FirebaseApp;
@@ -98,20 +99,10 @@ export default class DatabaseService {
     return getDocs(this.collection(path));
   }
 
-  async getCount(query: {
-    collectionName: string;
-    where?: { key?: string; conditional?: WhereFilterOp; value?: any }[];
-    orderBy?: string;
-    limit?: number;
-    advanced?: {
-      startAfter?: any;
-      startAt?: any;
-      endAt?: any;
-    };
-  }) {
+  async getCount(query: FireEnjinQuery) {
     const res = await getCountFromServer(
       this.rawQuery(
-        query?.collectionName,
+        query?.collectionName as string,
         query?.where,
         query?.orderBy,
         query?.limit,
@@ -178,24 +169,14 @@ export default class DatabaseService {
   }
 
   subscribe(
-    query: {
-      collectionName: string;
-      where?: { key?: string; conditional?: WhereFilterOp; value?: any }[];
-      orderBy?: string;
-      limit?: number;
-      advanced?: {
-        startAfter?: any;
-        startAt?: any;
-        endAt?: any;
-      };
-    },
+    query: FireEnjinQuery,
     callback: (data: { docs: QueryDocumentSnapshot[] }) => void,
     name?: string
   ) {
     const watcherName = name ? name : new Date().toISOString();
     this.watchers[watcherName] = onSnapshot(
       this.rawQuery(
-        query?.collectionName,
+        query?.collectionName as string,
         query?.where,
         query?.orderBy,
         query?.limit,

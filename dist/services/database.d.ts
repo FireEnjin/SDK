@@ -1,6 +1,7 @@
 import { FirebaseApp } from "@firebase/app";
 import { Firestore, WhereFilterOp, QueryDocumentSnapshot, QuerySnapshot } from "@firebase/firestore";
 import { Functions } from "@firebase/functions";
+import type { FireEnjinQuery } from "../interfaces";
 export default class DatabaseService {
     app: FirebaseApp;
     service: Firestore;
@@ -19,21 +20,7 @@ export default class DatabaseService {
     find(collectionName: string, id?: string): Promise<import("@firebase/firestore").DocumentData>;
     collection(path: string): import("@firebase/firestore").CollectionReference<import("@firebase/firestore").DocumentData, import("@firebase/firestore").DocumentData>;
     getCollection(path: any): Promise<QuerySnapshot<import("@firebase/firestore").DocumentData, import("@firebase/firestore").DocumentData>>;
-    getCount(query: {
-        collectionName: string;
-        where?: {
-            key?: string;
-            conditional?: WhereFilterOp;
-            value?: any;
-        }[];
-        orderBy?: string;
-        limit?: number;
-        advanced?: {
-            startAfter?: any;
-            startAt?: any;
-            endAt?: any;
-        };
-    }): Promise<number>;
+    getCount(query: FireEnjinQuery): Promise<number>;
     /**
      * Credit: https://stackoverflow.com/users/1701600/boern
      * generates a string, e.g. used as document ID
@@ -49,21 +36,7 @@ export default class DatabaseService {
     }): Promise<import("@firebase/firestore").DocumentReference<import("@firebase/firestore").DocumentData, import("@firebase/firestore").DocumentData>>;
     update(collectionName: string, id: string, data: any): Promise<import("@firebase/firestore").DocumentData>;
     clearWatchers(): Promise<boolean>;
-    subscribe(query: {
-        collectionName: string;
-        where?: {
-            key?: string;
-            conditional?: WhereFilterOp;
-            value?: any;
-        }[];
-        orderBy?: string;
-        limit?: number;
-        advanced?: {
-            startAfter?: any;
-            startAt?: any;
-            endAt?: any;
-        };
-    }, callback: (data: {
+    subscribe(query: FireEnjinQuery, callback: (data: {
         docs: QueryDocumentSnapshot[];
     }) => void, name?: string): any;
     unsubscribe(watcherName: string): boolean;
