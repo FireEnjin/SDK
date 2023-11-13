@@ -246,6 +246,7 @@ export interface FireEnjinSubscribeEvent extends FireEnjinEvent {
   disableCache?: boolean;
   params?: any;
   signalKey?: string;
+  callback?: FireEnjinSubscriptionCallback;
 }
 
 export interface FireEnjinSubscriptionEvent<I = any> extends FireEnjinEvent {

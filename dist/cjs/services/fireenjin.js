@@ -339,18 +339,28 @@ class FireEnjin {
             };
             if (signalKey) {
                 this.subscribe(signalKey, () => {
+                    var _a, _b, _c;
                     subscriptionDetails.data = {
                         state: this.state,
                         signal: this.signals[signalKey],
                         timestamp: new Date(),
                     };
+                    if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubscription) === "function")
+                        this.options.onSubscription(subscriptionDetails);
+                    if (typeof ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.callback) === "function")
+                        (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.callback(subscriptionDetails);
                     (0, subscription_1.default)(subscriptionDetails);
                 });
             }
             else {
                 const collectionName = ((_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.collection) || ((_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.endpoint);
                 (_s = (_r = (_q = this.host) === null || _q === void 0 ? void 0 : _q.db) === null || _r === void 0 ? void 0 : _r.subscribe) === null || _s === void 0 ? void 0 : _s.call(_r, Object.assign({ collectionName }, (_t = event === null || event === void 0 ? void 0 : event.detail) === null || _t === void 0 ? void 0 : _t.query), (data) => __awaiter(this, void 0, void 0, function* () {
+                    var _u, _v, _w;
                     subscriptionDetails.data = data;
+                    if (typeof ((_u = this.options) === null || _u === void 0 ? void 0 : _u.onSubscription) === "function")
+                        this.options.onSubscription(subscriptionDetails);
+                    if (typeof ((_v = event === null || event === void 0 ? void 0 : event.detail) === null || _v === void 0 ? void 0 : _v.callback) === "function")
+                        (_w = event === null || event === void 0 ? void 0 : event.detail) === null || _w === void 0 ? void 0 : _w.callback(subscriptionDetails);
                     (0, subscription_1.default)(subscriptionDetails);
                 }));
             }
@@ -360,7 +370,7 @@ class FireEnjin {
         if (!this.signals[signalKey])
             this.signals[signalKey] = new Set();
         this.signals[signalKey].add(signal);
-        return this.signals[signalKey];
+        return signal;
     }
     unsubscribe(signalKey, signal) {
         if (this.signals[signalKey])
@@ -697,6 +707,7 @@ class FireEnjin {
             const stateKey = (_k = element === null || element === void 0 ? void 0 : element.dataset) === null || _k === void 0 ? void 0 : _k.state;
             const signalKey = ((_l = element === null || element === void 0 ? void 0 : element.dataset) === null || _l === void 0 ? void 0 : _l.signal) || `state:${stateKey}`;
             this.subscribe(signalKey, () => {
+                var _a;
                 Object.keys(element.dataset).forEach((key) => {
                     var _a;
                     if (key.includes("bind")) {
@@ -710,7 +721,7 @@ class FireEnjin {
                     }
                     return;
                 });
-                (0, subscription_1.default)({
+                const subscriptionDetails = {
                     bubbles: true,
                     cancelable: true,
                     composed: false,
@@ -720,7 +731,10 @@ class FireEnjin {
                         timestamp: new Date(),
                     },
                     signalKey,
-                });
+                };
+                if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubscription) === "function")
+                    this.options.onSubscription(subscriptionDetails);
+                (0, subscription_1.default)();
             });
         }));
     }

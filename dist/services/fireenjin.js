@@ -377,19 +377,29 @@ var FireEnjin = /** @class */ (function () {
                 };
                 if (signalKey) {
                     this.subscribe(signalKey, function () {
+                        var _a, _b, _c;
                         subscriptionDetails.data = {
                             state: _this.state,
                             signal: _this.signals[signalKey],
                             timestamp: new Date(),
                         };
+                        if (typeof ((_a = _this.options) === null || _a === void 0 ? void 0 : _a.onSubscription) === "function")
+                            _this.options.onSubscription(subscriptionDetails);
+                        if (typeof ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.callback) === "function")
+                            (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.callback(subscriptionDetails);
                         (0, subscription_1.default)(subscriptionDetails);
                     });
                 }
                 else {
                     collectionName = ((_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.collection) || ((_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.endpoint);
                     (_s = (_r = (_q = this.host) === null || _q === void 0 ? void 0 : _q.db) === null || _r === void 0 ? void 0 : _r.subscribe) === null || _s === void 0 ? void 0 : _s.call(_r, __assign({ collectionName: collectionName }, (_t = event === null || event === void 0 ? void 0 : event.detail) === null || _t === void 0 ? void 0 : _t.query), function (data) { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
+                        var _a, _b, _c;
+                        return __generator(this, function (_d) {
                             subscriptionDetails.data = data;
+                            if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubscription) === "function")
+                                this.options.onSubscription(subscriptionDetails);
+                            if (typeof ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.callback) === "function")
+                                (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.callback(subscriptionDetails);
                             (0, subscription_1.default)(subscriptionDetails);
                             return [2 /*return*/];
                         });
@@ -403,7 +413,7 @@ var FireEnjin = /** @class */ (function () {
         if (!this.signals[signalKey])
             this.signals[signalKey] = new Set();
         this.signals[signalKey].add(signal);
-        return this.signals[signalKey];
+        return signal;
     };
     FireEnjin.prototype.unsubscribe = function (signalKey, signal) {
         if (this.signals[signalKey])
@@ -829,6 +839,7 @@ var FireEnjin = /** @class */ (function () {
                 stateKey = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.state;
                 signalKey = ((_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.signal) || "state:".concat(stateKey);
                 this.subscribe(signalKey, function () {
+                    var _a;
                     Object.keys(element.dataset).forEach(function (key) {
                         var _a;
                         if (key.includes("bind")) {
@@ -842,7 +853,7 @@ var FireEnjin = /** @class */ (function () {
                         }
                         return;
                     });
-                    (0, subscription_1.default)({
+                    var subscriptionDetails = {
                         bubbles: true,
                         cancelable: true,
                         composed: false,
@@ -852,7 +863,10 @@ var FireEnjin = /** @class */ (function () {
                             timestamp: new Date(),
                         },
                         signalKey: signalKey,
-                    });
+                    };
+                    if (typeof ((_a = _this.options) === null || _a === void 0 ? void 0 : _a.onSubscription) === "function")
+                        _this.options.onSubscription(subscriptionDetails);
+                    (0, subscription_1.default)();
                 });
                 return [2 /*return*/];
             });

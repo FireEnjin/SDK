@@ -360,6 +360,10 @@ export default class FireEnjin<I = any> {
           signal: this.signals[signalKey],
           timestamp: new Date(),
         };
+        if (typeof this.options?.onSubscription === "function")
+          this.options.onSubscription(subscriptionDetails);
+        if (typeof event?.detail?.callback === "function")
+          event?.detail?.callback(subscriptionDetails);
         fireenjinSubscription(subscriptionDetails);
       });
     } else {
@@ -369,6 +373,10 @@ export default class FireEnjin<I = any> {
         { collectionName, ...event?.detail?.query },
         async (data) => {
           subscriptionDetails.data = data;
+          if (typeof this.options?.onSubscription === "function")
+            this.options.onSubscription(subscriptionDetails);
+          if (typeof event?.detail?.callback === "function")
+            event?.detail?.callback(subscriptionDetails);
           fireenjinSubscription(subscriptionDetails);
         }
       );
@@ -378,7 +386,7 @@ export default class FireEnjin<I = any> {
   subscribe(signalKey: string, signal: () => void) {
     if (!this.signals[signalKey]) this.signals[signalKey] = new Set();
     this.signals[signalKey].add(signal);
-    return this.signals[signalKey];
+    return signal;
   }
 
   unsubscribe(signalKey: string, signal: () => void) {
@@ -785,7 +793,7 @@ export default class FireEnjin<I = any> {
           }
           return;
         });
-        fireenjinSubscription({
+        const subscriptionDetails = {
           bubbles: true,
           cancelable: true,
           composed: false,
@@ -795,7 +803,10 @@ export default class FireEnjin<I = any> {
             timestamp: new Date(),
           },
           signalKey,
-        });
+        };
+        if (typeof this.options?.onSubscription === "function")
+          this.options.onSubscription(subscriptionDetails);
+        fireenjinSubscription();
       });
     });
   }

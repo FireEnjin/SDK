@@ -302,6 +302,10 @@ export default class FireEnjin {
                     signal: this.signals[signalKey],
                     timestamp: new Date(),
                 };
+                if (typeof this.options?.onSubscription === "function")
+                    this.options.onSubscription(subscriptionDetails);
+                if (typeof event?.detail?.callback === "function")
+                    event?.detail?.callback(subscriptionDetails);
                 fireenjinSubscription(subscriptionDetails);
             });
         }
@@ -309,6 +313,10 @@ export default class FireEnjin {
             const collectionName = event?.detail?.collection || event?.detail?.endpoint;
             this.host?.db?.subscribe?.({ collectionName, ...event?.detail?.query }, async (data) => {
                 subscriptionDetails.data = data;
+                if (typeof this.options?.onSubscription === "function")
+                    this.options.onSubscription(subscriptionDetails);
+                if (typeof event?.detail?.callback === "function")
+                    event?.detail?.callback(subscriptionDetails);
                 fireenjinSubscription(subscriptionDetails);
             });
         }
@@ -317,7 +325,7 @@ export default class FireEnjin {
         if (!this.signals[signalKey])
             this.signals[signalKey] = new Set();
         this.signals[signalKey].add(signal);
-        return this.signals[signalKey];
+        return signal;
     }
     unsubscribe(signalKey, signal) {
         if (this.signals[signalKey])
@@ -650,7 +658,7 @@ export default class FireEnjin {
                     }
                     return;
                 });
-                fireenjinSubscription({
+                const subscriptionDetails = {
                     bubbles: true,
                     cancelable: true,
                     composed: false,
@@ -660,7 +668,10 @@ export default class FireEnjin {
                         timestamp: new Date(),
                     },
                     signalKey,
-                });
+                };
+                if (typeof this.options?.onSubscription === "function")
+                    this.options.onSubscription(subscriptionDetails);
+                fireenjinSubscription();
             });
         });
     }

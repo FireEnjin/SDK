@@ -20,7 +20,7 @@ export default class FireEnjin<I = any> {
     private onSubmit;
     private onFetch;
     private onSubscribe;
-    subscribe(signalKey: string, signal: () => void): Set<() => void>;
+    subscribe(signalKey: string, signal: () => void): () => void;
     unsubscribe(signalKey: string, signal: () => void): Set<() => void>;
     createSignal(initialValue: any, signalKey?: string): [() => any, any, string];
     createEffect(callback: () => void): void;
