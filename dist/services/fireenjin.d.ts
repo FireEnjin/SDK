@@ -21,7 +21,7 @@ export default class FireEnjin<I = any> {
     private onSubmit;
     private onFetch;
     private onSubscribe;
-    subscribe(signalKey: string, signal: () => void): () => void;
+    subscribe(signalKey: string, signal: () => void, runImmediately?: boolean): () => void;
     unsubscribe(signalKey: string, signal: () => void): Set<(data?: any) => void>;
     sendSignal(signalKey: string, data?: any): void;
     createSignal(initialValue: any, signalKey?: string, saveToState?: boolean, stateKey?: string): [() => any, any, string];

@@ -214,18 +214,6 @@ export default class FireEnjin {
         else if (event?.detail?.stateKey) {
             this.state.set(event?.detail?.stateKey, event?.detail?.value);
         }
-        const detail = {
-            event,
-            state: this.state,
-            stateKey: event?.detail?.stateKey,
-            value: event?.detail?.value,
-        };
-        if (typeof this.options?.onStateChange === "function")
-            return this.options.onStateChange(detail);
-        if (document)
-            document.dispatchEvent(new CustomEvent("fireenjinStateChange", {
-                detail,
-            }));
         return this.state;
     }
     async onUpload(event) {
@@ -347,10 +335,12 @@ export default class FireEnjin {
             });
         }
     }
-    subscribe(signalKey, signal) {
+    subscribe(signalKey, signal, runImmediately) {
         if (!this.signals[signalKey])
             this.signals[signalKey] = new Set();
         this.signals[signalKey].add(signal);
+        if (runImmediately)
+            signal();
         return signal;
     }
     unsubscribe(signalKey, signal) {
@@ -740,7 +730,7 @@ export default class FireEnjin {
                 if (typeof this.options?.onSubscription === "function")
                     this.options.onSubscription(subscriptionDetails);
                 fireenjinSubscription(subscriptionDetails);
-            });
+            }, true);
         });
     }
 }

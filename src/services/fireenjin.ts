@@ -402,9 +402,10 @@ export default class FireEnjin<I = any> {
     }
   }
 
-  subscribe(signalKey: string, signal: () => void) {
+  subscribe(signalKey: string, signal: () => void, runImmediately?: boolean) {
     if (!this.signals[signalKey]) this.signals[signalKey] = new Set();
     this.signals[signalKey].add(signal);
+    if (runImmediately) signal();
     return signal;
   }
 
@@ -851,35 +852,39 @@ export default class FireEnjin<I = any> {
         const stateKey: string = element?.dataset?.state;
         const signalKey: string =
           element?.dataset?.signal || `state:${stateKey}`;
-        this.subscribe(signalKey, () => {
-          Object.keys(element.dataset).forEach((key) => {
-            if (key.includes("bind")) {
-              let propName = firstToLowerCase(key.replace("bind", ""));
-              if (propName === "innerHtml") propName = "innerHTML";
-              if (propName === "outerHtml") propName = "outerHTML";
-              if (this.state?.[stateKey])
-                element[propName] = getByPath(
-                  this.state[stateKey],
-                  element.dataset[key]
-                );
-            }
-            return;
-          });
-          const subscriptionDetails = {
-            bubbles: true,
-            cancelable: true,
-            composed: false,
-            data: {
-              state: this.state,
-              signal: this.signals[signalKey],
-              timestamp: new Date(),
-            },
-            signalKey,
-          };
-          if (typeof this.options?.onSubscription === "function")
-            this.options.onSubscription(subscriptionDetails);
-          fireenjinSubscription(subscriptionDetails);
-        });
+        this.subscribe(
+          signalKey,
+          () => {
+            Object.keys(element.dataset).forEach((key) => {
+              if (key.includes("bind")) {
+                let propName = firstToLowerCase(key.replace("bind", ""));
+                if (propName === "innerHtml") propName = "innerHTML";
+                if (propName === "outerHtml") propName = "outerHTML";
+                if (this.state?.[stateKey])
+                  element[propName] = getByPath(
+                    this.state[stateKey],
+                    element.dataset[key]
+                  );
+              }
+              return;
+            });
+            const subscriptionDetails = {
+              bubbles: true,
+              cancelable: true,
+              composed: false,
+              data: {
+                state: this.state,
+                signal: this.signals[signalKey],
+                timestamp: new Date(),
+              },
+              signalKey,
+            };
+            if (typeof this.options?.onSubscription === "function")
+              this.options.onSubscription(subscriptionDetails);
+            fireenjinSubscription(subscriptionDetails);
+          },
+          true
+        );
       });
   }
 }

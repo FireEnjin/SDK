@@ -237,7 +237,7 @@ class FireEnjin {
         }
     }
     onState(event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function* () {
             if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                 console.log("fireenjinState: ", event);
@@ -247,18 +247,6 @@ class FireEnjin {
             else if ((_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.stateKey) {
                 this.state.set((_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.stateKey, (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.value);
             }
-            const detail = {
-                event,
-                state: this.state,
-                stateKey: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.stateKey,
-                value: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.value,
-            };
-            if (typeof ((_j = this.options) === null || _j === void 0 ? void 0 : _j.onStateChange) === "function")
-                return this.options.onStateChange(detail);
-            if (document)
-                document.dispatchEvent(new CustomEvent("fireenjinStateChange", {
-                    detail,
-                }));
             return this.state;
         });
     }
@@ -395,10 +383,12 @@ class FireEnjin {
             }
         });
     }
-    subscribe(signalKey, signal) {
+    subscribe(signalKey, signal, runImmediately) {
         if (!this.signals[signalKey])
             this.signals[signalKey] = new Set();
         this.signals[signalKey].add(signal);
+        if (runImmediately)
+            signal();
         return signal;
     }
     unsubscribe(signalKey, signal) {
@@ -807,7 +797,7 @@ class FireEnjin {
                 if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubscription) === "function")
                     this.options.onSubscription(subscriptionDetails);
                 (0, subscription_1.default)(subscriptionDetails);
-            });
+            }, true);
         }));
     }
 }
