@@ -163,6 +163,11 @@ export interface FireEnjinProgressEvent extends FireEnjinEvent {
     snapshot?: any;
     target?: any;
 }
+export interface FireEnjinStateEvent<I = any> extends FireEnjinEvent {
+    state?: I;
+    stateKey?: string;
+    value?: any;
+}
 export interface FireEnjinStateReadEvent<I = any> extends FireEnjinEvent {
     proxyTarget?: any;
     receiver?: any;

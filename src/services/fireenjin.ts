@@ -21,6 +21,7 @@ import type {
   FireEnjinSubscribeEvent,
   FireEnjinUploadEvent,
   FireEnjinUploadInput,
+  FireEnjinStateEvent,
 } from "../interfaces";
 import tryOrFail from "../helpers/tryOrFail";
 import Client from "./client";
@@ -31,6 +32,7 @@ import firstToLowerCase from "../helpers/firstToLowerCase";
 import getByPath from "../helpers/getByPath";
 import setByPath from "../helpers/setByPath";
 import fireenjinSubscription from "../events/subscription";
+import mergeSets from "../helpers/mergeSets";
 
 export default class FireEnjin<I = any> {
   client: Client | GraphQLClient | FirestoreClient | any;
@@ -207,6 +209,10 @@ export default class FireEnjin<I = any> {
         "fireenjinSubscribe",
         this.onSubscribe.bind(this) as any
       );
+      document.addEventListener(
+        "fireenjinState",
+        this.onState.bind(this) as any
+      );
       if (options?.autoBindAttributes)
         document.addEventListener(
           "DOMContentLoaded",
@@ -245,6 +251,16 @@ export default class FireEnjin<I = any> {
         });
       }
     }
+  }
+
+  private async onState(event: CustomEvent<FireEnjinStateEvent>) {
+    if (this.options?.debug) console.log("fireenjinState: ", event);
+    if (event?.detail?.state) {
+      this.state = mergeSets(this.state, event?.detail?.state || {});
+    } else if (event?.detail?.stateKey) {
+      this.state.set(event?.detail?.stateKey, event?.detail?.value);
+    }
+    return this.state;
   }
 
   private async onUpload(event: CustomEvent<FireEnjinUploadEvent>) {

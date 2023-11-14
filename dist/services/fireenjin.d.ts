@@ -16,6 +16,7 @@ export default class FireEnjin<I = any> {
     };
     currentSignal: ((data?: any) => any) | undefined;
     constructor(options: FireEnjinOptions);
+    private onState;
     private onUpload;
     private onSubmit;
     private onFetch;

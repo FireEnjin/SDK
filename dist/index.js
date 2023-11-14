@@ -1075,6 +1075,12 @@ async function fireenjinSubscription(input, options) {
     }));
 }
 
+function mergeSets(...args) {
+    return new Set(args.reduce((acc, current) => {
+        return [...acc, ...current];
+    }, []));
+}
+
 class FireEnjin {
     client;
     sdk = {};
@@ -1233,6 +1239,7 @@ class FireEnjin {
             document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
             document.addEventListener("fireenjinFetch", this.onFetch.bind(this));
             document.addEventListener("fireenjinSubscribe", this.onSubscribe.bind(this));
+            document.addEventListener("fireenjinState", this.onState.bind(this));
             if (options?.autoBindAttributes)
                 document.addEventListener("DOMContentLoaded", () => {
                     this.watchDataAttributes();
@@ -1267,6 +1274,29 @@ class FireEnjin {
                 });
             }
         }
+    }
+    async onState(event) {
+        if (this.options?.debug)
+            console.log("fireenjinState: ", event);
+        if (event?.detail?.state) {
+            this.state = mergeSets(this.state, event?.detail?.state || {});
+        }
+        else if (event?.detail?.stateKey) {
+            this.state.set(event?.detail?.stateKey, event?.detail?.value);
+        }
+        const detail = {
+            event,
+            state: this.state,
+            stateKey: event?.detail?.stateKey,
+            value: event?.detail?.value,
+        };
+        if (typeof this.options?.onStateChange === "function")
+            return this.options.onStateChange(detail);
+        if (document)
+            document.dispatchEvent(new CustomEvent("fireenjinStateChange", {
+                detail,
+            }));
+        return this.state;
     }
     async onUpload(event) {
         if (this.options?.debug)

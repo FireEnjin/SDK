@@ -59,6 +59,7 @@ var firstToLowerCase_1 = require("../helpers/firstToLowerCase");
 var getByPath_1 = require("../helpers/getByPath");
 var setByPath_1 = require("../helpers/setByPath");
 var subscription_1 = require("../events/subscription");
+var mergeSets_1 = require("../helpers/mergeSets");
 var FireEnjin = /** @class */ (function () {
     function FireEnjin(options) {
         var _this = this;
@@ -222,6 +223,7 @@ var FireEnjin = /** @class */ (function () {
             document.addEventListener("fireenjinSubmit", this.onSubmit.bind(this));
             document.addEventListener("fireenjinFetch", this.onFetch.bind(this));
             document.addEventListener("fireenjinSubscribe", this.onSubscribe.bind(this));
+            document.addEventListener("fireenjinState", this.onState.bind(this));
             if (options === null || options === void 0 ? void 0 : options.autoBindAttributes)
                 document.addEventListener("DOMContentLoaded", function () {
                     _this.watchDataAttributes();
@@ -257,6 +259,35 @@ var FireEnjin = /** @class */ (function () {
             }
         }
     }
+    FireEnjin.prototype.onState = function (event) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        return __awaiter(this, void 0, void 0, function () {
+            var detail;
+            return __generator(this, function (_k) {
+                if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
+                    console.log("fireenjinState: ", event);
+                if ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.state) {
+                    this.state = (0, mergeSets_1.default)(this.state, ((_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.state) || {});
+                }
+                else if ((_d = event === null || event === void 0 ? void 0 : event.detail) === null || _d === void 0 ? void 0 : _d.stateKey) {
+                    this.state.set((_e = event === null || event === void 0 ? void 0 : event.detail) === null || _e === void 0 ? void 0 : _e.stateKey, (_f = event === null || event === void 0 ? void 0 : event.detail) === null || _f === void 0 ? void 0 : _f.value);
+                }
+                detail = {
+                    event: event,
+                    state: this.state,
+                    stateKey: (_g = event === null || event === void 0 ? void 0 : event.detail) === null || _g === void 0 ? void 0 : _g.stateKey,
+                    value: (_h = event === null || event === void 0 ? void 0 : event.detail) === null || _h === void 0 ? void 0 : _h.value,
+                };
+                if (typeof ((_j = this.options) === null || _j === void 0 ? void 0 : _j.onStateChange) === "function")
+                    return [2 /*return*/, this.options.onStateChange(detail)];
+                if (document)
+                    document.dispatchEvent(new CustomEvent("fireenjinStateChange", {
+                        detail: detail,
+                    }));
+                return [2 /*return*/, this.state];
+            });
+        });
+    };
     FireEnjin.prototype.onUpload = function (event) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
         return __awaiter(this, void 0, void 0, function () {
