@@ -126,6 +126,7 @@ var FireEnjin = /** @class */ (function () {
             },
             set: function (proxyTarget, stateKey, value, receiver) {
                 var _a, _b, _c, _d, _e;
+                var signalKey = "state:".concat(stateKey);
                 var detail = {
                     receiver: receiver,
                     proxyTarget: proxyTarget,
@@ -142,8 +143,10 @@ var FireEnjin = /** @class */ (function () {
                         detail: detail,
                     }));
                 var reflection = Reflect.set(proxyTarget, stateKey, value, receiver);
-                if (_this.signals["state:".concat(stateKey)])
-                    _this.signals["state:".concat(stateKey)].forEach(function (fn) { return fn(); });
+                if (_this.signals[signalKey])
+                    _this.signals[signalKey].forEach(function (fn) {
+                        return fn({ value: value, stateKey: stateKey, state: _this.state, signalKey: signalKey });
+                    });
                 if (options === null || options === void 0 ? void 0 : options.autoBindAttributes)
                     (_e = (_d = (_c = document === null || document === void 0 ? void 0 : document.querySelectorAll) === null || _c === void 0 ? void 0 : _c.call(document, "[data-state]")) === null || _d === void 0 ? void 0 : _d.forEach) === null || _e === void 0 ? void 0 : _e.call(_d, function (element) { return __awaiter(_this, void 0, void 0, function () {
                         var stateKey;
@@ -420,10 +423,18 @@ var FireEnjin = /** @class */ (function () {
             this.signals[signalKey].delete(signal);
         return this.signals[signalKey];
     };
-    FireEnjin.prototype.createSignal = function (initialValue, signalKey) {
+    FireEnjin.prototype.sendSignal = function (signalKey, data) {
+        if (this.signals[signalKey]) {
+            this.signals[signalKey].forEach(function (signal) { return signal(data); });
+        }
+    };
+    FireEnjin.prototype.createSignal = function (initialValue, signalKey, saveToState, stateKey) {
         var _this = this;
         var value = initialValue;
-        var key = signalKey || "signal:".concat(Math.random());
+        var state = stateKey || signalKey;
+        var key = signalKey ||
+            (saveToState && "state:".concat(state)) ||
+            "signal:".concat(Math.random());
         if (!this.signals[key])
             this.signals[key] = new Set();
         var read = function () {
@@ -434,7 +445,16 @@ var FireEnjin = /** @class */ (function () {
         };
         var write = function (newValue) {
             value = newValue;
-            _this.signals[key].forEach(function (fn) { return fn(); });
+            if (saveToState && state)
+                _this.state[state] = value;
+            _this.signals[key].forEach(function (fn) {
+                return fn({
+                    value: value,
+                    signalKey: key,
+                    state: _this.state,
+                    stateKey: state,
+                });
+            });
         };
         return [read, write, key];
     };
@@ -794,44 +814,78 @@ var FireEnjin = /** @class */ (function () {
     };
     FireEnjin.prototype.watchDataAttributes = function () {
         var _this = this;
-        document.querySelectorAll("[data-fetch]").forEach(function (element) { return __awaiter(_this, void 0, void 0, function () {
-            var url, fetchInput, fetchOptions, stateKey, signalKey, res;
-            var _this = this;
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-            return __generator(this, function (_k) {
-                switch (_k.label) {
-                    case 0:
-                        url = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.fetch;
-                        fetchInput = ((_c = (_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.fetchInput) === null || _c === void 0 ? void 0 : _c.includes("{")) &&
-                            JSON.parse((_d = element === null || element === void 0 ? void 0 : element.dataset) === null || _d === void 0 ? void 0 : _d.fetchInput);
-                        fetchOptions = ((_f = (_e = element === null || element === void 0 ? void 0 : element.dataset) === null || _e === void 0 ? void 0 : _e.fetchOptions) === null || _f === void 0 ? void 0 : _f.includes("{")) &&
-                            JSON.parse((_g = element === null || element === void 0 ? void 0 : element.dataset) === null || _g === void 0 ? void 0 : _g.fetchOptions);
-                        stateKey = (_h = element === null || element === void 0 ? void 0 : element.dataset) === null || _h === void 0 ? void 0 : _h.state;
-                        signalKey = ((_j = element === null || element === void 0 ? void 0 : element.dataset) === null || _j === void 0 ? void 0 : _j.signal) || "state:".concat(stateKey);
-                        return [4 /*yield*/, this.fetch(url, fetchInput, fetchOptions)];
-                    case 1:
-                        res = _k.sent();
-                        this.subscribe(signalKey, function () {
-                            Object.keys(element.dataset).forEach(function (key) {
-                                if (key.includes("bind")) {
-                                    var propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
-                                    if (propName === "innerHtml")
-                                        propName = "innerHTML";
-                                    if (propName === "outerHtml")
-                                        propName = "outerHTML";
-                                    var value = (0, getByPath_1.default)(_this.state[stateKey], element.dataset[key]);
-                                    element[propName] = value;
-                                }
-                                return;
-                            });
-                        });
-                        if (typeof stateKey === "string")
-                            (0, setByPath_1.default)(this.state, stateKey, res);
-                        return [2 /*return*/];
-                }
+        document
+            .querySelectorAll("[data-trigger]")
+            .forEach(function (element) { return __awaiter(_this, void 0, void 0, function () {
+            var name, eventName, payload;
+            var _a, _b, _c, _d;
+            return __generator(this, function (_e) {
+                name = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.trigger;
+                eventName = ((_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.triggerOn) || "click";
+                payload = ((_c = element === null || element === void 0 ? void 0 : element.dataset) === null || _c === void 0 ? void 0 : _c.triggerPayload)
+                    ? JSON.parse((_d = element === null || element === void 0 ? void 0 : element.dataset) === null || _d === void 0 ? void 0 : _d.triggerPayload)
+                    : {};
+                element.addEventListener(eventName, function (event) {
+                    element.dispatchEvent(new CustomEvent("fireenjinTrigger", {
+                        detail: {
+                            event: event,
+                            name: name,
+                            payload: payload,
+                        },
+                    }));
+                });
+                return [2 /*return*/];
             });
         }); });
-        document.querySelectorAll("[data-signal]").forEach(function (element) { return __awaiter(_this, void 0, void 0, function () {
+        document.querySelectorAll("[data-fetch]").forEach(function (element) { return __awaiter(_this, void 0, void 0, function () {
+            var url, fetchParams, fetchOptions, res, stateKey, signalKey, eventName, subscribeBind;
+            var _this = this;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+            return __generator(this, function (_l) {
+                url = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.fetch;
+                fetchParams = ((_c = (_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.fetchParams) === null || _c === void 0 ? void 0 : _c.includes("{")) &&
+                    JSON.parse((_d = element === null || element === void 0 ? void 0 : element.dataset) === null || _d === void 0 ? void 0 : _d.fetchParams);
+                fetchOptions = ((_f = (_e = element === null || element === void 0 ? void 0 : element.dataset) === null || _e === void 0 ? void 0 : _e.fetchOptions) === null || _f === void 0 ? void 0 : _f.includes("{")) &&
+                    JSON.parse((_g = element === null || element === void 0 ? void 0 : element.dataset) === null || _g === void 0 ? void 0 : _g.fetchOptions);
+                stateKey = (_h = element === null || element === void 0 ? void 0 : element.dataset) === null || _h === void 0 ? void 0 : _h.state;
+                signalKey = ((_j = element === null || element === void 0 ? void 0 : element.dataset) === null || _j === void 0 ? void 0 : _j.signal) || "state:".concat(stateKey);
+                eventName = (_k = element === null || element === void 0 ? void 0 : element.dataset) === null || _k === void 0 ? void 0 : _k.triggerOn;
+                subscribeBind = function () { return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, this.fetch(url, fetchParams, fetchOptions)];
+                            case 1:
+                                res = _a.sent();
+                                this.subscribe(signalKey, function () {
+                                    Object.keys(element.dataset).forEach(function (key) {
+                                        if (key.includes("bind")) {
+                                            var propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
+                                            if (propName === "innerHtml")
+                                                propName = "innerHTML";
+                                            if (propName === "outerHtml")
+                                                propName = "outerHTML";
+                                            var value = (0, getByPath_1.default)(_this.state[stateKey], element.dataset[key]);
+                                            element[propName] = value;
+                                        }
+                                        return;
+                                    });
+                                });
+                                return [2 /*return*/];
+                        }
+                    });
+                }); };
+                eventName
+                    ? document.addEventListener(eventName, function () { return subscribeBind(); })
+                    : subscribeBind();
+                if (typeof stateKey === "string")
+                    (0, setByPath_1.default)(this.state, stateKey, res);
+                return [2 /*return*/];
+            });
+        }); });
+        document
+            .querySelectorAll("[data-signal],[data-state]")
+            .forEach(function (element) { return __awaiter(_this, void 0, void 0, function () {
             var stateKey, signalKey;
             var _this = this;
             var _a, _b;
@@ -866,7 +920,7 @@ var FireEnjin = /** @class */ (function () {
                     };
                     if (typeof ((_a = _this.options) === null || _a === void 0 ? void 0 : _a.onSubscription) === "function")
                         _this.options.onSubscription(subscriptionDetails);
-                    (0, subscription_1.default)();
+                    (0, subscription_1.default)(subscriptionDetails);
                 });
                 return [2 /*return*/];
             });

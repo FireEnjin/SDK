@@ -80,6 +80,7 @@ export default class FireEnjin {
                 return value;
             },
             set: (proxyTarget, stateKey, value, receiver) => {
+                const signalKey = `state:${stateKey}`;
                 const detail = {
                     receiver,
                     proxyTarget,
@@ -96,8 +97,8 @@ export default class FireEnjin {
                         detail,
                     }));
                 const reflection = Reflect.set(proxyTarget, stateKey, value, receiver);
-                if (this.signals[`state:${stateKey}`])
-                    this.signals[`state:${stateKey}`].forEach((fn) => fn());
+                if (this.signals[signalKey])
+                    this.signals[signalKey].forEach((fn) => fn({ value, stateKey, state: this.state, signalKey }));
                 if (options?.autoBindAttributes)
                     document
                         ?.querySelectorAll?.("[data-state]")
@@ -332,9 +333,17 @@ export default class FireEnjin {
             this.signals[signalKey].delete(signal);
         return this.signals[signalKey];
     }
-    createSignal(initialValue, signalKey) {
+    sendSignal(signalKey, data) {
+        if (this.signals[signalKey]) {
+            this.signals[signalKey].forEach((signal) => signal(data));
+        }
+    }
+    createSignal(initialValue, signalKey, saveToState, stateKey) {
         let value = initialValue;
-        const key = signalKey || `signal:${Math.random()}`;
+        const state = stateKey || signalKey;
+        const key = signalKey ||
+            (saveToState && `state:${state}`) ||
+            `signal:${Math.random()}`;
         if (!this.signals[key])
             this.signals[key] = new Set();
         const read = () => {
@@ -345,7 +354,14 @@ export default class FireEnjin {
         };
         const write = (newValue) => {
             value = newValue;
-            this.signals[key].forEach((fn) => fn());
+            if (saveToState && state)
+                this.state[state] = value;
+            this.signals[key].forEach((fn) => fn({
+                value,
+                signalKey: key,
+                state: this.state,
+                stateKey: state,
+            }));
         };
         return [read, write, key];
     }
@@ -616,33 +632,60 @@ export default class FireEnjin {
         });
     }
     watchDataAttributes() {
+        document
+            .querySelectorAll("[data-trigger]")
+            .forEach(async (element) => {
+            const name = element?.dataset?.trigger;
+            const eventName = element?.dataset?.triggerOn || "click";
+            const payload = element?.dataset?.triggerPayload
+                ? JSON.parse(element?.dataset?.triggerPayload)
+                : {};
+            element.addEventListener(eventName, (event) => {
+                element.dispatchEvent(new CustomEvent("fireenjinTrigger", {
+                    detail: {
+                        event,
+                        name,
+                        payload,
+                    },
+                }));
+            });
+        });
         document.querySelectorAll("[data-fetch]").forEach(async (element) => {
             const url = element?.dataset?.fetch;
-            const fetchInput = element?.dataset?.fetchInput?.includes("{") &&
-                JSON.parse(element?.dataset?.fetchInput);
+            const fetchParams = element?.dataset?.fetchParams?.includes("{") &&
+                JSON.parse(element?.dataset?.fetchParams);
             const fetchOptions = element?.dataset?.fetchOptions?.includes("{") &&
                 JSON.parse(element?.dataset?.fetchOptions);
+            let res;
             const stateKey = element?.dataset?.state;
             const signalKey = element?.dataset?.signal || `state:${stateKey}`;
-            const res = await this.fetch(url, fetchInput, fetchOptions);
-            this.subscribe(signalKey, () => {
-                Object.keys(element.dataset).forEach((key) => {
-                    if (key.includes("bind")) {
-                        let propName = firstToLowerCase(key.replace("bind", ""));
-                        if (propName === "innerHtml")
-                            propName = "innerHTML";
-                        if (propName === "outerHtml")
-                            propName = "outerHTML";
-                        const value = getByPath(this.state[stateKey], element.dataset[key]);
-                        element[propName] = value;
-                    }
-                    return;
+            const eventName = element?.dataset?.triggerOn;
+            const subscribeBind = async () => {
+                res = await this.fetch(url, fetchParams, fetchOptions);
+                this.subscribe(signalKey, () => {
+                    Object.keys(element.dataset).forEach((key) => {
+                        if (key.includes("bind")) {
+                            let propName = firstToLowerCase(key.replace("bind", ""));
+                            if (propName === "innerHtml")
+                                propName = "innerHTML";
+                            if (propName === "outerHtml")
+                                propName = "outerHTML";
+                            const value = getByPath(this.state[stateKey], element.dataset[key]);
+                            element[propName] = value;
+                        }
+                        return;
+                    });
                 });
-            });
+            };
+            eventName
+                ? document.addEventListener(eventName, () => subscribeBind())
+                : subscribeBind();
             if (typeof stateKey === "string")
                 setByPath(this.state, stateKey, res);
         });
-        document.querySelectorAll("[data-signal]").forEach(async (element) => {
+        document
+            .querySelectorAll("[data-signal],[data-state]")
+            .forEach(async (element) => {
             const stateKey = element?.dataset?.state;
             const signalKey = element?.dataset?.signal || `state:${stateKey}`;
             this.subscribe(signalKey, () => {
@@ -671,7 +714,7 @@ export default class FireEnjin {
                 };
                 if (typeof this.options?.onSubscription === "function")
                     this.options.onSubscription(subscriptionDetails);
-                fireenjinSubscription();
+                fireenjinSubscription(subscriptionDetails);
             });
         });
     }

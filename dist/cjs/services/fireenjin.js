@@ -113,6 +113,7 @@ class FireEnjin {
             },
             set: (proxyTarget, stateKey, value, receiver) => {
                 var _a, _b, _c, _d, _e;
+                const signalKey = `state:${stateKey}`;
                 const detail = {
                     receiver,
                     proxyTarget,
@@ -129,8 +130,8 @@ class FireEnjin {
                         detail,
                     }));
                 const reflection = Reflect.set(proxyTarget, stateKey, value, receiver);
-                if (this.signals[`state:${stateKey}`])
-                    this.signals[`state:${stateKey}`].forEach((fn) => fn());
+                if (this.signals[signalKey])
+                    this.signals[signalKey].forEach((fn) => fn({ value, stateKey, state: this.state, signalKey }));
                 if (options === null || options === void 0 ? void 0 : options.autoBindAttributes)
                     (_e = (_d = (_c = document === null || document === void 0 ? void 0 : document.querySelectorAll) === null || _c === void 0 ? void 0 : _c.call(document, "[data-state]")) === null || _d === void 0 ? void 0 : _d.forEach) === null || _e === void 0 ? void 0 : _e.call(_d, (element) => __awaiter(this, void 0, void 0, function* () {
                         var _f;
@@ -377,9 +378,17 @@ class FireEnjin {
             this.signals[signalKey].delete(signal);
         return this.signals[signalKey];
     }
-    createSignal(initialValue, signalKey) {
+    sendSignal(signalKey, data) {
+        if (this.signals[signalKey]) {
+            this.signals[signalKey].forEach((signal) => signal(data));
+        }
+    }
+    createSignal(initialValue, signalKey, saveToState, stateKey) {
         let value = initialValue;
-        const key = signalKey || `signal:${Math.random()}`;
+        const state = stateKey || signalKey;
+        const key = signalKey ||
+            (saveToState && `state:${state}`) ||
+            `signal:${Math.random()}`;
         if (!this.signals[key])
             this.signals[key] = new Set();
         const read = () => {
@@ -390,7 +399,14 @@ class FireEnjin {
         };
         const write = (newValue) => {
             value = newValue;
-            this.signals[key].forEach((fn) => fn());
+            if (saveToState && state)
+                this.state[state] = value;
+            this.signals[key].forEach((fn) => fn({
+                value,
+                signalKey: key,
+                state: this.state,
+                stateKey: state,
+            }));
         };
         return [read, write, key];
     }
@@ -675,37 +691,65 @@ class FireEnjin {
         });
     }
     watchDataAttributes() {
+        document
+            .querySelectorAll("[data-trigger]")
+            .forEach((element) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d;
+            const name = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.trigger;
+            const eventName = ((_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.triggerOn) || "click";
+            const payload = ((_c = element === null || element === void 0 ? void 0 : element.dataset) === null || _c === void 0 ? void 0 : _c.triggerPayload)
+                ? JSON.parse((_d = element === null || element === void 0 ? void 0 : element.dataset) === null || _d === void 0 ? void 0 : _d.triggerPayload)
+                : {};
+            element.addEventListener(eventName, (event) => {
+                element.dispatchEvent(new CustomEvent("fireenjinTrigger", {
+                    detail: {
+                        event,
+                        name,
+                        payload,
+                    },
+                }));
+            });
+        }));
         document.querySelectorAll("[data-fetch]").forEach((element) => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-            const url = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.fetch;
-            const fetchInput = ((_c = (_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.fetchInput) === null || _c === void 0 ? void 0 : _c.includes("{")) &&
-                JSON.parse((_d = element === null || element === void 0 ? void 0 : element.dataset) === null || _d === void 0 ? void 0 : _d.fetchInput);
-            const fetchOptions = ((_f = (_e = element === null || element === void 0 ? void 0 : element.dataset) === null || _e === void 0 ? void 0 : _e.fetchOptions) === null || _f === void 0 ? void 0 : _f.includes("{")) &&
-                JSON.parse((_g = element === null || element === void 0 ? void 0 : element.dataset) === null || _g === void 0 ? void 0 : _g.fetchOptions);
-            const stateKey = (_h = element === null || element === void 0 ? void 0 : element.dataset) === null || _h === void 0 ? void 0 : _h.state;
-            const signalKey = ((_j = element === null || element === void 0 ? void 0 : element.dataset) === null || _j === void 0 ? void 0 : _j.signal) || `state:${stateKey}`;
-            const res = yield this.fetch(url, fetchInput, fetchOptions);
-            this.subscribe(signalKey, () => {
-                Object.keys(element.dataset).forEach((key) => {
-                    if (key.includes("bind")) {
-                        let propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
-                        if (propName === "innerHtml")
-                            propName = "innerHTML";
-                        if (propName === "outerHtml")
-                            propName = "outerHTML";
-                        const value = (0, getByPath_1.default)(this.state[stateKey], element.dataset[key]);
-                        element[propName] = value;
-                    }
-                    return;
+            var _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+            const url = (_e = element === null || element === void 0 ? void 0 : element.dataset) === null || _e === void 0 ? void 0 : _e.fetch;
+            const fetchParams = ((_g = (_f = element === null || element === void 0 ? void 0 : element.dataset) === null || _f === void 0 ? void 0 : _f.fetchParams) === null || _g === void 0 ? void 0 : _g.includes("{")) &&
+                JSON.parse((_h = element === null || element === void 0 ? void 0 : element.dataset) === null || _h === void 0 ? void 0 : _h.fetchParams);
+            const fetchOptions = ((_k = (_j = element === null || element === void 0 ? void 0 : element.dataset) === null || _j === void 0 ? void 0 : _j.fetchOptions) === null || _k === void 0 ? void 0 : _k.includes("{")) &&
+                JSON.parse((_l = element === null || element === void 0 ? void 0 : element.dataset) === null || _l === void 0 ? void 0 : _l.fetchOptions);
+            let res;
+            const stateKey = (_m = element === null || element === void 0 ? void 0 : element.dataset) === null || _m === void 0 ? void 0 : _m.state;
+            const signalKey = ((_o = element === null || element === void 0 ? void 0 : element.dataset) === null || _o === void 0 ? void 0 : _o.signal) || `state:${stateKey}`;
+            const eventName = (_p = element === null || element === void 0 ? void 0 : element.dataset) === null || _p === void 0 ? void 0 : _p.triggerOn;
+            const subscribeBind = () => __awaiter(this, void 0, void 0, function* () {
+                res = yield this.fetch(url, fetchParams, fetchOptions);
+                this.subscribe(signalKey, () => {
+                    Object.keys(element.dataset).forEach((key) => {
+                        if (key.includes("bind")) {
+                            let propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
+                            if (propName === "innerHtml")
+                                propName = "innerHTML";
+                            if (propName === "outerHtml")
+                                propName = "outerHTML";
+                            const value = (0, getByPath_1.default)(this.state[stateKey], element.dataset[key]);
+                            element[propName] = value;
+                        }
+                        return;
+                    });
                 });
             });
+            eventName
+                ? document.addEventListener(eventName, () => subscribeBind())
+                : subscribeBind();
             if (typeof stateKey === "string")
                 (0, setByPath_1.default)(this.state, stateKey, res);
         }));
-        document.querySelectorAll("[data-signal]").forEach((element) => __awaiter(this, void 0, void 0, function* () {
-            var _k, _l;
-            const stateKey = (_k = element === null || element === void 0 ? void 0 : element.dataset) === null || _k === void 0 ? void 0 : _k.state;
-            const signalKey = ((_l = element === null || element === void 0 ? void 0 : element.dataset) === null || _l === void 0 ? void 0 : _l.signal) || `state:${stateKey}`;
+        document
+            .querySelectorAll("[data-signal],[data-state]")
+            .forEach((element) => __awaiter(this, void 0, void 0, function* () {
+            var _q, _r;
+            const stateKey = (_q = element === null || element === void 0 ? void 0 : element.dataset) === null || _q === void 0 ? void 0 : _q.state;
+            const signalKey = ((_r = element === null || element === void 0 ? void 0 : element.dataset) === null || _r === void 0 ? void 0 : _r.signal) || `state:${stateKey}`;
             this.subscribe(signalKey, () => {
                 var _a;
                 Object.keys(element.dataset).forEach((key) => {
@@ -734,7 +778,7 @@ class FireEnjin {
                 };
                 if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubscription) === "function")
                     this.options.onSubscription(subscriptionDetails);
-                (0, subscription_1.default)();
+                (0, subscription_1.default)(subscriptionDetails);
             });
         }));
     }

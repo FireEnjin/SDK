@@ -1,6 +1,6 @@
 import { GraphQLClient } from "graphql-request";
 import { FirebaseStorage } from "@firebase/storage";
-import { FireEnjinFetchInput, FireEnjinFetchOptions, FireEnjinHost, FireEnjinMethodOptions, FireEnjinOptions, FireEnjinSubmitInput, FireEnjinSubmitOptions, FireEnjinUploadInput } from "../interfaces";
+import type { FireEnjinFetchInput, FireEnjinFetchOptions, FireEnjinHost, FireEnjinMethodOptions, FireEnjinOptions, FireEnjinSubmitInput, FireEnjinSubmitOptions, FireEnjinUploadInput } from "../interfaces";
 import Client from "./client";
 import FirestoreClient from "./firestore";
 export default class FireEnjin<I = any> {
@@ -12,21 +12,22 @@ export default class FireEnjin<I = any> {
     storage?: FirebaseStorage;
     state: I | any;
     signals: {
-        [signalKey: string]: Set<() => void>;
+        [signalKey: string]: Set<(data?: any) => void>;
     };
-    currentSignal: (() => any) | undefined;
+    currentSignal: ((data?: any) => any) | undefined;
     constructor(options: FireEnjinOptions);
     private onUpload;
     private onSubmit;
     private onFetch;
     private onSubscribe;
     subscribe(signalKey: string, signal: () => void): () => void;
-    unsubscribe(signalKey: string, signal: () => void): Set<() => void>;
-    createSignal(initialValue: any, signalKey?: string): [() => any, any, string];
+    unsubscribe(signalKey: string, signal: () => void): Set<(data?: any) => void>;
+    sendSignal(signalKey: string, data?: any): void;
+    createSignal(initialValue: any, signalKey?: string, saveToState?: boolean, stateKey?: string): [() => any, any, string];
     createEffect(callback: () => void): void;
     createEffectPromise(callback: () => Promise<void>): void;
     clearSignal(signalKey?: string): {
-        [signalKey: string]: Set<() => void>;
+        [signalKey: string]: Set<(data?: any) => void>;
     };
     private hash;
     upload<I = any, T = any>(input: FireEnjinUploadInput<I>, options?: FireEnjinMethodOptions): Promise<T>;

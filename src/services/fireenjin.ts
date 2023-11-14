@@ -7,7 +7,7 @@ import {
   uploadBytesResumable,
   uploadString,
 } from "@firebase/storage";
-import {
+import type {
   FireEnjinFetchEvent,
   FireEnjinFetchInput,
   FireEnjinFetchOptions,
@@ -42,8 +42,8 @@ export default class FireEnjin<I = any> {
   options: FireEnjinOptions;
   storage?: FirebaseStorage;
   state: I | any = {};
-  signals: { [signalKey: string]: Set<() => void> } = {};
-  currentSignal: (() => any) | undefined;
+  signals: { [signalKey: string]: Set<(data?: any) => void> } = {};
+  currentSignal: ((data?: any) => any) | undefined;
 
   constructor(options: FireEnjinOptions) {
     this.options = options || {};
@@ -105,6 +105,7 @@ export default class FireEnjin<I = any> {
         return value;
       },
       set: (proxyTarget: any, stateKey: string, value: any, receiver: any) => {
+        const signalKey = `state:${stateKey}`;
         const detail = {
           receiver,
           proxyTarget,
@@ -122,8 +123,10 @@ export default class FireEnjin<I = any> {
             })
           );
         const reflection = Reflect.set(proxyTarget, stateKey, value, receiver);
-        if (this.signals[`state:${stateKey}`])
-          this.signals[`state:${stateKey}`].forEach((fn: any) => fn());
+        if (this.signals[signalKey])
+          this.signals[signalKey].forEach((fn: (data?: any) => void) =>
+            fn({ value, stateKey, state: this.state, signalKey })
+          );
         if (options?.autoBindAttributes)
           document
             ?.querySelectorAll?.("[data-state]")
@@ -394,12 +397,24 @@ export default class FireEnjin<I = any> {
     return this.signals[signalKey];
   }
 
+  sendSignal(signalKey: string, data?: any) {
+    if (this.signals[signalKey]) {
+      this.signals[signalKey].forEach((signal) => signal(data));
+    }
+  }
+
   createSignal(
     initialValue: any,
-    signalKey?: string
+    signalKey?: string,
+    saveToState?: boolean,
+    stateKey?: string
   ): [() => any, any, string] {
     let value = initialValue;
-    const key = signalKey || `signal:${Math.random()}`;
+    const state = stateKey || signalKey;
+    const key =
+      signalKey ||
+      (saveToState && `state:${state}`) ||
+      `signal:${Math.random()}`;
     if (!this.signals[key]) this.signals[key] = new Set();
     const read: () => any = () => {
       if (this.currentSignal !== undefined) {
@@ -409,7 +424,15 @@ export default class FireEnjin<I = any> {
     };
     const write: (val: any) => void = (newValue: any) => {
       value = newValue;
-      this.signals[key].forEach((fn) => fn());
+      if (saveToState && state) this.state[state] = value;
+      this.signals[key].forEach((fn: (data?: any) => void) =>
+        fn({
+          value,
+          signalKey: key,
+          state: this.state,
+          stateKey: state,
+        })
+      );
     };
 
     return [read, write, key];
@@ -751,63 +774,96 @@ export default class FireEnjin<I = any> {
   }
 
   public watchDataAttributes() {
+    document
+      .querySelectorAll("[data-trigger]")
+      .forEach(async (element: any) => {
+        const name = element?.dataset?.trigger;
+        const eventName = element?.dataset?.triggerOn || "click";
+        const payload = element?.dataset?.triggerPayload
+          ? JSON.parse(element?.dataset?.triggerPayload)
+          : {};
+        element.addEventListener(eventName, (event) => {
+          element.dispatchEvent(
+            new CustomEvent("fireenjinTrigger", {
+              detail: {
+                event,
+                name,
+                payload,
+              },
+            })
+          );
+        });
+      });
     document.querySelectorAll("[data-fetch]").forEach(async (element: any) => {
       const url: string = element?.dataset?.fetch;
-      const fetchInput =
-        element?.dataset?.fetchInput?.includes("{") &&
-        JSON.parse(element?.dataset?.fetchInput);
+      const fetchParams =
+        element?.dataset?.fetchParams?.includes("{") &&
+        JSON.parse(element?.dataset?.fetchParams);
       const fetchOptions =
         element?.dataset?.fetchOptions?.includes("{") &&
         JSON.parse(element?.dataset?.fetchOptions);
+      let res: any;
       const stateKey: string = element?.dataset?.state;
       const signalKey: string = element?.dataset?.signal || `state:${stateKey}`;
-      const res = await this.fetch(url, fetchInput, fetchOptions);
-      this.subscribe(signalKey, () => {
-        Object.keys(element.dataset).forEach((key) => {
-          if (key.includes("bind")) {
-            let propName = firstToLowerCase(key.replace("bind", ""));
-            if (propName === "innerHtml") propName = "innerHTML";
-            if (propName === "outerHtml") propName = "outerHTML";
-            const value = getByPath(this.state[stateKey], element.dataset[key]);
-            element[propName] = value;
-          }
-          return;
-        });
-      });
-      if (typeof stateKey === "string") setByPath(this.state, stateKey, res);
-    });
-    document.querySelectorAll("[data-signal]").forEach(async (element: any) => {
-      const stateKey: string = element?.dataset?.state;
-      const signalKey: string = element?.dataset?.signal || `state:${stateKey}`;
-      this.subscribe(signalKey, () => {
-        Object.keys(element.dataset).forEach((key) => {
-          if (key.includes("bind")) {
-            let propName = firstToLowerCase(key.replace("bind", ""));
-            if (propName === "innerHtml") propName = "innerHTML";
-            if (propName === "outerHtml") propName = "outerHTML";
-            if (this.state?.[stateKey])
-              element[propName] = getByPath(
+      const eventName = element?.dataset?.triggerOn;
+      const subscribeBind = async () => {
+        res = await this.fetch(url, fetchParams, fetchOptions);
+        this.subscribe(signalKey, () => {
+          Object.keys(element.dataset).forEach((key) => {
+            if (key.includes("bind")) {
+              let propName = firstToLowerCase(key.replace("bind", ""));
+              if (propName === "innerHtml") propName = "innerHTML";
+              if (propName === "outerHtml") propName = "outerHTML";
+              const value = getByPath(
                 this.state[stateKey],
                 element.dataset[key]
               );
-          }
-          return;
+              element[propName] = value;
+            }
+            return;
+          });
         });
-        const subscriptionDetails = {
-          bubbles: true,
-          cancelable: true,
-          composed: false,
-          data: {
-            state: this.state,
-            signal: this.signals[signalKey],
-            timestamp: new Date(),
-          },
-          signalKey,
-        };
-        if (typeof this.options?.onSubscription === "function")
-          this.options.onSubscription(subscriptionDetails);
-        fireenjinSubscription();
-      });
+      };
+      eventName
+        ? document.addEventListener(eventName, () => subscribeBind())
+        : subscribeBind();
+      if (typeof stateKey === "string") setByPath(this.state, stateKey, res);
     });
+    document
+      .querySelectorAll("[data-signal],[data-state]")
+      .forEach(async (element: any) => {
+        const stateKey: string = element?.dataset?.state;
+        const signalKey: string =
+          element?.dataset?.signal || `state:${stateKey}`;
+        this.subscribe(signalKey, () => {
+          Object.keys(element.dataset).forEach((key) => {
+            if (key.includes("bind")) {
+              let propName = firstToLowerCase(key.replace("bind", ""));
+              if (propName === "innerHtml") propName = "innerHTML";
+              if (propName === "outerHtml") propName = "outerHTML";
+              if (this.state?.[stateKey])
+                element[propName] = getByPath(
+                  this.state[stateKey],
+                  element.dataset[key]
+                );
+            }
+            return;
+          });
+          const subscriptionDetails = {
+            bubbles: true,
+            cancelable: true,
+            composed: false,
+            data: {
+              state: this.state,
+              signal: this.signals[signalKey],
+              timestamp: new Date(),
+            },
+            signalKey,
+          };
+          if (typeof this.options?.onSubscription === "function")
+            this.options.onSubscription(subscriptionDetails);
+          fireenjinSubscription(subscriptionDetails);
+        });
+      });
   }
 }
