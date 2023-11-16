@@ -40,7 +40,7 @@ export type FireEnjinUploadCallback = (data: CustomEvent<FireEnjinUploadEvent>) 
 export type FireEnjinProgressCallback = (data: FireEnjinProgressEvent) => void;
 export type FireEnjinStateChangeCallback = (data: FireEnjinStateChangeEvent) => boolean;
 export type FireEnjinStateReadCallback = (data: FireEnjinStateReadEvent) => boolean;
-export type FireEnjinSubscriptionCallback<I = any> = (data: FireEnjinSubscriptionEvent<I>) => boolean;
+export type FireEnjinSubscriptionCallback<I = any> = (data: FireEnjinSubscriptionEvent<I>) => Promise<void> | void;
 export type FireEnjinFetchCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinFetchInput<I>, options?: FireEnjinFetchOptions) => Promise<T>;
 export type FireEnjinSubmitCallback<I = any, T = any> = (endpoint: string, input?: FireEnjinSubmitInput<I, T>, options?: FireEnjinSubmitOptions) => Promise<T>;
 export type FireEnjinOptions<I = any> = {

@@ -58,7 +58,7 @@ export type FireEnjinStateReadCallback = (
 
 export type FireEnjinSubscriptionCallback<I = any> = (
   data: FireEnjinSubscriptionEvent<I>
-) => boolean;
+) => Promise<void> | void;
 
 export type FireEnjinFetchCallback<I = any, T = any> = (
   endpoint: string,
