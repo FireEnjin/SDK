@@ -473,6 +473,7 @@ export default class FireEnjin {
                 bubbles: options?.bubbles,
                 cancelable: options?.cancelable,
                 composed: options?.composed,
+                callback: options?.callback,
                 onError: this.options?.onError,
                 onSuccess: this.options?.onSuccess,
             });
@@ -497,6 +498,7 @@ export default class FireEnjin {
             bubbles: options?.bubbles,
             cancelable: options?.cancelable,
             composed: options?.composed,
+            callback: options?.callback,
             onError: this.options?.onError,
             onSuccess: this.options?.onSuccess,
         });
@@ -537,6 +539,7 @@ export default class FireEnjin {
             bubbles: options?.bubbles,
             cancelable: options?.cancelable,
             composed: options?.composed,
+            callback: options?.callback,
             onError: this.options?.onError,
             onSuccess: this.options?.onSuccess,
         });

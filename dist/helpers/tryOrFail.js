@@ -68,26 +68,36 @@ function tryOrFail(fn, options) {
                     };
                     _d.label = 1;
                 case 1:
-                    _d.trys.push([1, 4, , 6]);
+                    _d.trys.push([1, 6, , 10]);
                     return [4 /*yield*/, fn()];
                 case 2:
                     data = _d.sent();
-                    return [4 /*yield*/, (0, success_1.default)(__assign(__assign({}, baseData), { data: data }), {
-                            onSuccess: options === null || options === void 0 ? void 0 : options.onSuccess,
-                            onError: options === null || options === void 0 ? void 0 : options.onError,
-                        })];
+                    if (!(typeof (options === null || options === void 0 ? void 0 : options.callback) === "function")) return [3 /*break*/, 4];
+                    return [4 /*yield*/, options.callback(data)];
                 case 3:
                     _d.sent();
-                    return [2 /*return*/, data];
-                case 4:
-                    error_2 = _d.sent();
-                    return [4 /*yield*/, (0, error_1.default)(__assign(__assign({}, baseData), { error: error_2 }), {
-                            onError: options === null || options === void 0 ? void 0 : options.onError,
-                        })];
+                    _d.label = 4;
+                case 4: return [4 /*yield*/, (0, success_1.default)(__assign(__assign({}, baseData), { data: data }), {
+                        onSuccess: options === null || options === void 0 ? void 0 : options.onSuccess,
+                        onError: options === null || options === void 0 ? void 0 : options.onError,
+                    })];
                 case 5:
                     _d.sent();
+                    return [2 /*return*/, data];
+                case 6:
+                    error_2 = _d.sent();
+                    if (!(typeof (options === null || options === void 0 ? void 0 : options.callback) === "function")) return [3 /*break*/, 8];
+                    return [4 /*yield*/, options.callback(undefined, error_2)];
+                case 7:
+                    _d.sent();
+                    _d.label = 8;
+                case 8: return [4 /*yield*/, (0, error_1.default)(__assign(__assign({}, baseData), { error: error_2 }), {
+                        onError: options === null || options === void 0 ? void 0 : options.onError,
+                    })];
+                case 9:
+                    _d.sent();
                     return [2 /*return*/];
-                case 6: return [2 /*return*/];
+                case 10: return [2 /*return*/];
             }
         });
     });

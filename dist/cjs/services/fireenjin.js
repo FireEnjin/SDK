@@ -529,6 +529,7 @@ class FireEnjin {
                     bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                     cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                     composed: options === null || options === void 0 ? void 0 : options.composed,
+                    callback: options === null || options === void 0 ? void 0 : options.callback,
                     onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
                     onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess,
                 });
@@ -553,6 +554,7 @@ class FireEnjin {
                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                 composed: options === null || options === void 0 ? void 0 : options.composed,
+                callback: options === null || options === void 0 ? void 0 : options.callback,
                 onError: (_h = this.options) === null || _h === void 0 ? void 0 : _h.onError,
                 onSuccess: (_j = this.options) === null || _j === void 0 ? void 0 : _j.onSuccess,
             });
@@ -596,6 +598,7 @@ class FireEnjin {
                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                 composed: options === null || options === void 0 ? void 0 : options.composed,
+                callback: options === null || options === void 0 ? void 0 : options.callback,
                 onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
                 onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess,
             });

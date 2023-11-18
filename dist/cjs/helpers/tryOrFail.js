@@ -29,6 +29,8 @@ function tryOrFail(fn, options) {
         };
         try {
             const data = yield fn();
+            if (typeof (options === null || options === void 0 ? void 0 : options.callback) === "function")
+                yield options.callback(data);
             yield (0, success_1.default)(Object.assign(Object.assign({}, baseData), { data }), {
                 onSuccess: options === null || options === void 0 ? void 0 : options.onSuccess,
                 onError: options === null || options === void 0 ? void 0 : options.onError,
@@ -36,6 +38,8 @@ function tryOrFail(fn, options) {
             return data;
         }
         catch (error) {
+            if (typeof (options === null || options === void 0 ? void 0 : options.callback) === "function")
+                yield options.callback(undefined, error);
             yield (0, error_1.default)(Object.assign(Object.assign({}, baseData), { error }), {
                 onError: options === null || options === void 0 ? void 0 : options.onError,
             });

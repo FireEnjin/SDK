@@ -17,6 +17,7 @@ export default async function tryOrFail<T = any>(
     bubbles?: boolean;
     cancelable?: boolean;
     composed?: boolean;
+    callback?: (data?: T | undefined, error?: any) => Promise<void>;
     onError?: FireEnjinErrorCallback;
     onSuccess?: FireEnjinSuccessCallback;
   }
@@ -33,6 +34,7 @@ export default async function tryOrFail<T = any>(
   };
   try {
     const data = await fn();
+    if (typeof options?.callback === "function") await options.callback(data);
     await fireenjinSuccess(
       { ...baseData, data },
       {
@@ -43,6 +45,8 @@ export default async function tryOrFail<T = any>(
 
     return data;
   } catch (error) {
+    if (typeof options?.callback === "function")
+      await options.callback(undefined, error);
     await fireenjinError(
       {
         ...baseData,

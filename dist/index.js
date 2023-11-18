@@ -799,6 +799,8 @@ async function tryOrFail(fn, options) {
     };
     try {
         const data = await fn();
+        if (typeof options?.callback === "function")
+            await options.callback(data);
         await fireenjinSuccess({ ...baseData, data }, {
             onSuccess: options?.onSuccess,
             onError: options?.onError,
@@ -806,6 +808,8 @@ async function tryOrFail(fn, options) {
         return data;
     }
     catch (error) {
+        if (typeof options?.callback === "function")
+            await options.callback(undefined, error);
         await fireenjinError({
             ...baseData,
             error,
@@ -1543,6 +1547,7 @@ class FireEnjin {
                 bubbles: options?.bubbles,
                 cancelable: options?.cancelable,
                 composed: options?.composed,
+                callback: options?.callback,
                 onError: this.options?.onError,
                 onSuccess: this.options?.onSuccess,
             });
@@ -1567,6 +1572,7 @@ class FireEnjin {
             bubbles: options?.bubbles,
             cancelable: options?.cancelable,
             composed: options?.composed,
+            callback: options?.callback,
             onError: this.options?.onError,
             onSuccess: this.options?.onSuccess,
         });
@@ -1607,6 +1613,7 @@ class FireEnjin {
             bubbles: options?.bubbles,
             cancelable: options?.cancelable,
             composed: options?.composed,
+            callback: options?.callback,
             onError: this.options?.onError,
             onSuccess: this.options?.onSuccess,
         });

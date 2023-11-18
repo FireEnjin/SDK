@@ -575,6 +575,7 @@ export default class FireEnjin<I = any> {
         bubbles: options?.bubbles,
         cancelable: options?.cancelable,
         composed: options?.composed,
+        callback: options?.callback,
         onError: this.options?.onError,
         onSuccess: this.options?.onSuccess,
       });
@@ -602,6 +603,7 @@ export default class FireEnjin<I = any> {
       bubbles: options?.bubbles,
       cancelable: options?.cancelable,
       composed: options?.composed,
+      callback: options?.callback,
       onError: this.options?.onError,
       onSuccess: this.options?.onSuccess,
     });
@@ -651,6 +653,7 @@ export default class FireEnjin<I = any> {
       bubbles: options?.bubbles,
       cancelable: options?.cancelable,
       composed: options?.composed,
+      callback: options?.callback,
       onError: this.options?.onError,
       onSuccess: this.options?.onSuccess,
     }) as Promise<T>;

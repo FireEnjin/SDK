@@ -158,19 +158,22 @@ export interface FireEnjinUploadOptions extends FireEnjinMethodOptions {
   [key: string]: any;
 }
 
-export interface FireEnjinFetchOptions extends FireEnjinMethodOptions {
+export interface FireEnjinFetchOptions<I = any> extends FireEnjinMethodOptions {
   cacheKey?: string;
   disableCache?: boolean;
   dataPropsMap?: any;
   headers?: HeadersInit;
+  callback?: (data?: I, error?: any) => Promise<void>;
   fn?: (
     endpoint: string,
     input?: FireEnjinFetchInput<any>,
-    options?: FireEnjinFetchOptions
+    options?: FireEnjinFetchOptions<I>
   ) => Promise<any>;
 }
 
-export interface FireEnjinSubmitOptions extends FireEnjinMethodOptions {
+export interface FireEnjinSubmitOptions<I = any>
+  extends FireEnjinMethodOptions {
+  callback?: (data?: I, error?: any) => Promise<void>;
   fn?: (
     endpoint: string,
     input?: FireEnjinFetchInput<any>,

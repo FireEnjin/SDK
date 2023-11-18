@@ -9,6 +9,7 @@ export default function tryOrFail<T = any>(fn: () => Promise<T>, options?: {
     bubbles?: boolean;
     cancelable?: boolean;
     composed?: boolean;
+    callback?: (data?: T | undefined, error?: any) => Promise<void>;
     onError?: FireEnjinErrorCallback;
     onSuccess?: FireEnjinSuccessCallback;
 }): Promise<T>;
