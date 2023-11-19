@@ -558,12 +558,13 @@ class FireEnjin {
                 onError: (_h = this.options) === null || _h === void 0 ? void 0 : _h.onError,
                 onSuccess: (_j = this.options) === null || _j === void 0 ? void 0 : _j.onSuccess,
             });
-            if (!(options === null || options === void 0 ? void 0 : options.disableCache)) {
+            if (!(options === null || options === void 0 ? void 0 : options.disableCache) && !this.options.disableCache) {
+                console.log(`Caching ${localKey} with data: `, data);
                 try {
                     yield localforage.setItem(localKey, data);
                 }
-                catch (_l) {
-                    console.log("No Local data found");
+                catch (e) {
+                    console.log("Error setting cache: ", e);
                 }
             }
             return data;

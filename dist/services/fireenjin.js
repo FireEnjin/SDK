@@ -555,10 +555,10 @@ var FireEnjin = /** @class */ (function () {
     FireEnjin.prototype.fetch = function (endpoint, input, options) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         return __awaiter(this, void 0, void 0, function () {
-            var data, event, name, method, localKey, localData, _k, fn, _l;
+            var data, event, name, method, localKey, localData, _k, fn, e_1;
             var _this = this;
-            return __generator(this, function (_m) {
-                switch (_m.label) {
+            return __generator(this, function (_l) {
+                switch (_l.label) {
                     case 0:
                         data = null;
                         event = (options === null || options === void 0 ? void 0 : options.event) || null;
@@ -573,17 +573,17 @@ var FireEnjin = /** @class */ (function () {
                                         ? this.hash(JSON.stringify(Object.values(input.params)))
                                         : "").concat(this.hash(JSON.stringify(input || {}))));
                         localData = null;
-                        _m.label = 1;
+                        _l.label = 1;
                     case 1:
-                        _m.trys.push([1, 3, , 4]);
+                        _l.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, ((_b = localforage === null || localforage === void 0 ? void 0 : localforage.getItem) === null || _b === void 0 ? void 0 : _b.call(localforage, localKey))];
                     case 2:
-                        localData = (_m.sent()) || null;
+                        localData = (_l.sent()) || null;
                         if (localData && (input === null || input === void 0 ? void 0 : input.id) && (input === null || input === void 0 ? void 0 : input.collection))
                             localData = localData === null || localData === void 0 ? void 0 : localData[input.id];
                         return [3 /*break*/, 4];
                     case 3:
-                        _k = _m.sent();
+                        _k = _l.sent();
                         console.log("No Local data found");
                         return [3 /*break*/, 4];
                     case 4:
@@ -604,8 +604,8 @@ var FireEnjin = /** @class */ (function () {
                                 onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess,
                             })];
                     case 5:
-                        data = _m.sent();
-                        _m.label = 6;
+                        data = _l.sent();
+                        _l.label = 6;
                     case 6:
                         fn = typeof ((_e = this.options) === null || _e === void 0 ? void 0 : _e.onFetch) === "function"
                             ? this.options.onFetch(endpoint, input, options)
@@ -634,18 +634,19 @@ var FireEnjin = /** @class */ (function () {
                                 onSuccess: (_j = this.options) === null || _j === void 0 ? void 0 : _j.onSuccess,
                             })];
                     case 7:
-                        data = _m.sent();
-                        if (!!(options === null || options === void 0 ? void 0 : options.disableCache)) return [3 /*break*/, 11];
-                        _m.label = 8;
+                        data = _l.sent();
+                        if (!(!(options === null || options === void 0 ? void 0 : options.disableCache) && !this.options.disableCache)) return [3 /*break*/, 11];
+                        console.log("Caching ".concat(localKey, " with data: "), data);
+                        _l.label = 8;
                     case 8:
-                        _m.trys.push([8, 10, , 11]);
+                        _l.trys.push([8, 10, , 11]);
                         return [4 /*yield*/, localforage.setItem(localKey, data)];
                     case 9:
-                        _m.sent();
+                        _l.sent();
                         return [3 /*break*/, 11];
                     case 10:
-                        _l = _m.sent();
-                        console.log("No Local data found");
+                        e_1 = _l.sent();
+                        console.log("Error setting cache: ", e_1);
                         return [3 /*break*/, 11];
                     case 11: return [2 /*return*/, data];
                 }
@@ -757,7 +758,7 @@ var FireEnjin = /** @class */ (function () {
                 fileName = (input === null || input === void 0 ? void 0 : input.fileName) || (typeof file !== "string" && (file === null || file === void 0 ? void 0 : file.name));
                 storageRef = (0, storage_1.ref)(this.storage, path + fileName);
                 return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var _a, ref_1, metadata, _b, uploadTask_1, onProgress_1, target_1, e_1;
+                        var _a, ref_1, metadata, _b, uploadTask_1, onProgress_1, target_1, e_2;
                         var _c;
                         var _this = this;
                         return __generator(this, function (_d) {
@@ -824,9 +825,9 @@ var FireEnjin = /** @class */ (function () {
                                     _d.label = 4;
                                 case 4: return [3 /*break*/, 6];
                                 case 5:
-                                    e_1 = _d.sent();
-                                    console.log("Error uploading file: ", e_1);
-                                    reject(e_1);
+                                    e_2 = _d.sent();
+                                    console.log("Error uploading file: ", e_2);
+                                    reject(e_2);
                                     return [3 /*break*/, 6];
                                 case 6: return [2 /*return*/];
                             }

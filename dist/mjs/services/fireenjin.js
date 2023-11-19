@@ -502,12 +502,13 @@ export default class FireEnjin {
             onError: this.options?.onError,
             onSuccess: this.options?.onSuccess,
         });
-        if (!options?.disableCache) {
+        if (!options?.disableCache && !this.options.disableCache) {
+            console.log(`Caching ${localKey} with data: `, data);
             try {
                 await localforage.setItem(localKey, data);
             }
-            catch {
-                console.log("No Local data found");
+            catch (e) {
+                console.log("Error setting cache: ", e);
             }
         }
         return data;
