@@ -899,27 +899,42 @@ class Client {
     }
 }
 
-function cleanFirestoreData(input) {
-    const toPlainFirestoreObject = (o) => {
-        if (o &&
-            typeof o === "object" &&
-            !Array.isArray(o) &&
-            !isFirestoreTimestamp(o)) {
-            return {
-                ...Object.keys(o).reduce((a, c) => ((a[c] = toPlainFirestoreObject(o[c])), a), {}),
-            };
+function cleanFirestoreData(input, keepDocumentReferenceId = false, removeDates = false) {
+    const data = typeof input === "object" ? { ...input } : input;
+    for (const key of Object.keys(input)) {
+        const value = input[key];
+        if (!value)
+            continue;
+        try {
+            if (typeof value?.firestore === "object") {
+                keepDocumentReferenceId
+                    ? (data[key] = { id: value.id })
+                    : delete data[key];
+            }
+            else if (removeDates && typeof value?.toISOString === "function") {
+                data[key] = new Date().toISOString();
+            }
+            else if (typeof value?.toDate === "function") {
+                data[key] = value.toDate();
+                if (removeDates)
+                    data[key] = data[key].toISOString();
+            }
+            else if (value?.constructor?.name === "Array") {
+                const cleanArray = [];
+                for (const item of data[key]) {
+                    cleanArray.push(cleanFirestoreData(item));
+                }
+                data[key] = cleanArray;
+            }
+            else if (value?.constructor?.name === "Object") {
+                data[key] = cleanFirestoreData(value);
+            }
         }
-        return o;
-    };
-    function isFirestoreTimestamp(o) {
-        if (o &&
-            Object.getPrototypeOf(o).toMillis &&
-            Object.getPrototypeOf(o).constructor.name === "Timestamp") {
-            return true;
+        catch (err) {
+            delete data[key];
         }
-        return false;
     }
-    return toPlainFirestoreObject(input);
+    return JSON.parse(JSON.stringify(data));
 }
 
 class FirestoreClient {
@@ -1579,7 +1594,7 @@ class FireEnjin {
         if (!options?.disableCache && !this.options.disableCache) {
             console.log(`Caching ${localKey} with data: `, data);
             try {
-                await localforage__namespace.setItem(localKey, data);
+                await localforage__namespace.setItem(localKey, cleanFirestoreData(data, true));
             }
             catch (e) {
                 console.log("Error setting cache: ", e);

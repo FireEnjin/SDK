@@ -1,23 +1,41 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function cleanFirestoreData(input) {
-    const toPlainFirestoreObject = (o) => {
-        if (o &&
-            typeof o === "object" &&
-            !Array.isArray(o) &&
-            !isFirestoreTimestamp(o)) {
-            return Object.assign({}, Object.keys(o).reduce((a, c) => ((a[c] = toPlainFirestoreObject(o[c])), a), {}));
+function cleanFirestoreData(input, keepDocumentReferenceId = false, removeDates = false) {
+    var _a, _b;
+    const data = typeof input === "object" ? Object.assign({}, input) : input;
+    for (const key of Object.keys(input)) {
+        const value = input[key];
+        if (!value)
+            continue;
+        try {
+            if (typeof (value === null || value === void 0 ? void 0 : value.firestore) === "object") {
+                keepDocumentReferenceId
+                    ? (data[key] = { id: value.id })
+                    : delete data[key];
+            }
+            else if (removeDates && typeof (value === null || value === void 0 ? void 0 : value.toISOString) === "function") {
+                data[key] = new Date().toISOString();
+            }
+            else if (typeof (value === null || value === void 0 ? void 0 : value.toDate) === "function") {
+                data[key] = value.toDate();
+                if (removeDates)
+                    data[key] = data[key].toISOString();
+            }
+            else if (((_a = value === null || value === void 0 ? void 0 : value.constructor) === null || _a === void 0 ? void 0 : _a.name) === "Array") {
+                const cleanArray = [];
+                for (const item of data[key]) {
+                    cleanArray.push(cleanFirestoreData(item));
+                }
+                data[key] = cleanArray;
+            }
+            else if (((_b = value === null || value === void 0 ? void 0 : value.constructor) === null || _b === void 0 ? void 0 : _b.name) === "Object") {
+                data[key] = cleanFirestoreData(value);
+            }
         }
-        return o;
-    };
-    function isFirestoreTimestamp(o) {
-        if (o &&
-            Object.getPrototypeOf(o).toMillis &&
-            Object.getPrototypeOf(o).constructor.name === "Timestamp") {
-            return true;
+        catch (err) {
+            delete data[key];
         }
-        return false;
     }
-    return toPlainFirestoreObject(input);
+    return JSON.parse(JSON.stringify(data));
 }
 exports.default = cleanFirestoreData;

@@ -48,6 +48,7 @@ const getByPath_1 = __importDefault(require("../helpers/getByPath"));
 const setByPath_1 = __importDefault(require("../helpers/setByPath"));
 const subscription_1 = __importDefault(require("../events/subscription"));
 const mergeSets_1 = __importDefault(require("../helpers/mergeSets"));
+const cleanFirestoreData_1 = __importDefault(require("../helpers/cleanFirestoreData"));
 class FireEnjin {
     constructor(options) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
@@ -561,7 +562,7 @@ class FireEnjin {
             if (!(options === null || options === void 0 ? void 0 : options.disableCache) && !this.options.disableCache) {
                 console.log(`Caching ${localKey} with data: `, data);
                 try {
-                    yield localforage.setItem(localKey, data);
+                    yield localforage.setItem(localKey, (0, cleanFirestoreData_1.default)(data, true));
                 }
                 catch (e) {
                     console.log("Error setting cache: ", e);

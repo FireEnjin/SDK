@@ -60,6 +60,7 @@ var getByPath_1 = require("../helpers/getByPath");
 var setByPath_1 = require("../helpers/setByPath");
 var subscription_1 = require("../events/subscription");
 var mergeSets_1 = require("../helpers/mergeSets");
+var cleanFirestoreData_1 = require("../helpers/cleanFirestoreData");
 var FireEnjin = /** @class */ (function () {
     function FireEnjin(options) {
         var _this = this;
@@ -640,7 +641,7 @@ var FireEnjin = /** @class */ (function () {
                         _l.label = 8;
                     case 8:
                         _l.trys.push([8, 10, , 11]);
-                        return [4 /*yield*/, localforage.setItem(localKey, data)];
+                        return [4 /*yield*/, localforage.setItem(localKey, (0, cleanFirestoreData_1.default)(data, true))];
                     case 9:
                         _l.sent();
                         return [3 /*break*/, 11];

@@ -11,6 +11,7 @@ import getByPath from "../helpers/getByPath";
 import setByPath from "../helpers/setByPath";
 import fireenjinSubscription from "../events/subscription";
 import mergeSets from "../helpers/mergeSets";
+import cleanFirestoreData from "../helpers/cleanFirestoreData";
 export default class FireEnjin {
     client;
     sdk = {};
@@ -505,7 +506,7 @@ export default class FireEnjin {
         if (!options?.disableCache && !this.options.disableCache) {
             console.log(`Caching ${localKey} with data: `, data);
             try {
-                await localforage.setItem(localKey, data);
+                await localforage.setItem(localKey, cleanFirestoreData(data, true));
             }
             catch (e) {
                 console.log("Error setting cache: ", e);
