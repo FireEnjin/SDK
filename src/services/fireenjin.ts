@@ -804,9 +804,19 @@ export default class FireEnjin<I = any> {
         const payload = element?.dataset?.triggerPayload
           ? JSON.parse(element?.dataset?.triggerPayload)
           : {};
+        const bubbles =
+          (element?.dataset?.bubbles &&
+            element?.dataset?.bubbles !== "false") ??
+          true;
+        const cancelable =
+          (element?.dataset?.cancelable &&
+            element?.dataset?.cancelable !== "false") ??
+          true;
         element.addEventListener(eventName, (event) => {
           element.dispatchEvent(
             new CustomEvent("fireenjinTrigger", {
+              bubbles,
+              cancelable,
               detail: {
                 event,
                 name,

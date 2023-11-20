@@ -842,16 +842,22 @@ var FireEnjin = /** @class */ (function () {
         document
             .querySelectorAll("[data-trigger]")
             .forEach(function (element) { return __awaiter(_this, void 0, void 0, function () {
-            var name, eventName, payload;
-            var _a, _b, _c, _d;
-            return __generator(this, function (_e) {
+            var name, eventName, payload, bubbles, cancelable;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+            return __generator(this, function (_l) {
                 name = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.trigger;
                 eventName = ((_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.triggerOn) || "click";
                 payload = ((_c = element === null || element === void 0 ? void 0 : element.dataset) === null || _c === void 0 ? void 0 : _c.triggerPayload)
                     ? JSON.parse((_d = element === null || element === void 0 ? void 0 : element.dataset) === null || _d === void 0 ? void 0 : _d.triggerPayload)
                     : {};
+                bubbles = (_g = (((_e = element === null || element === void 0 ? void 0 : element.dataset) === null || _e === void 0 ? void 0 : _e.bubbles) &&
+                    ((_f = element === null || element === void 0 ? void 0 : element.dataset) === null || _f === void 0 ? void 0 : _f.bubbles) !== "false")) !== null && _g !== void 0 ? _g : true;
+                cancelable = (_k = (((_h = element === null || element === void 0 ? void 0 : element.dataset) === null || _h === void 0 ? void 0 : _h.cancelable) &&
+                    ((_j = element === null || element === void 0 ? void 0 : element.dataset) === null || _j === void 0 ? void 0 : _j.cancelable) !== "false")) !== null && _k !== void 0 ? _k : true;
                 element.addEventListener(eventName, function (event) {
                     element.dispatchEvent(new CustomEvent("fireenjinTrigger", {
+                        bubbles: bubbles,
+                        cancelable: cancelable,
                         detail: {
                             event: event,
                             name: name,

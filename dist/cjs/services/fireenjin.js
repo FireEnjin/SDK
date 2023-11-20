@@ -717,14 +717,20 @@ class FireEnjin {
         document
             .querySelectorAll("[data-trigger]")
             .forEach((element) => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
             const name = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.trigger;
             const eventName = ((_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.triggerOn) || "click";
             const payload = ((_c = element === null || element === void 0 ? void 0 : element.dataset) === null || _c === void 0 ? void 0 : _c.triggerPayload)
                 ? JSON.parse((_d = element === null || element === void 0 ? void 0 : element.dataset) === null || _d === void 0 ? void 0 : _d.triggerPayload)
                 : {};
+            const bubbles = (_g = (((_e = element === null || element === void 0 ? void 0 : element.dataset) === null || _e === void 0 ? void 0 : _e.bubbles) &&
+                ((_f = element === null || element === void 0 ? void 0 : element.dataset) === null || _f === void 0 ? void 0 : _f.bubbles) !== "false")) !== null && _g !== void 0 ? _g : true;
+            const cancelable = (_k = (((_h = element === null || element === void 0 ? void 0 : element.dataset) === null || _h === void 0 ? void 0 : _h.cancelable) &&
+                ((_j = element === null || element === void 0 ? void 0 : element.dataset) === null || _j === void 0 ? void 0 : _j.cancelable) !== "false")) !== null && _k !== void 0 ? _k : true;
             element.addEventListener(eventName, (event) => {
                 element.dispatchEvent(new CustomEvent("fireenjinTrigger", {
+                    bubbles,
+                    cancelable,
                     detail: {
                         event,
                         name,
@@ -734,16 +740,16 @@ class FireEnjin {
             });
         }));
         document.querySelectorAll("[data-fetch]").forEach((element) => __awaiter(this, void 0, void 0, function* () {
-            var _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
-            const url = (_e = element === null || element === void 0 ? void 0 : element.dataset) === null || _e === void 0 ? void 0 : _e.fetch;
-            const fetchParams = ((_g = (_f = element === null || element === void 0 ? void 0 : element.dataset) === null || _f === void 0 ? void 0 : _f.fetchParams) === null || _g === void 0 ? void 0 : _g.includes("{")) &&
-                JSON.parse((_h = element === null || element === void 0 ? void 0 : element.dataset) === null || _h === void 0 ? void 0 : _h.fetchParams);
-            const fetchOptions = ((_k = (_j = element === null || element === void 0 ? void 0 : element.dataset) === null || _j === void 0 ? void 0 : _j.fetchOptions) === null || _k === void 0 ? void 0 : _k.includes("{")) &&
-                JSON.parse((_l = element === null || element === void 0 ? void 0 : element.dataset) === null || _l === void 0 ? void 0 : _l.fetchOptions);
+            var _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
+            const url = (_l = element === null || element === void 0 ? void 0 : element.dataset) === null || _l === void 0 ? void 0 : _l.fetch;
+            const fetchParams = ((_o = (_m = element === null || element === void 0 ? void 0 : element.dataset) === null || _m === void 0 ? void 0 : _m.fetchParams) === null || _o === void 0 ? void 0 : _o.includes("{")) &&
+                JSON.parse((_p = element === null || element === void 0 ? void 0 : element.dataset) === null || _p === void 0 ? void 0 : _p.fetchParams);
+            const fetchOptions = ((_r = (_q = element === null || element === void 0 ? void 0 : element.dataset) === null || _q === void 0 ? void 0 : _q.fetchOptions) === null || _r === void 0 ? void 0 : _r.includes("{")) &&
+                JSON.parse((_s = element === null || element === void 0 ? void 0 : element.dataset) === null || _s === void 0 ? void 0 : _s.fetchOptions);
             let res;
-            const stateKey = (_m = element === null || element === void 0 ? void 0 : element.dataset) === null || _m === void 0 ? void 0 : _m.state;
-            const signalKey = ((_o = element === null || element === void 0 ? void 0 : element.dataset) === null || _o === void 0 ? void 0 : _o.signal) || `state:${stateKey}`;
-            const eventName = (_p = element === null || element === void 0 ? void 0 : element.dataset) === null || _p === void 0 ? void 0 : _p.triggerOn;
+            const stateKey = (_t = element === null || element === void 0 ? void 0 : element.dataset) === null || _t === void 0 ? void 0 : _t.state;
+            const signalKey = ((_u = element === null || element === void 0 ? void 0 : element.dataset) === null || _u === void 0 ? void 0 : _u.signal) || `state:${stateKey}`;
+            const eventName = (_v = element === null || element === void 0 ? void 0 : element.dataset) === null || _v === void 0 ? void 0 : _v.triggerOn;
             const subscribeBind = () => __awaiter(this, void 0, void 0, function* () {
                 res = yield this.fetch(url, fetchParams, fetchOptions);
                 this.subscribe(signalKey, () => {
@@ -770,9 +776,9 @@ class FireEnjin {
         document
             .querySelectorAll("[data-signal],[data-state]")
             .forEach((element) => __awaiter(this, void 0, void 0, function* () {
-            var _q, _r;
-            const stateKey = (_q = element === null || element === void 0 ? void 0 : element.dataset) === null || _q === void 0 ? void 0 : _q.state;
-            const signalKey = ((_r = element === null || element === void 0 ? void 0 : element.dataset) === null || _r === void 0 ? void 0 : _r.signal) || `state:${stateKey}`;
+            var _w, _x;
+            const stateKey = (_w = element === null || element === void 0 ? void 0 : element.dataset) === null || _w === void 0 ? void 0 : _w.state;
+            const signalKey = ((_x = element === null || element === void 0 ? void 0 : element.dataset) === null || _x === void 0 ? void 0 : _x.signal) || `state:${stateKey}`;
             this.subscribe(signalKey, () => {
                 var _a;
                 Object.keys(element.dataset).forEach((key) => {
