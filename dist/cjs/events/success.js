@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = fireenjinSuccess;
 const setComponentProps_1 = __importDefault(require("../helpers/setComponentProps"));
 function fireenjinSuccess(input, options) {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a;
         const detail = {
             event: input === null || input === void 0 ? void 0 : input.event,
             target: (input === null || input === void 0 ? void 0 : input.target) || ((_a = input === null || input === void 0 ? void 0 : input.event) === null || _a === void 0 ? void 0 : _a.target),
@@ -48,4 +49,3 @@ function fireenjinSuccess(input, options) {
         }));
     });
 }
-exports.default = fireenjinSuccess;

@@ -36,17 +36,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = fireenjinSuccess;
 var setComponentProps_1 = require("../helpers/setComponentProps");
 function fireenjinSuccess(input, options) {
-    var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var detail, _b, _c, el;
+        var detail, _a, _b, el;
+        var _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
                     detail = {
                         event: input === null || input === void 0 ? void 0 : input.event,
-                        target: (input === null || input === void 0 ? void 0 : input.target) || ((_a = input === null || input === void 0 ? void 0 : input.event) === null || _a === void 0 ? void 0 : _a.target),
+                        target: (input === null || input === void 0 ? void 0 : input.target) || ((_c = input === null || input === void 0 ? void 0 : input.event) === null || _c === void 0 ? void 0 : _c.target),
                         data: (input === null || input === void 0 ? void 0 : input.data) || null,
                         name: input === null || input === void 0 ? void 0 : input.name,
                         endpoint: input === null || input === void 0 ? void 0 : input.endpoint,
@@ -59,13 +60,13 @@ function fireenjinSuccess(input, options) {
                     _d.label = 1;
                 case 1:
                     _d.trys.push([1, 3, , 4]);
-                    _b = detail;
+                    _a = detail;
                     return [4 /*yield*/, (0, setComponentProps_1.default)(input === null || input === void 0 ? void 0 : input.dataPropsMap, input === null || input === void 0 ? void 0 : input.data)];
                 case 2:
-                    _b.data = _d.sent();
+                    _a.data = _d.sent();
                     return [3 /*break*/, 4];
                 case 3:
-                    _c = _d.sent();
+                    _b = _d.sent();
                     console.log("Error setting data props");
                     if (typeof (options === null || options === void 0 ? void 0 : options.onError) === "function")
                         options.onError(detail);
@@ -85,4 +86,3 @@ function fireenjinSuccess(input, options) {
         });
     });
 }
-exports.default = fireenjinSuccess;

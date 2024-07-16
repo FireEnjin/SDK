@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = getParameter;
 function getParameter(paramName) {
     var searchString = window.location.search.substring(1), i, val, params = searchString.split("&");
     for (i = 0; i < params.length; i++) {
@@ -10,4 +11,3 @@ function getParameter(paramName) {
     }
     return null;
 }
-exports.default = getParameter;

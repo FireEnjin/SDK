@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = tryOrFail;
 const error_1 = __importDefault(require("../events/error"));
 const success_1 = __importDefault(require("../events/success"));
 function tryOrFail(fn, options) {
-    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b, _c;
         const baseData = {
             cached: !!(options === null || options === void 0 ? void 0 : options.cached),
             event: options === null || options === void 0 ? void 0 : options.event,
@@ -47,4 +48,3 @@ function tryOrFail(fn, options) {
         }
     });
 }
-exports.default = tryOrFail;

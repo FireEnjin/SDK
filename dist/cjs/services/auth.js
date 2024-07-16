@@ -102,8 +102,8 @@ class AuthService {
         });
     }
     getClaims() {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             try {
                 yield (0, auth_1.reload)(this.service.currentUser);
                 const { claims } = yield (0, auth_1.getIdTokenResult)((_a = this.service) === null || _a === void 0 ? void 0 : _a.currentUser);
@@ -115,8 +115,8 @@ class AuthService {
         });
     }
     getToken() {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const currentToken = ((_a = this.service) === null || _a === void 0 ? void 0 : _a.currentUser)
                 ? yield (0, auth_1.getIdToken)(this.service.currentUser)
                 : localStorage.getItem(((_b = this.config) === null || _b === void 0 ? void 0 : _b.tokenLocalStorageKey) || "");
@@ -215,7 +215,7 @@ class AuthService {
     onAuthChanged(callback) {
         var _a;
         (0, auth_1.onAuthStateChanged)(this.service, (session) => __awaiter(this, void 0, void 0, function* () {
-            var _b, _c, _d;
+            var _a, _b, _c;
             if (!session ||
                 (!session.emailVerified &&
                     session.providerData &&
@@ -223,8 +223,8 @@ class AuthService {
                 return false;
             }
             if (session) {
-                localStorage.setItem(((_b = this.config) === null || _b === void 0 ? void 0 : _b.authLocalStorageKey) || "", JSON.stringify(session));
-                localStorage.setItem(((_c = this.config) === null || _c === void 0 ? void 0 : _c.tokenLocalStorageKey) || "", yield (0, auth_1.getIdToken)((_d = this.service) === null || _d === void 0 ? void 0 : _d.currentUser, true));
+                localStorage.setItem(((_a = this.config) === null || _a === void 0 ? void 0 : _a.authLocalStorageKey) || "", JSON.stringify(session));
+                localStorage.setItem(((_b = this.config) === null || _b === void 0 ? void 0 : _b.tokenLocalStorageKey) || "", yield (0, auth_1.getIdToken)((_c = this.service) === null || _c === void 0 ? void 0 : _c.currentUser, true));
             }
             if (callback && typeof callback === "function") {
                 callback(session);
@@ -294,14 +294,9 @@ class AuthService {
             }
         });
     }
-    withSocial(network, redirect = false) {
-        return __awaiter(this, void 0, void 0, function* () {
+    withSocial(network_1) {
+        return __awaiter(this, arguments, void 0, function* (network, { redirect, scopes } = {}) {
             let provider;
-            let shouldRedirect = redirect;
-            if (window.matchMedia("(display-mode: standalone)").matches) {
-                console.log("Running in PWA mode...");
-                shouldRedirect = true;
-            }
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 if (network === "facebook") {
                     provider = new auth_1.FacebookAuthProvider();
@@ -318,7 +313,15 @@ class AuthService {
                     });
                 }
                 try {
-                    if (shouldRedirect) {
+                    for (const scope of scopes || []) {
+                        provider.addScope(scope);
+                    }
+                }
+                catch (error) {
+                    console.log(error);
+                }
+                try {
+                    if (redirect) {
                         yield (0, auth_1.signInWithRedirect)(this.service, provider);
                     }
                     else {
@@ -337,8 +340,8 @@ class AuthService {
         return (0, auth_1.signOut)(this.service);
     }
     updatePassword(newPassword, credential) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             if (credential) {
                 yield (0, auth_1.reauthenticateWithCredential)((_a = this.service) === null || _a === void 0 ? void 0 : _a.currentUser, credential);
             }

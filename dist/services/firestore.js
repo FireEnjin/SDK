@@ -55,9 +55,9 @@ var FirestoreClient = /** @class */ (function () {
         this.db = options === null || options === void 0 ? void 0 : options.db;
     }
     FirestoreClient.prototype.rawRequest = function (query, variables, requestOptions) {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
             var method, headers, endpoint, response;
+            var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:

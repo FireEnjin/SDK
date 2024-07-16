@@ -73,8 +73,8 @@ class DatabaseService {
         return (0, firestore_1.getDocs)(this.collection(path));
     }
     getCount(query) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const res = yield (0, firestore_1.getCountFromServer)(this.rawQuery(query === null || query === void 0 ? void 0 : query.collectionName, query === null || query === void 0 ? void 0 : query.where, query === null || query === void 0 ? void 0 : query.orderBy, query === null || query === void 0 ? void 0 : query.limit, query === null || query === void 0 ? void 0 : query.advanced));
             return ((_b = (_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.call(res)) === null || _b === void 0 ? void 0 : _b.count) || 0;
         });
@@ -100,8 +100,8 @@ class DatabaseService {
     getDocument(path, id) {
         return (0, firestore_1.getDoc)(this.document(path, id));
     }
-    setDocument(path, data, id, { merge, mergeFields } = {}) {
-        return __awaiter(this, void 0, void 0, function* () {
+    setDocument(path_1, data_1, id_1) {
+        return __awaiter(this, arguments, void 0, function* (path, data, id, { merge, mergeFields } = {}) {
             const doc = this.document(path, id);
             yield (0, firestore_1.setDoc)(doc, data, {
                 merge,
@@ -201,8 +201,8 @@ class DatabaseService {
         });
     }
     list(collectionName, where, orderBy, limit, advanced) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const query = yield this.query(collectionName, where, orderBy, limit, advanced);
             return (((_a = query === null || query === void 0 ? void 0 : query.docs) === null || _a === void 0 ? void 0 : _a.map((queryDoc) => (Object.assign({ id: queryDoc.id }, ((queryDoc === null || queryDoc === void 0 ? void 0 : queryDoc.exists()) ? queryDoc.data() : {}))))) || null);
         });

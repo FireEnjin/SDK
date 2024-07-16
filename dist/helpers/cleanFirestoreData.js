@@ -11,6 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = cleanFirestoreData;
 function cleanFirestoreData(input, keepDocumentReferenceId, removeDates) {
     var _a, _b;
     if (keepDocumentReferenceId === void 0) { keepDocumentReferenceId = false; }
@@ -53,4 +54,3 @@ function cleanFirestoreData(input, keepDocumentReferenceId, removeDates) {
     }
     return JSON.parse(JSON.stringify(data));
 }
-exports.default = cleanFirestoreData;

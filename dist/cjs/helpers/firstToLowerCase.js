@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = firstToLowerCase;
 /**
  * Lowercases the first character in the `string`.
  *
@@ -16,4 +17,3 @@ function firstToLowerCase(string) {
     }
     return string[0].toLowerCase() + string.slice(1);
 }
-exports.default = firstToLowerCase;

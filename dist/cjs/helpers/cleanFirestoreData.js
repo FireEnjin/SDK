@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = cleanFirestoreData;
 function cleanFirestoreData(input, keepDocumentReferenceId = false, removeDates = false) {
     var _a, _b;
     const data = typeof input === "object" ? Object.assign({}, input) : input;
@@ -38,4 +39,3 @@ function cleanFirestoreData(input, keepDocumentReferenceId = false, removeDates 
     }
     return JSON.parse(JSON.stringify(data));
 }
-exports.default = cleanFirestoreData;

@@ -261,8 +261,8 @@ var FireEnjin = /** @class */ (function () {
         }
     }
     FireEnjin.prototype.onState = function (event) {
-        var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function () {
+            var _a, _b, _c, _d, _e, _f;
             return __generator(this, function (_g) {
                 if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                     console.log("fireenjinState: ", event);
@@ -277,9 +277,9 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.onUpload = function (event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
         return __awaiter(this, void 0, void 0, function () {
             var data;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
             return __generator(this, function (_s) {
                 switch (_s.label) {
                     case 0:
@@ -317,9 +317,9 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.onSubmit = function (event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         return __awaiter(this, void 0, void 0, function () {
             var target;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
             return __generator(this, function (_m) {
                 if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                     console.log("fireenjinSubmit: ", event);
@@ -347,9 +347,9 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.onFetch = function (event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         return __awaiter(this, void 0, void 0, function () {
             var target;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
             return __generator(this, function (_m) {
                 if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                     console.log("fireenjinFetch: ", event);
@@ -375,10 +375,10 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.onSubscribe = function (event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
         return __awaiter(this, void 0, void 0, function () {
             var signalKey, subscriptionDetails, collectionName;
             var _this = this;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
             return __generator(this, function (_u) {
                 if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                     console.log("fireenjinSubscribe: ", event);
@@ -508,10 +508,10 @@ var FireEnjin = /** @class */ (function () {
         return hash;
     };
     FireEnjin.prototype.upload = function (input, options) {
-        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function () {
             var endpoint, method, target;
             var _this = this;
+            var _a, _b, _c;
             return __generator(this, function (_d) {
                 endpoint = (options === null || options === void 0 ? void 0 : options.endpoint) || "upload";
                 method = (options === null || options === void 0 ? void 0 : options.method) || "post";
@@ -554,10 +554,10 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.fetch = function (endpoint, input, options) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         return __awaiter(this, void 0, void 0, function () {
-            var data, event, name, method, localKey, localData, _k, fn, e_1;
+            var data, event, name, method, localKey, localData, _a, fn, e_1;
             var _this = this;
+            var _b, _c, _d, _e, _f, _g, _h, _j, _k;
             return __generator(this, function (_l) {
                 switch (_l.label) {
                     case 0:
@@ -568,7 +568,7 @@ var FireEnjin = /** @class */ (function () {
                         localKey = (input === null || input === void 0 ? void 0 : input.collection) ||
                             ((options === null || options === void 0 ? void 0 : options.cacheKey)
                                 ? options.cacheKey
-                                : "".concat(((_a = this.options) === null || _a === void 0 ? void 0 : _a.cachePrefix) ? this.options.cachePrefix : "").concat(endpoint, "_").concat((input === null || input === void 0 ? void 0 : input.id)
+                                : "".concat(((_b = this.options) === null || _b === void 0 ? void 0 : _b.cachePrefix) ? this.options.cachePrefix : "").concat(endpoint, "_").concat((input === null || input === void 0 ? void 0 : input.id)
                                     ? "".concat(input.id, ":")
                                     : (input === null || input === void 0 ? void 0 : input.params)
                                         ? this.hash(JSON.stringify(Object.values(input.params)))
@@ -577,14 +577,14 @@ var FireEnjin = /** @class */ (function () {
                         _l.label = 1;
                     case 1:
                         _l.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, ((_b = localforage === null || localforage === void 0 ? void 0 : localforage.getItem) === null || _b === void 0 ? void 0 : _b.call(localforage, localKey))];
+                        return [4 /*yield*/, ((_c = localforage === null || localforage === void 0 ? void 0 : localforage.getItem) === null || _c === void 0 ? void 0 : _c.call(localforage, localKey))];
                     case 2:
                         localData = (_l.sent()) || null;
                         if (localData && (input === null || input === void 0 ? void 0 : input.id) && (input === null || input === void 0 ? void 0 : input.collection))
                             localData = localData === null || localData === void 0 ? void 0 : localData[input.id];
                         return [3 /*break*/, 4];
                     case 3:
-                        _k = _l.sent();
+                        _a = _l.sent();
                         console.log("No Local data found");
                         return [3 /*break*/, 4];
                     case 4:
@@ -601,16 +601,16 @@ var FireEnjin = /** @class */ (function () {
                                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                                 composed: options === null || options === void 0 ? void 0 : options.composed,
                                 callback: options === null || options === void 0 ? void 0 : options.callback,
-                                onError: (_c = this.options) === null || _c === void 0 ? void 0 : _c.onError,
-                                onSuccess: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onSuccess,
+                                onError: (_d = this.options) === null || _d === void 0 ? void 0 : _d.onError,
+                                onSuccess: (_e = this.options) === null || _e === void 0 ? void 0 : _e.onSuccess,
                             })];
                     case 5:
                         data = _l.sent();
                         _l.label = 6;
                     case 6:
-                        fn = typeof ((_e = this.options) === null || _e === void 0 ? void 0 : _e.onFetch) === "function"
+                        fn = typeof ((_f = this.options) === null || _f === void 0 ? void 0 : _f.onFetch) === "function"
                             ? this.options.onFetch(endpoint, input, options)
-                            : ((_f = this.host) === null || _f === void 0 ? void 0 : _f.type) === "graphql"
+                            : ((_g = this.host) === null || _g === void 0 ? void 0 : _g.type) === "graphql"
                                 ? (input === null || input === void 0 ? void 0 : input.query)
                                     ? this.client.request(input === null || input === void 0 ? void 0 : input.query, input === null || input === void 0 ? void 0 : input.params, {
                                         method: method,
@@ -624,15 +624,15 @@ var FireEnjin = /** @class */ (function () {
                             }); }); }, {
                                 endpoint: endpoint,
                                 event: event,
-                                target: (options === null || options === void 0 ? void 0 : options.target) || ((_g = options === null || options === void 0 ? void 0 : options.event) === null || _g === void 0 ? void 0 : _g.target),
+                                target: (options === null || options === void 0 ? void 0 : options.target) || ((_h = options === null || options === void 0 ? void 0 : options.event) === null || _h === void 0 ? void 0 : _h.target),
                                 name: name,
                                 cached: false,
                                 bubbles: options === null || options === void 0 ? void 0 : options.bubbles,
                                 cancelable: options === null || options === void 0 ? void 0 : options.cancelable,
                                 composed: options === null || options === void 0 ? void 0 : options.composed,
                                 callback: options === null || options === void 0 ? void 0 : options.callback,
-                                onError: (_h = this.options) === null || _h === void 0 ? void 0 : _h.onError,
-                                onSuccess: (_j = this.options) === null || _j === void 0 ? void 0 : _j.onSuccess,
+                                onError: (_j = this.options) === null || _j === void 0 ? void 0 : _j.onError,
+                                onSuccess: (_k = this.options) === null || _k === void 0 ? void 0 : _k.onSuccess,
                             })];
                     case 7:
                         data = _l.sent();
@@ -655,10 +655,10 @@ var FireEnjin = /** @class */ (function () {
         });
     };
     FireEnjin.prototype.submit = function (endpoint, input, options) {
-        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function () {
             var event, name, method, fn;
             var _this = this;
+            var _a, _b, _c, _d;
             return __generator(this, function (_e) {
                 event = (options === null || options === void 0 ? void 0 : options.event) || null;
                 name = (options === null || options === void 0 ? void 0 : options.name) || null;

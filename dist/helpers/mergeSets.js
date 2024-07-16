@@ -9,6 +9,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = mergeSets;
 function mergeSets() {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -18,4 +19,3 @@ function mergeSets() {
         return __spreadArray(__spreadArray([], acc, true), current, true);
     }, []));
 }
-exports.default = mergeSets;

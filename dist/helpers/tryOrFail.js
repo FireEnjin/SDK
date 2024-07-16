@@ -47,12 +47,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = tryOrFail;
 var error_1 = require("../events/error");
 var success_1 = require("../events/success");
 function tryOrFail(fn, options) {
-    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function () {
         var baseData, data, error_2;
+        var _a, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
@@ -102,4 +103,3 @@ function tryOrFail(fn, options) {
         });
     });
 }
-exports.default = tryOrFail;

@@ -421,13 +421,8 @@ class AuthService {
             }
         });
     }
-    async withSocial(network, redirect = false) {
+    async withSocial(network, { redirect, scopes } = {}) {
         let provider;
-        let shouldRedirect = redirect;
-        if (window.matchMedia("(display-mode: standalone)").matches) {
-            console.log("Running in PWA mode...");
-            shouldRedirect = true;
-        }
         return new Promise(async (resolve, reject) => {
             if (network === "facebook") {
                 provider = new auth.FacebookAuthProvider();
@@ -444,7 +439,15 @@ class AuthService {
                 });
             }
             try {
-                if (shouldRedirect) {
+                for (const scope of scopes || []) {
+                    provider.addScope(scope);
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
+            try {
+                if (redirect) {
                     await auth.signInWithRedirect(this.service, provider);
                 }
                 else {

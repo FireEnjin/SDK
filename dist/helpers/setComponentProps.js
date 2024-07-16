@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = setComponentProps;
 function setComponentProps(dataPropsMap, data) {
     return __awaiter(this, void 0, void 0, function () {
         var newData, dataKeys, _i, dataKeys_1, key;
@@ -59,4 +60,3 @@ function setComponentProps(dataPropsMap, data) {
         });
     });
 }
-exports.default = setComponentProps;

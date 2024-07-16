@@ -43,55 +43,55 @@ var Model = /** @class */ (function () {
         this.endpoint = endpoint;
         this.endpoints = endpoints;
     }
-    Model.prototype.create = function (data, _a) {
-        var _b;
-        var id = _a.id, params = _a.params, query = _a.query, endpoint = _a.endpoint;
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_c) {
-                return [2 /*return*/, this.fireenjin.submit(endpoint || ((_b = this.endpoints) === null || _b === void 0 ? void 0 : _b.create) || this.endpoint || "", { data: data, id: id, params: params, query: query })];
+    Model.prototype.create = function (data_1, _a) {
+        return __awaiter(this, arguments, void 0, function (data, _b) {
+            var _c;
+            var id = _b.id, params = _b.params, query = _b.query, endpoint = _b.endpoint;
+            return __generator(this, function (_d) {
+                return [2 /*return*/, this.fireenjin.submit(endpoint || ((_c = this.endpoints) === null || _c === void 0 ? void 0 : _c.create) || this.endpoint || "", { data: data, id: id, params: params, query: query })];
             });
         });
     };
-    Model.prototype.find = function (id, _a) {
-        var _b;
-        var params = _a.params, query = _a.query, endpoint = _a.endpoint;
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_c) {
-                return [2 /*return*/, this.fireenjin.fetch(endpoint || ((_b = this.endpoints) === null || _b === void 0 ? void 0 : _b.find) || this.endpoint || "", { id: id, params: params, query: query })];
+    Model.prototype.find = function (id_1, _a) {
+        return __awaiter(this, arguments, void 0, function (id, _b) {
+            var _c;
+            var params = _b.params, query = _b.query, endpoint = _b.endpoint;
+            return __generator(this, function (_d) {
+                return [2 /*return*/, this.fireenjin.fetch(endpoint || ((_c = this.endpoints) === null || _c === void 0 ? void 0 : _c.find) || this.endpoint || "", { id: id, params: params, query: query })];
             });
         });
     };
-    Model.prototype.update = function (id, data, _a) {
-        var _b;
-        var params = _a.params, query = _a.query, endpoint = _a.endpoint;
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_c) {
-                return [2 /*return*/, this.fireenjin.submit(endpoint || ((_b = this.endpoints) === null || _b === void 0 ? void 0 : _b.update) || this.endpoint || "", { data: data, id: id, params: params, query: query })];
+    Model.prototype.update = function (id_1, data_1, _a) {
+        return __awaiter(this, arguments, void 0, function (id, data, _b) {
+            var _c;
+            var params = _b.params, query = _b.query, endpoint = _b.endpoint;
+            return __generator(this, function (_d) {
+                return [2 /*return*/, this.fireenjin.submit(endpoint || ((_c = this.endpoints) === null || _c === void 0 ? void 0 : _c.update) || this.endpoint || "", { data: data, id: id, params: params, query: query })];
             });
         });
     };
-    Model.prototype.delete = function (id, _a) {
-        var _b;
-        var params = _a.params, query = _a.query, endpoint = _a.endpoint;
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+    Model.prototype.delete = function (id_1, _a) {
+        return __awaiter(this, arguments, void 0, function (id, _b) {
+            var _c;
+            var params = _b.params, query = _b.query, endpoint = _b.endpoint;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0: return [4 /*yield*/, this.fireenjin.submit(id, {
-                            endpoint: endpoint || ((_b = this.endpoints) === null || _b === void 0 ? void 0 : _b.delete) || this.endpoint || "",
+                            endpoint: endpoint || ((_c = this.endpoints) === null || _c === void 0 ? void 0 : _c.delete) || this.endpoint || "",
                             params: params,
                             query: query,
                         })];
-                    case 1: return [2 /*return*/, _c.sent()];
+                    case 1: return [2 /*return*/, _d.sent()];
                 }
             });
         });
     };
     Model.prototype.list = function (_a) {
-        var _b;
-        var params = _a.params, query = _a.query, endpoint = _a.endpoint;
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_c) {
-                return [2 /*return*/, this.fireenjin.fetch(endpoint || ((_b = this.endpoints) === null || _b === void 0 ? void 0 : _b.list) || this.endpoint || "", { params: params, query: query })];
+        return __awaiter(this, arguments, void 0, function (_b) {
+            var _c;
+            var params = _b.params, query = _b.query, endpoint = _b.endpoint;
+            return __generator(this, function (_d) {
+                return [2 /*return*/, this.fireenjin.fetch(endpoint || ((_c = this.endpoints) === null || _c === void 0 ? void 0 : _c.list) || this.endpoint || "", { params: params, query: query })];
             });
         });
     };

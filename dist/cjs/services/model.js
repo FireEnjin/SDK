@@ -15,38 +15,38 @@ class Model {
         this.endpoint = endpoint;
         this.endpoints = endpoints;
     }
-    create(data, { id, params, query, endpoint, }) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.fireenjin.submit(endpoint || ((_a = this.endpoints) === null || _a === void 0 ? void 0 : _a.create) || this.endpoint || "", { data, id, params, query });
+    create(data_1, _a) {
+        return __awaiter(this, arguments, void 0, function* (data, { id, params, query, endpoint, }) {
+            var _b;
+            return this.fireenjin.submit(endpoint || ((_b = this.endpoints) === null || _b === void 0 ? void 0 : _b.create) || this.endpoint || "", { data, id, params, query });
         });
     }
-    find(id, { params, query, endpoint, }) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.fireenjin.fetch(endpoint || ((_a = this.endpoints) === null || _a === void 0 ? void 0 : _a.find) || this.endpoint || "", { id, params, query });
+    find(id_1, _a) {
+        return __awaiter(this, arguments, void 0, function* (id, { params, query, endpoint, }) {
+            var _b;
+            return this.fireenjin.fetch(endpoint || ((_b = this.endpoints) === null || _b === void 0 ? void 0 : _b.find) || this.endpoint || "", { id, params, query });
         });
     }
-    update(id, data, { params, query, endpoint, }) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.fireenjin.submit(endpoint || ((_a = this.endpoints) === null || _a === void 0 ? void 0 : _a.update) || this.endpoint || "", { data, id, params, query });
+    update(id_1, data_1, _a) {
+        return __awaiter(this, arguments, void 0, function* (id, data, { params, query, endpoint, }) {
+            var _b;
+            return this.fireenjin.submit(endpoint || ((_b = this.endpoints) === null || _b === void 0 ? void 0 : _b.update) || this.endpoint || "", { data, id, params, query });
         });
     }
-    delete(id, { params, query, endpoint, }) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
+    delete(id_1, _a) {
+        return __awaiter(this, arguments, void 0, function* (id, { params, query, endpoint, }) {
+            var _b;
             return yield this.fireenjin.submit(id, {
-                endpoint: endpoint || ((_a = this.endpoints) === null || _a === void 0 ? void 0 : _a.delete) || this.endpoint || "",
+                endpoint: endpoint || ((_b = this.endpoints) === null || _b === void 0 ? void 0 : _b.delete) || this.endpoint || "",
                 params,
                 query,
             });
         });
     }
-    list({ params, query, endpoint, }) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.fireenjin.fetch(endpoint || ((_a = this.endpoints) === null || _a === void 0 ? void 0 : _a.list) || this.endpoint || "", { params, query });
+    list(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ params, query, endpoint, }) {
+            var _b;
+            return this.fireenjin.fetch(endpoint || ((_b = this.endpoints) === null || _b === void 0 ? void 0 : _b.list) || this.endpoint || "", { params, query });
         });
     }
 }

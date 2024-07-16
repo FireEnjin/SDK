@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = getByPath;
 function getByPath(o, s) {
     if (s === ".")
         return o;
@@ -17,4 +18,3 @@ function getByPath(o, s) {
     }
     return o;
 }
-exports.default = getByPath;

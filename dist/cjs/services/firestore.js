@@ -20,8 +20,8 @@ class FirestoreClient {
         this.db = options === null || options === void 0 ? void 0 : options.db;
     }
     rawRequest(query, variables, requestOptions) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || "GET";
             const headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.headers) || {};
             const endpoint = query;

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = setByPath;
 var isNumeric_1 = require("./isNumeric");
 function setByPath(obj, path, value) {
     var pList = path.split(".");
@@ -14,4 +15,3 @@ function setByPath(obj, path, value) {
     obj[pList[len - 1]] = value;
     return obj;
 }
-exports.default = setByPath;

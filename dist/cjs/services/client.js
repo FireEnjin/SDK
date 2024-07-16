@@ -19,8 +19,8 @@ class Client {
         this.options = options || {};
     }
     rawRequest(query, variables, requestOptions) {
-        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
             const method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "GET";
             const headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_b = this.options) === null || _b === void 0 ? void 0 : _b.headers) || {};
             const endpoint = `${this.url}/${query}${method === "get" ? (0, objectToUrlParams_1.default)(variables) : ""}`;
@@ -34,8 +34,8 @@ class Client {
         });
     }
     request(endpoint, variables, requestOptions) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             const method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "GET";
             const headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_b = this.options) === null || _b === void 0 ? void 0 : _b.headers) || {};
             const response = yield fetch(`${this.url}/${endpoint}`, Object.assign(Object.assign(Object.assign({ method }, (this.options || {})), (requestOptions || {})), { headers, body: (!["get", "post"].includes(method.toLowerCase()) &&

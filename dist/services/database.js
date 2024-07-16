@@ -144,9 +144,9 @@ var DatabaseService = /** @class */ (function () {
         return (0, firestore_1.getDocs)(this.collection(path));
     };
     DatabaseService.prototype.getCount = function (query) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var res;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0: return [4 /*yield*/, (0, firestore_1.getCountFromServer)(this.rawQuery(query === null || query === void 0 ? void 0 : query.collectionName, query === null || query === void 0 ? void 0 : query.where, query === null || query === void 0 ? void 0 : query.orderBy, query === null || query === void 0 ? void 0 : query.limit, query === null || query === void 0 ? void 0 : query.advanced))];
@@ -179,10 +179,10 @@ var DatabaseService = /** @class */ (function () {
     DatabaseService.prototype.getDocument = function (path, id) {
         return (0, firestore_1.getDoc)(this.document(path, id));
     };
-    DatabaseService.prototype.setDocument = function (path, data, id, _a) {
-        var _b = _a === void 0 ? {} : _a, merge = _b.merge, mergeFields = _b.mergeFields;
-        return __awaiter(this, void 0, void 0, function () {
+    DatabaseService.prototype.setDocument = function (path_1, data_1, id_1) {
+        return __awaiter(this, arguments, void 0, function (path, data, id, _a) {
             var doc;
+            var _b = _a === void 0 ? {} : _a, merge = _b.merge, mergeFields = _b.mergeFields;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -315,9 +315,9 @@ var DatabaseService = /** @class */ (function () {
         });
     };
     DatabaseService.prototype.list = function (collectionName, where, orderBy, limit, advanced) {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
             var query;
+            var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, this.query(collectionName, where, orderBy, limit, advanced)];

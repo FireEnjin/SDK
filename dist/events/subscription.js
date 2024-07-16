@@ -36,38 +36,39 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = fireenjinSubscription;
 var setComponentProps_1 = require("../helpers/setComponentProps");
 function fireenjinSubscription(input, options) {
-    var _a, _b, _c, _d, _e, _f, _g;
     return __awaiter(this, void 0, void 0, function () {
-        var detail, _h, _j, el;
+        var detail, _a, _b, el;
+        var _c, _d, _e, _f, _g, _h, _j;
         return __generator(this, function (_k) {
             switch (_k.label) {
                 case 0:
                     detail = {
                         event: input === null || input === void 0 ? void 0 : input.event,
-                        target: (input === null || input === void 0 ? void 0 : input.target) || ((_a = input === null || input === void 0 ? void 0 : input.event) === null || _a === void 0 ? void 0 : _a.target),
+                        target: (input === null || input === void 0 ? void 0 : input.target) || ((_c = input === null || input === void 0 ? void 0 : input.event) === null || _c === void 0 ? void 0 : _c.target),
                         data: (input === null || input === void 0 ? void 0 : input.data) || null,
                         name: input === null || input === void 0 ? void 0 : input.name,
                         endpoint: input === null || input === void 0 ? void 0 : input.endpoint,
                         bubbles: !!(input === null || input === void 0 ? void 0 : input.bubbles),
                         cancelable: !!(input === null || input === void 0 ? void 0 : input.cancelable),
                         composed: !!(input === null || input === void 0 ? void 0 : input.composed),
-                        query: (input === null || input === void 0 ? void 0 : input.query) || ((_c = (_b = input === null || input === void 0 ? void 0 : input.event) === null || _b === void 0 ? void 0 : _b.detail) === null || _c === void 0 ? void 0 : _c.query),
-                        params: (input === null || input === void 0 ? void 0 : input.params) || ((_e = (_d = input === null || input === void 0 ? void 0 : input.event) === null || _d === void 0 ? void 0 : _d.detail) === null || _e === void 0 ? void 0 : _e.params),
-                        signalKey: (input === null || input === void 0 ? void 0 : input.signalKey) || ((_g = (_f = input === null || input === void 0 ? void 0 : input.event) === null || _f === void 0 ? void 0 : _f.detail) === null || _g === void 0 ? void 0 : _g.signalKey),
+                        query: (input === null || input === void 0 ? void 0 : input.query) || ((_e = (_d = input === null || input === void 0 ? void 0 : input.event) === null || _d === void 0 ? void 0 : _d.detail) === null || _e === void 0 ? void 0 : _e.query),
+                        params: (input === null || input === void 0 ? void 0 : input.params) || ((_g = (_f = input === null || input === void 0 ? void 0 : input.event) === null || _f === void 0 ? void 0 : _f.detail) === null || _g === void 0 ? void 0 : _g.params),
+                        signalKey: (input === null || input === void 0 ? void 0 : input.signalKey) || ((_j = (_h = input === null || input === void 0 ? void 0 : input.event) === null || _h === void 0 ? void 0 : _h.detail) === null || _j === void 0 ? void 0 : _j.signalKey),
                     };
                     if (!(input === null || input === void 0 ? void 0 : input.dataPropsMap)) return [3 /*break*/, 4];
                     _k.label = 1;
                 case 1:
                     _k.trys.push([1, 3, , 4]);
-                    _h = detail;
+                    _a = detail;
                     return [4 /*yield*/, (0, setComponentProps_1.default)(input === null || input === void 0 ? void 0 : input.dataPropsMap, input === null || input === void 0 ? void 0 : input.data)];
                 case 2:
-                    _h.data = _k.sent();
+                    _a.data = _k.sent();
                     return [3 /*break*/, 4];
                 case 3:
-                    _j = _k.sent();
+                    _b = _k.sent();
                     console.log("Error setting data props");
                     if (typeof (options === null || options === void 0 ? void 0 : options.onError) === "function")
                         options.onError(detail);
@@ -85,4 +86,3 @@ function fireenjinSubscription(input, options) {
         });
     });
 }
-exports.default = fireenjinSubscription;

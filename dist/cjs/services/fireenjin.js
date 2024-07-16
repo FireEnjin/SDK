@@ -136,8 +136,8 @@ class FireEnjin {
                     this.signals[signalKey].forEach((fn) => fn({ value, stateKey, state: this.state, signalKey }));
                 if (options === null || options === void 0 ? void 0 : options.autoBindAttributes)
                     (_e = (_d = (_c = document === null || document === void 0 ? void 0 : document.querySelectorAll) === null || _c === void 0 ? void 0 : _c.call(document, "[data-state]")) === null || _d === void 0 ? void 0 : _d.forEach) === null || _e === void 0 ? void 0 : _e.call(_d, (element) => __awaiter(this, void 0, void 0, function* () {
-                        var _f;
-                        const stateKey = (_f = element === null || element === void 0 ? void 0 : element.dataset) === null || _f === void 0 ? void 0 : _f.state;
+                        var _a;
+                        const stateKey = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.state;
                         Object.keys(element.dataset).forEach((key) => {
                             if (key.includes("bind")) {
                                 let propName = (0, firstToLowerCase_1.default)(key.replace("bind", ""));
@@ -238,8 +238,8 @@ class FireEnjin {
         }
     }
     onState(event) {
-        var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e, _f;
             if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                 console.log("fireenjinState: ", event);
             if ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.state) {
@@ -252,8 +252,8 @@ class FireEnjin {
         });
     }
     onUpload(event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
             if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                 console.log("fireenjinUpload: ", event);
             if (typeof ((_b = this.options) === null || _b === void 0 ? void 0 : _b.onUpload) === "function")
@@ -284,8 +284,8 @@ class FireEnjin {
         });
     }
     onSubmit(event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
             if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                 console.log("fireenjinSubmit: ", event);
             if (!event ||
@@ -311,8 +311,8 @@ class FireEnjin {
         });
     }
     onFetch(event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
             if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                 console.log("fireenjinFetch: ", event);
             if (!event ||
@@ -336,8 +336,8 @@ class FireEnjin {
         });
     }
     onSubscribe(event) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
             if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.debug)
                 console.log("fireenjinSubscribe: ", event);
             const signalKey = ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.signalKey) || ((_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.endpoint);
@@ -373,12 +373,12 @@ class FireEnjin {
             else {
                 const collectionName = ((_o = event === null || event === void 0 ? void 0 : event.detail) === null || _o === void 0 ? void 0 : _o.collection) || ((_p = event === null || event === void 0 ? void 0 : event.detail) === null || _p === void 0 ? void 0 : _p.endpoint);
                 (_s = (_r = (_q = this.host) === null || _q === void 0 ? void 0 : _q.db) === null || _r === void 0 ? void 0 : _r.subscribe) === null || _s === void 0 ? void 0 : _s.call(_r, Object.assign({ collectionName }, (_t = event === null || event === void 0 ? void 0 : event.detail) === null || _t === void 0 ? void 0 : _t.query), (data) => __awaiter(this, void 0, void 0, function* () {
-                    var _u, _v, _w;
+                    var _a, _b, _c;
                     subscriptionDetails.data = data;
-                    if (typeof ((_u = this.options) === null || _u === void 0 ? void 0 : _u.onSubscription) === "function")
+                    if (typeof ((_a = this.options) === null || _a === void 0 ? void 0 : _a.onSubscription) === "function")
                         this.options.onSubscription(subscriptionDetails);
-                    if (typeof ((_v = event === null || event === void 0 ? void 0 : event.detail) === null || _v === void 0 ? void 0 : _v.callback) === "function")
-                        (_w = event === null || event === void 0 ? void 0 : event.detail) === null || _w === void 0 ? void 0 : _w.callback(subscriptionDetails);
+                    if (typeof ((_b = event === null || event === void 0 ? void 0 : event.detail) === null || _b === void 0 ? void 0 : _b.callback) === "function")
+                        (_c = event === null || event === void 0 ? void 0 : event.detail) === null || _c === void 0 ? void 0 : _c.callback(subscriptionDetails);
                     (0, subscription_1.default)(subscriptionDetails);
                 }));
             }
@@ -457,20 +457,20 @@ class FireEnjin {
         return hash;
     }
     upload(input, options) {
-        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
             const endpoint = (options === null || options === void 0 ? void 0 : options.endpoint) || "upload";
             const method = (options === null || options === void 0 ? void 0 : options.method) || "post";
             const target = (options === null || options === void 0 ? void 0 : options.target) || ((_a = options === null || options === void 0 ? void 0 : options.event) === null || _a === void 0 ? void 0 : _a.target) || document;
             return (0, tryOrFail_1.default)(() => __awaiter(this, void 0, void 0, function* () {
-                var _d, _e, _f, _g, _h, _j;
+                var _a, _b, _c, _d, _e, _f;
                 return this.storage
-                    ? this.uploadFile((_d = input === null || input === void 0 ? void 0 : input.data) === null || _d === void 0 ? void 0 : _d.file, {
-                        fileName: (_e = input === null || input === void 0 ? void 0 : input.data) === null || _e === void 0 ? void 0 : _e.fileName,
-                        path: (_f = input === null || input === void 0 ? void 0 : input.data) === null || _f === void 0 ? void 0 : _f.path,
+                    ? this.uploadFile((_a = input === null || input === void 0 ? void 0 : input.data) === null || _a === void 0 ? void 0 : _a.file, {
+                        fileName: (_b = input === null || input === void 0 ? void 0 : input.data) === null || _b === void 0 ? void 0 : _b.fileName,
+                        path: (_c = input === null || input === void 0 ? void 0 : input.data) === null || _c === void 0 ? void 0 : _c.path,
                         target,
                     }, options)
-                    : ((_g = this.host) === null || _g === void 0 ? void 0 : _g.type) === "graphql" && !((_h = this.options) === null || _h === void 0 ? void 0 : _h.uploadUrl)
+                    : ((_d = this.host) === null || _d === void 0 ? void 0 : _d.type) === "graphql" && !((_e = this.options) === null || _e === void 0 ? void 0 : _e.uploadUrl)
                         ? (input === null || input === void 0 ? void 0 : input.query)
                             ? this.client.request(input.query, input.params, {
                                 method,
@@ -479,7 +479,7 @@ class FireEnjin {
                                 id: input === null || input === void 0 ? void 0 : input.id,
                                 data: input === null || input === void 0 ? void 0 : input.data,
                             })
-                        : this.client.request(((_j = this.options) === null || _j === void 0 ? void 0 : _j.uploadUrl) || endpoint, input, {
+                        : this.client.request(((_f = this.options) === null || _f === void 0 ? void 0 : _f.uploadUrl) || endpoint, input, {
                             method,
                         });
             }), {
@@ -497,8 +497,8 @@ class FireEnjin {
         });
     }
     fetch(endpoint, input, options) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
             let data = null;
             const event = (options === null || options === void 0 ? void 0 : options.event) || null;
             const name = (options === null || options === void 0 ? void 0 : options.name) || null;
@@ -572,8 +572,8 @@ class FireEnjin {
         });
     }
     submit(endpoint, input, options) {
-        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d;
             const event = (options === null || options === void 0 ? void 0 : options.event) || null;
             const name = (options === null || options === void 0 ? void 0 : options.name) || null;
             const method = (options === null || options === void 0 ? void 0 : options.method) || "post";
@@ -740,16 +740,16 @@ class FireEnjin {
             });
         }));
         document.querySelectorAll("[data-fetch]").forEach((element) => __awaiter(this, void 0, void 0, function* () {
-            var _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
-            const url = (_l = element === null || element === void 0 ? void 0 : element.dataset) === null || _l === void 0 ? void 0 : _l.fetch;
-            const fetchParams = ((_o = (_m = element === null || element === void 0 ? void 0 : element.dataset) === null || _m === void 0 ? void 0 : _m.fetchParams) === null || _o === void 0 ? void 0 : _o.includes("{")) &&
-                JSON.parse((_p = element === null || element === void 0 ? void 0 : element.dataset) === null || _p === void 0 ? void 0 : _p.fetchParams);
-            const fetchOptions = ((_r = (_q = element === null || element === void 0 ? void 0 : element.dataset) === null || _q === void 0 ? void 0 : _q.fetchOptions) === null || _r === void 0 ? void 0 : _r.includes("{")) &&
-                JSON.parse((_s = element === null || element === void 0 ? void 0 : element.dataset) === null || _s === void 0 ? void 0 : _s.fetchOptions);
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+            const url = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.fetch;
+            const fetchParams = ((_c = (_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.fetchParams) === null || _c === void 0 ? void 0 : _c.includes("{")) &&
+                JSON.parse((_d = element === null || element === void 0 ? void 0 : element.dataset) === null || _d === void 0 ? void 0 : _d.fetchParams);
+            const fetchOptions = ((_f = (_e = element === null || element === void 0 ? void 0 : element.dataset) === null || _e === void 0 ? void 0 : _e.fetchOptions) === null || _f === void 0 ? void 0 : _f.includes("{")) &&
+                JSON.parse((_g = element === null || element === void 0 ? void 0 : element.dataset) === null || _g === void 0 ? void 0 : _g.fetchOptions);
             let res;
-            const stateKey = (_t = element === null || element === void 0 ? void 0 : element.dataset) === null || _t === void 0 ? void 0 : _t.state;
-            const signalKey = ((_u = element === null || element === void 0 ? void 0 : element.dataset) === null || _u === void 0 ? void 0 : _u.signal) || `state:${stateKey}`;
-            const eventName = (_v = element === null || element === void 0 ? void 0 : element.dataset) === null || _v === void 0 ? void 0 : _v.triggerOn;
+            const stateKey = (_h = element === null || element === void 0 ? void 0 : element.dataset) === null || _h === void 0 ? void 0 : _h.state;
+            const signalKey = ((_j = element === null || element === void 0 ? void 0 : element.dataset) === null || _j === void 0 ? void 0 : _j.signal) || `state:${stateKey}`;
+            const eventName = (_k = element === null || element === void 0 ? void 0 : element.dataset) === null || _k === void 0 ? void 0 : _k.triggerOn;
             const subscribeBind = () => __awaiter(this, void 0, void 0, function* () {
                 res = yield this.fetch(url, fetchParams, fetchOptions);
                 this.subscribe(signalKey, () => {
@@ -776,9 +776,9 @@ class FireEnjin {
         document
             .querySelectorAll("[data-signal],[data-state]")
             .forEach((element) => __awaiter(this, void 0, void 0, function* () {
-            var _w, _x;
-            const stateKey = (_w = element === null || element === void 0 ? void 0 : element.dataset) === null || _w === void 0 ? void 0 : _w.state;
-            const signalKey = ((_x = element === null || element === void 0 ? void 0 : element.dataset) === null || _x === void 0 ? void 0 : _x.signal) || `state:${stateKey}`;
+            var _a, _b;
+            const stateKey = (_a = element === null || element === void 0 ? void 0 : element.dataset) === null || _a === void 0 ? void 0 : _a.state;
+            const signalKey = ((_b = element === null || element === void 0 ? void 0 : element.dataset) === null || _b === void 0 ? void 0 : _b.signal) || `state:${stateKey}`;
             this.subscribe(signalKey, () => {
                 var _a;
                 Object.keys(element.dataset).forEach((key) => {

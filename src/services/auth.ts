@@ -395,14 +395,11 @@ export default class AuthService {
     });
   }
 
-  async withSocial(network: string, redirect = false): Promise<any> {
+  async withSocial(
+    network: string,
+    { redirect, scopes }: { redirect?: boolean; scopes?: string[] } = {}
+  ): Promise<any> {
     let provider;
-    let shouldRedirect = redirect;
-    if (window.matchMedia("(display-mode: standalone)").matches) {
-      console.log("Running in PWA mode...");
-      shouldRedirect = true;
-    }
-
     return new Promise(async (resolve, reject) => {
       if (network === "facebook") {
         provider = new FacebookAuthProvider();
@@ -416,8 +413,17 @@ export default class AuthService {
             "A social network is required or the one provided is not yet supported.",
         });
       }
+
       try {
-        if (shouldRedirect) {
+        for (const scope of scopes || []) {
+          provider.addScope(scope);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      try {
+        if (redirect) {
           await signInWithRedirect(this.service, provider);
         } else {
           await signInWithPopup(this.service, provider);

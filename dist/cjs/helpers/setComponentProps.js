@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = setComponentProps;
 function setComponentProps(dataPropsMap, data) {
     return __awaiter(this, void 0, void 0, function* () {
         let newData = data ? data : {};
@@ -28,4 +29,3 @@ function setComponentProps(dataPropsMap, data) {
         return newData;
     });
 }
-exports.default = setComponentProps;

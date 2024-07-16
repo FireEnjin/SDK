@@ -36,10 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = fireenjinError;
 function fireenjinError(input, options) {
-    var _a;
     return __awaiter(this, void 0, void 0, function () {
         var detail, el;
+        var _a;
         return __generator(this, function (_b) {
             detail = {
                 event: input === null || input === void 0 ? void 0 : input.event,
@@ -65,4 +66,3 @@ function fireenjinError(input, options) {
         });
     });
 }
-exports.default = fireenjinError;

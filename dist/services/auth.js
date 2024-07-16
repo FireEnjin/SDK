@@ -147,9 +147,9 @@ var AuthService = /** @class */ (function () {
         });
     };
     AuthService.prototype.getClaims = function () {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
             var claims, error_1;
+            var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -170,22 +170,22 @@ var AuthService = /** @class */ (function () {
         });
     };
     AuthService.prototype.getToken = function () {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var currentToken, _c;
+            var currentToken, _a;
+            var _b, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        if (!((_a = this.service) === null || _a === void 0 ? void 0 : _a.currentUser)) return [3 /*break*/, 2];
+                        if (!((_b = this.service) === null || _b === void 0 ? void 0 : _b.currentUser)) return [3 /*break*/, 2];
                         return [4 /*yield*/, (0, auth_1.getIdToken)(this.service.currentUser)];
                     case 1:
-                        _c = _d.sent();
+                        _a = _d.sent();
                         return [3 /*break*/, 3];
                     case 2:
-                        _c = localStorage.getItem(((_b = this.config) === null || _b === void 0 ? void 0 : _b.tokenLocalStorageKey) || "");
+                        _a = localStorage.getItem(((_c = this.config) === null || _c === void 0 ? void 0 : _c.tokenLocalStorageKey) || "");
                         _d.label = 3;
                     case 3:
-                        currentToken = _c;
+                        currentToken = _a;
                         return [4 /*yield*/, this.setToken(currentToken)];
                     case 4:
                         _d.sent();
@@ -406,21 +406,16 @@ var AuthService = /** @class */ (function () {
             }
         });
     };
-    AuthService.prototype.withSocial = function (network, redirect) {
-        if (redirect === void 0) { redirect = false; }
-        return __awaiter(this, void 0, void 0, function () {
-            var provider, shouldRedirect;
+    AuthService.prototype.withSocial = function (network_1) {
+        return __awaiter(this, arguments, void 0, function (network, _a) {
+            var provider;
             var _this = this;
-            return __generator(this, function (_a) {
-                shouldRedirect = redirect;
-                if (window.matchMedia("(display-mode: standalone)").matches) {
-                    console.log("Running in PWA mode...");
-                    shouldRedirect = true;
-                }
+            var _b = _a === void 0 ? {} : _a, redirect = _b.redirect, scopes = _b.scopes;
+            return __generator(this, function (_c) {
                 return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                        var error_3;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
+                        var _i, _a, scope, error_3;
+                        return __generator(this, function (_b) {
+                            switch (_b.label) {
                                 case 0:
                                     if (network === "facebook") {
                                         provider = new auth_1.FacebookAuthProvider();
@@ -436,23 +431,32 @@ var AuthService = /** @class */ (function () {
                                             message: "A social network is required or the one provided is not yet supported.",
                                         });
                                     }
-                                    _a.label = 1;
+                                    try {
+                                        for (_i = 0, _a = scopes || []; _i < _a.length; _i++) {
+                                            scope = _a[_i];
+                                            provider.addScope(scope);
+                                        }
+                                    }
+                                    catch (error) {
+                                        console.log(error);
+                                    }
+                                    _b.label = 1;
                                 case 1:
-                                    _a.trys.push([1, 6, , 7]);
-                                    if (!shouldRedirect) return [3 /*break*/, 3];
+                                    _b.trys.push([1, 6, , 7]);
+                                    if (!redirect) return [3 /*break*/, 3];
                                     return [4 /*yield*/, (0, auth_1.signInWithRedirect)(this.service, provider)];
                                 case 2:
-                                    _a.sent();
+                                    _b.sent();
                                     return [3 /*break*/, 5];
                                 case 3: return [4 /*yield*/, (0, auth_1.signInWithPopup)(this.service, provider)];
                                 case 4:
-                                    _a.sent();
-                                    _a.label = 5;
+                                    _b.sent();
+                                    _b.label = 5;
                                 case 5:
                                     this.emitLoggedInEvent({ currentUser: this.service.currentUser });
                                     return [3 /*break*/, 7];
                                 case 6:
-                                    error_3 = _a.sent();
+                                    error_3 = _b.sent();
                                     console.log(error_3);
                                     return [3 /*break*/, 7];
                                 case 7: return [2 /*return*/];
@@ -467,8 +471,8 @@ var AuthService = /** @class */ (function () {
         return (0, auth_1.signOut)(this.service);
     };
     AuthService.prototype.updatePassword = function (newPassword, credential) {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
+            var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:

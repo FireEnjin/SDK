@@ -54,34 +54,34 @@ var Client = /** @class */ (function () {
         this.options = options || {};
     }
     Client.prototype.rawRequest = function (query, variables, requestOptions) {
-        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function () {
             var method, headers, endpoint, response;
-            var _d;
+            var _a;
+            var _b, _c, _d;
             return __generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
-                        method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_a = this.options) === null || _a === void 0 ? void 0 : _a.method) || "GET";
-                        headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_b = this.options) === null || _b === void 0 ? void 0 : _b.headers) || {};
+                        method = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.method) || ((_b = this.options) === null || _b === void 0 ? void 0 : _b.method) || "GET";
+                        headers = (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.headers) || ((_c = this.options) === null || _c === void 0 ? void 0 : _c.headers) || {};
                         endpoint = "".concat(this.url, "/").concat(query).concat(method === "get" ? (0, objectToUrlParams_1.default)(variables) : "");
                         return [4 /*yield*/, fetch("".concat(this.url, "/").concat(endpoint), __assign(__assign(__assign({ method: method }, (this.options || {})), (requestOptions || {})), { headers: headers, body: method === "get" ? null : JSON.stringify(variables || {}) }))];
                     case 1:
                         response = _e.sent();
-                        _d = {};
-                        return [4 /*yield*/, ((_c = response === null || response === void 0 ? void 0 : response.json) === null || _c === void 0 ? void 0 : _c.call(response))];
-                    case 2: return [2 /*return*/, (_d.data = (_e.sent()) || null,
-                            _d.headers = response.headers,
-                            _d.status = response.status,
-                            _d.extensions = {},
-                            _d)];
+                        _a = {};
+                        return [4 /*yield*/, ((_d = response === null || response === void 0 ? void 0 : response.json) === null || _d === void 0 ? void 0 : _d.call(response))];
+                    case 2: return [2 /*return*/, (_a.data = (_e.sent()) || null,
+                            _a.headers = response.headers,
+                            _a.status = response.status,
+                            _a.extensions = {},
+                            _a)];
                 }
             });
         });
     };
     Client.prototype.request = function (endpoint, variables, requestOptions) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var method, headers, response;
+            var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:

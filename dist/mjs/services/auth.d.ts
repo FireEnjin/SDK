@@ -62,7 +62,10 @@ export default class AuthService {
     sendPasswordReset(emailAddress: string, options?: any): Promise<void>;
     withEmail(email: string, password: string): Promise<unknown>;
     updateEmail(newEmail: string, actionOptions: any): Promise<unknown>;
-    withSocial(network: string, redirect?: boolean): Promise<any>;
+    withSocial(network: string, { redirect, scopes }?: {
+        redirect?: boolean;
+        scopes?: string[];
+    }): Promise<any>;
     logout(): Promise<void>;
     updatePassword(newPassword: string, credential: any): Promise<void>;
     storeRoles(roles: any[]): Promise<any[]>;

@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = uploadFiles;
 const storage_1 = require("firebase/storage");
 const getExtension_1 = __importDefault(require("./getExtension"));
 function uploadFiles(app, files, options) {
@@ -36,4 +37,3 @@ function uploadFiles(app, files, options) {
         return results;
     });
 }
-exports.default = uploadFiles;
